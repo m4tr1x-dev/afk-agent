@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T16:17:23Z",
+  "updated": "2026-09-12T17:25:11Z",
   "milestone": "M1",
   "exit_criteria": [
     {
@@ -18,8 +18,8 @@
     {
       "id": "M1.3",
       "text": "model loads on Vulkan with its vision encoder; latency measured with a game running",
-      "state": "done_with_caveat",
-      "detail": "Vision encoder answered for both variants: E4B 7/8, 26B A4B 8/8 exact on all three fields, graphics processor confirmed at 8.42x and 11.23x. Visual budget is a process flag, not a per-request parameter; image token counts identical between variants. Processor-only generation measured at 12.6 tokens/s for 26B A4B, which is the degradation ladder's step 3. Latency with a game running is still to measure."
+      "state": "done",
+      "detail": "Vision encoder answered on both variants (E4B 7/8, 26B A4B 8/8). Tactical latency with a game resident measured: 445 ms E4B, 596 ms 26B A4B, against a 150-400 ms target that is not met - cadence corrected to 1-2 Hz. FR-CTX-002 measured as load-bearing: 2686 ms per tick at product prompt size. Deliberative latency still open."
     },
     {
       "id": "M1.4",
@@ -28,11 +28,11 @@
     }
   ],
   "task": {
-    "id": "T-0026",
-    "title": "E-CAP part C: the corpus recorder",
+    "id": "T-0028",
+    "title": "E8 terms pack, then E-CAP part C the corpus recorder",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T16:17:23Z"
+    "started": "2026-09-12T17:25:11Z"
   },
   "gates": {
     "G0": "pass",
@@ -43,12 +43,6 @@
     "G7": "pass"
   },
   "open_decisions": [
-    {
-      "id": "ADR-0008",
-      "title": "screen capture API",
-      "blocked_on": "a run against a demonstrably animating window",
-      "evidence": "experiments/01-reachability/results/"
-    },
     {
       "id": "ADR-0009",
       "title": "accepted; its validation section still needs the question 1 numbers",
@@ -65,6 +59,12 @@
       "title": "model variant and quantisation",
       "blocked_on": "E3/E4: all six variants in one table, grounding as the quality axis rather than MMMU",
       "evidence": null
+    },
+    {
+      "id": "ADR-0008",
+      "title": "screen capture API",
+      "blocked_on": "nothing; WGC measured at 2.27 ms and 55 fps against 12.92 ms for PrintWindow, with failure signatures for FR-PERC-009",
+      "evidence": "experiments/07-capture/"
     }
   ],
   "blockers": [
@@ -88,8 +88,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0026 E-CAP part C: the corpus recorder, which the maintainer's 100 minutes feeds",
-    "T-0027 E3: model latency with a game resident, the figure the specification says is the only one that matters",
-    "T-0028 E8: the verbatim terms pack for the roster titles that are installed"
+    "T-0028 E8: verbatim clause pack for the installed roster titles; a human signs off",
+    "T-0029 E-CAP part C: the corpus recorder, which the maintainer's 100 minutes feeds",
+    "T-0030 E6: deliberative throughput on the processor, and E5 two pinned slots"
   ]
 }

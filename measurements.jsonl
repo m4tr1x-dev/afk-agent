@@ -18,3 +18,7 @@
 {"at": "2026-09-12T16:17:23Z", "what": "wgc_fps_on_a_game", "value": 55.1, "conditions": "same; delivers on presentation rather than on a clock", "lands_in": "docs/spec/09-gui-and-overlay.md"}
 {"at": "2026-09-12T16:17:23Z", "what": "printwindow_frame_latency_p50_ms", "value": 12.92, "conditions": "same window", "lands_in": "docs/spec/09-gui-and-overlay.md"}
 {"at": "2026-09-12T16:17:23Z", "what": "overlay_leaked_pixels", "value": 0, "conditions": "2400 frames under WDA_EXCLUDEFROMCAPTURE across three runs", "lands_in": "docs/spec/09-gui-and-overlay.md"}
+{"at": "2026-09-12T17:25:11Z", "what": "tactical_tick_p50_ms_e4b", "value": 445, "conditions": "game resident, 4800-token prefix, cache on, fresh frame, 256 px", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T17:25:11Z", "what": "tactical_tick_p50_ms_26b_a4b", "value": 596, "conditions": "same conditions", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T17:25:11Z", "what": "prefix_cache_saving_ms_per_tick", "value": 2686, "conditions": "26B A4B, 4800-token prefix, 256 px: 3282 ms off against 596 ms on", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T17:25:11Z", "what": "text_only_floor_ms_e4b", "value": 333, "conditions": "no image, same conditions", "lands_in": "docs/spec/15-performance-budgets.md"}

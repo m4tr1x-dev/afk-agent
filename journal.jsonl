@@ -39,3 +39,7 @@
 {"at": "2026-09-12T16:17:23Z", "event": "attempt_failed", "what": "differencing two captures to detect the capture border", "why": "the border is drawn on screen around the window and may never appear in a capture; zero difference proved nothing", "dont_retry": true}
 {"at": "2026-09-12T16:17:23Z", "event": "attempt_failed", "what": "reading the screen at a covered window's coordinates", "why": "reads whatever is on top; a clean reading of the wrong thing, twice", "dont_retry": true}
 {"at": "2026-09-12T16:17:23Z", "event": "merged", "prs": [31, 32]}
+{"at": "2026-09-12T17:25:11Z", "event": "question_answered", "matrix_question": 3, "detail": "tactical 445 ms E4B / 596 ms 26B with a game resident; target 150-400 ms not met; cadence corrected to 1-2 Hz; FR-CTX-002 worth 2686 ms per tick"}
+{"at": "2026-09-12T17:25:11Z", "event": "correction", "what": "the claim that the runtime's device report is static", "detail": "it moves by 1199 MiB for a 16 GiB model and not at all for another process; unrelated to residency rather than static. FR-MODEL-004 now requires a platform query."}
+{"at": "2026-09-12T17:25:11Z", "event": "spec_change", "detail": "05-reasoning-loop cadence 1-4 Hz -> 1-2 Hz; 15-performance-budgets tactical row measured; 17-model-contract FR-CTX-002 gains its number; FR-MODEL-004 gains the source requirement"}
+{"at": "2026-09-12T17:25:11Z", "event": "merged", "prs": [33]}
