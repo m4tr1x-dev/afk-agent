@@ -1,0 +1,100 @@
+name: code-quality
+
+# The checks that run against source rather than against documentation.
+#
+# Two runners, for one reason each. The contract generator is plain Rust with no
+# platform surface, so it runs on Linux where runners are cheap and fast. The
+# product workspace declares `user32` and pins a single Windows target, so it can
+# only be built on Windows; `CON-001` makes that deliberate rather than a gap.
+#
+# The toolchain version is not set here. `rust-toolchain.toml` pins it exactly,
+# and naming a version in two places is how the two drift apart.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: code-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  contract:
+    name: Contract generator and freshness
+    runs-on: ubuntu-latest
+    env:
+      # `.cargo/config.toml` pins the product's target to Windows, and cargo
+      # applies it to every invocation from the repository root — including this
+      # one, although ADR-0016 keeps the generator out of the product workspace.
+      # The generator does not ship, so it builds for the runner's own host.
+      CARGO_BUILD_TARGET: x86_64-unknown-linux-gnu
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            contract/codegen/target
+          key: contract-${{ runner.os }}-${{ hashFiles('contract/codegen/Cargo.lock') }}
+
+      - name: Formatting
+        run: cargo fmt --manifest-path contract/codegen/Cargo.toml --all --check
+
+      - name: Lints
+        run: >
+          cargo clippy --manifest-path contract/codegen/Cargo.toml
+          --all-targets --locked -- -D warnings
+
+      - name: Tests
+        run: cargo test --manifest-path contract/codegen/Cargo.toml --locked
+
+      # The highest value per second in the whole pipeline: it proves that the
+      # schema, the generated types and the published reference page still agree.
+      # A schema edited without regenerating produces two well-formed files that
+      # describe different protocols, and nothing else notices.
+      - name: Generated artefacts match the schema
+        run: python tools/check_codegen.py
+
+  rust:
+    name: Product workspace
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: workspace-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+
+      - name: Formatting
+        run: cargo fmt --all --check
+
+      - name: Lints
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      # Clippy does not link, so it passes on a missing `#[link]` attribute that
+      # fails the build. Building the tests is what catches it.
+      - name: Tests
+        run: cargo test --workspace --locked
+
+      - name: Documentation
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo doc --workspace --no-deps --locked

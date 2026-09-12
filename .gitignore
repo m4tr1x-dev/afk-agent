@@ -1,5 +1,8 @@
 # Rust
-/target/
+# Cargo build output, at any depth: the product workspace has one, and the
+# contract generator keeps its own because ADR-0016 excludes it from the
+# workspace.
+target/
 **/*.rs.bk
 *.pdb
 

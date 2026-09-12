@@ -142,6 +142,7 @@ nav:
       - decisions/0025-terms-of-service-and-anti-cheat-posture.md
       - decisions/0035-sustained-action-execution.md
       - decisions/0036-three-valued-verification.md
+      - decisions/0039-generate-the-contract-from-one-schema.md
   - Explanation:
       - explanation/index.md
       - explanation/why-no-per-game-training.md
@@ -165,6 +166,8 @@ nav:
       - reference/index.md
       - reference/sensor-expressions.md
       - reference/traceability.md
+      - Contract:
+          - reference/contract/events.md
       - reference/api/index.md
   - Contributing:
       - contributing/index.md

@@ -1,0 +1,54 @@
+# A slice of the catalogue, enough to exercise every emitter.
+#
+# Every declaration carries a `doc`, and the generator refuses one that does
+# not. The reference page is generated from this text, so an omission here is a
+# hole in the published protocol rather than a missing comment.
+schema_version = 1
+
+[[union]]
+name = "Event"
+doc = "Core to interface. A new variant is a minor bump; older clients skip it."
+
+[[union.variant]]
+name = "SessionState"
+tag = 1
+doc = "FR-LOOP-008. The state machine's current state, and why it is there."
+fields = [
+  { name = "state", type = "u8", doc = "Idle, Briefing, Running, Stopping, Stopped." },
+  { name = "reason", type = "string", doc = "One sentence, for the overlay." },
+]
+
+[[union.variant]]
+name = "VerificationOutcome"
+tag = 7
+doc = "FR-GND-006. Exactly one of three values; INV-GND-001 forbids collapsing the third."
+fields = [
+  { name = "action_id", type = "u64", doc = "The action this outcome belongs to." },
+  { name = "outcome", type = "u8", doc = "0 confirmed, 1 refuted, 2 inconclusive." },
+  { name = "evidence", type = "string", doc = "What was observed, in one sentence." },
+]
+
+[[tool]]
+name = "click"
+doc = "Click a mark. FR-GND-001: choosing from a list is structurally safer than producing coordinates."
+[[tool.param]]
+name = "mark"
+type = "mark"
+doc = "One of the marks in the current observation. The grammar enumerates them."
+[[tool.param]]
+name = "button"
+type = "enum"
+values = ["left", "right", "middle"]
+doc = "Which button. Most interfaces want the left one."
+
+[[tool]]
+name = "look"
+doc = "Turn the camera by a relative delta over a duration. FR-ACT-004."
+[[tool.param]]
+name = "dx"
+type = "i32"
+doc = "Horizontal delta in mouse units. Negative turns left. Calibrated per session."
+[[tool.param]]
+name = "duration_ms"
+type = "u32"
+doc = "How long to spread the movement over, in milliseconds."

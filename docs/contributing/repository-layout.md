@@ -28,7 +28,7 @@ directory exists today or is part of the shape `ADR-0016` sets.
 | `docs/` | present | The specification and all other documentation |
 | `styles/` | present | Vale prose rules and vocabulary |
 | `tools/` | present | Documentation and build scripts |
-| `contract/` | planned | Message and tool schemas, the single source of truth |
+| `contract/` | present | Message and tool schemas, the single source of truth |
 | `crates/` | present | The Rust core, one crate per subsystem boundary |
 | `src/` | planned | The C# shell and overlay |
 | `tests/` | planned | Corpus, benchmark harness, replay fixtures |

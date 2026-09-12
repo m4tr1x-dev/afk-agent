@@ -129,6 +129,25 @@ def gates() -> dict[str, list[Step]]:
             Step("test", [cargo, "test", "--workspace", "--locked"]),
             Step("doc", [cargo, "doc", "--workspace", "--no-deps", "--locked"]),
             Step("supply chain", [cargo, "deny", "check"], optional=True),
+            # The generator is excluded from the product workspace by ADR-0016,
+            # which means `--workspace` above does not see it. Excluded from the
+            # audit surface is not the same as excluded from the checks.
+            Step(
+                "codegen fmt",
+                [cargo, "fmt", "--manifest-path", "contract/codegen/Cargo.toml", "--all", "--check"],
+            ),
+            Step(
+                "codegen clippy",
+                [
+                    cargo, "clippy", "--manifest-path", "contract/codegen/Cargo.toml",
+                    "--all-targets", "--locked", "--", "-D", "warnings",
+                ],
+            ),
+            Step(
+                "codegen test",
+                [cargo, "test", "--manifest-path", "contract/codegen/Cargo.toml", "--locked"],
+            ),
+            Step("codegen freshness", [py, "tools/check_codegen.py"]),
         ],
         "G3": [
             Step("format", [dotnet, "format", "--verify-no-changes"]),

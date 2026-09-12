@@ -151,3 +151,5 @@ respawns
 cooldown
 fallbacks
 superfences
+codegen
+msbuild
