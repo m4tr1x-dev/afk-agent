@@ -1,0 +1,139 @@
+# The titles this project is allowed to point a probe at, and what it may do to
+# each of them.
+#
+# This file is read at run time and it refuses things. That is the whole point.
+# `ADR-0025` excludes competitive multiplayer as a use case and as a direction,
+# and the terms of some titles prohibit automation outright — and a rule of that
+# kind, written in a decision record and nowhere else, is a rule somebody
+# eventually works around at two in the morning with a good reason.
+#
+# So: `synthesis_allowed = false` means the reachability probe and the harness
+# will not run against the title, and say so rather than doing it anyway. The
+# difference between "we wrote it down" and "the tool will not do it" is the
+# whole difference.
+#
+# `terms` takes exactly one of three values, and the scale is deliberately
+# coarse:
+#
+#   prohibits   a quoted clause forbids automation
+#   silent      the terms do not address it, or the reading is arguable
+#   permits     a quoted clause allows it
+#
+# **Anything ambiguous is `silent`, never `permits`.** `permits` requires a
+# clause quoted verbatim in docs/reference/terms/, and until that page exists
+# for a title, the honest value is `silent`. An open-source licence that says
+# nothing about automation is `silent`, not `permits` - a licence grants rights
+# over the software, and saying nothing about a use is not the same as allowing
+# it. The distinction costs nothing and keeps the column meaningful.
+#
+# `terms_reviewed` is the date a person read the pack, not the date the agent
+# assembled it. Known-good-matrix question 8 is not closable without that
+# signature, and an unsigned entry is recorded as such.
+
+schema_version = 1
+
+[[title]]
+name = "xonotic"
+display = "Xonotic"
+engine = "DarkPlaces"
+licence = "GPL-2.0-or-later"
+synthesis_allowed = true
+terms = "silent"
+terms_reviewed = ""
+notes = """
+Open source, single-player and local matches used. Reached in E1 at 0.892 \
+columns per unit, R2 0.957. Started with cl_allow_uidtracking 0 from the \
+command line rather than by answering its consent prompt, because clicking \
+through a consent dialogue is not something this project does on a user's \
+behalf.
+"""
+
+[[title]]
+name = "openarena"
+display = "OpenArena 0.8.8"
+engine = "id Tech 3"
+licence = "GPL-2.0-only"
+synthesis_allowed = true
+terms = "silent"
+terms_reviewed = ""
+notes = """
+Open source. Reached in E1 at 1.091 columns per unit, R2 0.975, and 0.1111 \
+degrees per mouse unit by the wrap test. The only roster title so far that \
+needed no manual setup at all: +map oa_dm1 from the command line lands in \
+gameplay.
+"""
+
+[[title]]
+name = "assaultcube"
+display = "AssaultCube 1.3.0.2"
+engine = "Cube"
+licence = "zlib-acknowledgement"
+synthesis_allowed = true
+terms = "silent"
+terms_reviewed = ""
+notes = """
+Open source. The cleanest response measured: R2 1.000 across the sweep, and \
+0.0909 degrees per mouse unit from the wrap test, which cross-checks against \
+the sweep at a field of view of about 110 degrees. Also the title that showed \
+FR-ACT-005 in the wild - a click delivered at a coordinate the pointer had not \
+visited did nothing.
+"""
+
+[[title]]
+name = "breathedge"
+display = "Breathedge"
+engine = "Unreal Engine 4"
+licence = "proprietary"
+synthesis_allowed = true
+terms = "silent"
+terms_reviewed = ""
+notes = """
+Commercial, single-player only. Used as the control on a commercial-lineage \
+engine. Its frames are not committed to this repository; evidence for it lives \
+outside the working tree. The publisher's agreement has not been assembled into \
+a clause pack yet, so `terms` is silent rather than anything stronger.
+"""
+
+[[title]]
+name = "roblox"
+display = "Roblox"
+engine = "Roblox"
+licence = "proprietary"
+synthesis_allowed = false
+terms = "prohibits"
+terms_reviewed = ""
+notes = """
+Capture only, never synthesis. It exposes a real interface tree, which makes it \
+valuable ground truth for the corpus, and its terms prohibit automation, which \
+makes it ineligible for anything that sends input. Both facts are true at once \
+and the second one wins wherever they meet.
+"""
+
+[[title]]
+name = "fortnite"
+display = "Fortnite"
+engine = "Unreal Engine 5"
+licence = "proprietary"
+synthesis_allowed = false
+terms = "prohibits"
+terms_reviewed = ""
+notes = """
+Competitive multiplayer, excluded by ADR-0025 as a use case and as a direction \
+of contribution, independently of what its terms say. Listed here so that the \
+exclusion is enforced rather than remembered.
+"""
+
+[[title]]
+name = "gta-v"
+display = "Grand Theft Auto V"
+engine = "RAGE"
+licence = "proprietary"
+synthesis_allowed = false
+terms = "silent"
+terms_reviewed = ""
+notes = """
+Story mode would be in scope; the online mode is competitive multiplayer and is \
+not, and nothing in this roster can tell the two apart from outside the game. \
+False until that is resolved, because the failure mode of guessing wrong here \
+is somebody's account.
+"""

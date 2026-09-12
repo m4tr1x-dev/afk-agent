@@ -47,12 +47,21 @@
 
 mod capture;
 mod correlate;
+mod roster;
 mod run;
 
+use std::path::Path;
 use std::process::ExitCode;
+
+/// Where the roster lives, relative to the repository root.
+///
+/// Not configurable, deliberately. A probe that takes the path to the file
+/// deciding what it may do can be pointed at a file that permits everything.
+const ROSTER: &str = "tests/roster.toml";
 
 fn main() -> ExitCode {
     let mut window = String::new();
+    let mut title = String::new();
     let mut arm_seconds = 8_u64;
     let mut forced_route: Option<String> = None;
     let mut turn_only: Option<i32> = None;
@@ -62,6 +71,7 @@ fn main() -> ExitCode {
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--window" => window = args.next().unwrap_or_default(),
+            "--title" => title = args.next().unwrap_or_default(),
             "--arm" => {
                 arm_seconds = args.next().and_then(|v| v.parse().ok()).unwrap_or(8);
             }
@@ -77,6 +87,21 @@ fn main() -> ExitCode {
                 return ExitCode::from(2);
             }
         }
+    }
+
+    if title.is_empty() {
+        eprintln!("--title is required\n\n{USAGE}");
+        return ExitCode::from(2);
+    }
+
+    // Checked before anything is synthesised, and before the window is even
+    // looked for. ADR-0025 excludes competitive multiplayer, and some titles'
+    // terms prohibit automation outright. Both rules lived in prose until now,
+    // and a rule that lives only in prose is one somebody works around at two
+    // in the morning with a good reason.
+    if let Err(refusal) = roster::permits_synthesis(Path::new(ROSTER), &title) {
+        eprintln!("refusing to run against '{title}': {refusal}");
+        return ExitCode::from(3);
     }
 
     if window.is_empty() {
@@ -134,8 +159,11 @@ fn main() -> ExitCode {
 }
 
 const USAGE: &str = "\
-reachability-probe --window <title substring> [--arm <seconds>]
+reachability-probe --title <roster name> --window <title substring> [--arm <seconds>]
 
+  --title    The title's name in tests/roster.toml. Required, and checked
+             before anything is synthesised: a title the roster does not list,
+             or lists with synthesis_allowed = false, is refused.
   --window   Part of the target window's title. First visible match wins.
   --arm      Seconds to wait before starting, so you can bring the game
              forward. Default 8.
