@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T15:14:20Z",
+  "updated": "2026-09-12T15:32:59Z",
   "milestone": "M1",
   "exit_criteria": [
     {
@@ -18,8 +18,8 @@
     {
       "id": "M1.3",
       "text": "model loads on Vulkan with its vision encoder; latency measured with a game running",
-      "state": "partial",
-      "detail": "Vision encoder answered for E4B: 7 of 8 synthetic scenes exact on all three fields, graphics processor confirmed at 8.42x processor-only throughput. The visual budget is a process flag, not a per-request parameter, which reworded FR-MODEL-002. The 26B A4B variant and latency with a game running are still to run."
+      "state": "done_with_caveat",
+      "detail": "Vision encoder answered for both variants: E4B 7/8, 26B A4B 8/8 exact on all three fields, graphics processor confirmed at 8.42x and 11.23x. Visual budget is a process flag, not a per-request parameter; image token counts identical between variants. Processor-only generation measured at 12.6 tokens/s for 26B A4B, which is the degradation ladder's step 3. Latency with a game running is still to measure."
     },
     {
       "id": "M1.4",
@@ -28,11 +28,11 @@
     }
   ],
   "task": {
-    "id": "T-0022",
-    "title": "Pre-register ADR-0006 and ADR-0007, then E2 on 26B A4B",
+    "id": "T-0024",
+    "title": "E-CAP: capture backends, overlay self-exclusion, corpus recorder",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T15:14:20Z"
+    "started": "2026-09-12T15:32:59Z"
   },
   "gates": {
     "G0": "pass",
@@ -67,7 +67,17 @@
       "evidence": null
     }
   ],
-  "blockers": [],
+  "blockers": [
+    {
+      "id": "B-001",
+      "title": "labelled corpus needs about 100 minutes of the maintainer's gameplay",
+      "raised": "2026-09-12T15:32:59Z",
+      "blocking": "ADR-0014 and the grounding benchmark",
+      "on_critical_path": false,
+      "unblock": "touch .agent/UNBLOCK-B-001",
+      "note": "Not actionable yet - the recorder is built in E-CAP part C. Raised early so it does not arrive as a surprise."
+    }
+  ],
   "invariants": [
     "CON-002: no kernel driver, no injection, no hooking, no cross-process memory, no drawing in the game's renderer",
     "CON-003: no cloud inference, ever, in any form",
@@ -78,8 +88,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0022 pre-register ADR-0006 and ADR-0007 with Decision deliberately absent",
-    "T-0023 E2 against 26B A4B once its download completes",
-    "T-0024 E-CAP: three capture backends, then the overlay's zero-leak assertion"
+    "T-0024 E-CAP part A: three capture backends across window modes",
+    "T-0025 E-CAP part B: overlay, and 1000 frames with zero leaked pixels",
+    "T-0026 E-CAP part C: the corpus recorder, which the maintainer's 100 minutes feeds"
   ]
 }

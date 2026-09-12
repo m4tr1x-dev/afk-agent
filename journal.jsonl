@@ -33,3 +33,5 @@
 {"at": "2026-09-12T15:14:20Z", "event": "attempt_failed", "what": "device control by free graphics memory", "why": "this runtime's device enumeration returns a static figure; the reading never moves, so the control could only accuse", "dont_retry": true}
 {"at": "2026-09-12T15:14:20Z", "event": "spec_change", "detail": "FR-MODEL-002 reworded from 'set the budget' to 'control the cost'; prompt layout unified on page 08; vision criterion 4 given two numbers; guardian watches three processes"}
 {"at": "2026-09-12T15:14:20Z", "event": "merged", "prs": [24, 25, 26, 27, 28]}
+{"at": "2026-09-12T15:32:59Z", "event": "blocker_raised", "id": "B-001", "detail": "human dependency package flagged in STATUS.md; not yet on the critical path"}
+{"at": "2026-09-12T15:32:59Z", "event": "question_answered", "matrix_question": 2, "detail": "26B A4B 8/8; 12.6 tokens/s processor-only fills the degradation ladder's step 3"}
