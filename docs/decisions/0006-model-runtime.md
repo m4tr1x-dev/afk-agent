@@ -1,7 +1,7 @@
 ---
 title: ADR-0006 — The local model runtime
 description: Pre-registered. Which inference runtime hosts the model, with the capability ladder written before any of them was measured.
-status: proposed
+status: accepted
 owner: m4tr1x-dev
 created: 2026-09-12
 last_reviewed: 2026-09-12
@@ -10,7 +10,7 @@ deciders: [m4tr1x-dev]
 consulted: []
 informed: []
 applies_to: unreleased
-tags: [adr, model, runtime, pre-registered]
+tags: [adr, model, runtime]
 requirements: [FR-MODEL-001, FR-MODEL-002, FR-MODEL-003]
 decisions: [ADR-0013]
 affects: [crates, contract]
@@ -18,7 +18,11 @@ spec: [docs/spec/17-model-contract.md]
 evidence:
   - experiments/02-vision-encoder/findings.md
   - experiments/02-vision-encoder/results/2026-09-12-e4b-vulkan.txt
-  - experiments/02-vision-encoder/run.sh
+  - experiments/02-vision-encoder/results/2026-09-12-26b-a4b-vulkan.txt
+  - experiments/03-model-latency/findings.md
+  - experiments/03-model-latency/results/2026-09-12-tactical.txt
+  - experiments/03-model-latency/results/2026-09-12-slots.txt
+  - experiments/03-model-latency/results/2026-09-12-deliberative-cpu.txt
 supersedes: null
 superseded_by: null
 generated: false
@@ -26,15 +30,16 @@ generated: false
 
 # ADR-0006 — The local model runtime
 
-!!! warning "Pre-registered: the Decision section is deliberately absent"
+!!! note "This record was pre-registered"
 
-    Everything here except the decision was written **before** the measurements
-    that will settle it. That ordering is the point, and it is the Validation
-    section that carries it: a threshold written after seeing the numbers is a
-    threshold the winner clears.
+    Everything except the Decision section was written **before** the
+    measurements, and the Decision section was literally absent until they
+    returned. The Validation section below is unedited since then.
 
-    `docs/contributing/adr-process.md` requires this for any record whose
-    decision is a number, a ranking, or a choice a measurement distinguishes.
+    That ordering earned its keep. Driver 4 named a fallback for the per-request
+    visual budget before anyone knew whether the runtime offered one — and it
+    does not, so the fallback is what shipped. A record written afterwards would
+    have presented rescaling as the plan all along.
 
 ## Context and problem statement
 
@@ -85,6 +90,56 @@ A cell filled from documentation rather than from a run is marked as such and do
 - **The two-slot fallback costs more than 5% of duty cycle** in the measurement E5 produces. Above that, one slot stops being an acceptable degradation.
 - **A runtime the table rejected gains grammar-constrained decoding on Vulkan.** The table is dated; a capability that arrives later does not invalidate the decision, it schedules a revisit.
 - **The ROCm path measures materially faster than Vulkan on this card.** Not a reason to switch on its own — the rest of the design assumes Vulkan — but a reason to record the gap and decide deliberately.
+
+## Decision
+
+**`llama-server` from llama.cpp, Vulkan backend, pinned to build 10930, commit `56381e407`.**
+
+Every capability in the ladder was measured on the reference hardware rather than read from documentation.
+
+| # | Capability | Result |
+| --- | --- | --- |
+| 1 | Grammar-constrained decoding | **Yes.** Every measurement in both experiments constrains output with a GBNF grammar, and an answer outside it was never produced |
+| 2 | Vulkan | **Yes.** 8.42x and 11.23x generation throughput against a processor-only baseline of the same model |
+| 3 | Two concurrent pinned contexts | **Yes, and they do not evict each other.** Twenty alternating rounds; each slot reused its own prefix, 123 tokens of 128 and 312 of 317 |
+| 4 | Per-request visual cost | **Not as a request parameter.** A process-level flag; the per-request dial is the resolution of the image sent — the fallback this record named in advance |
+| 5 | Reasoning depth beyond on and off | **Available and unexercised.** `--reasoning-budget` takes a token count rather than a switch, so the capability exists; no measurement here used it |
+| 6 | Multimodal input | **Yes.** 8 of 8 synthetic scenes read exactly on all three fields by 26B A4B, 7 of 8 by E4B |
+| 7 | An interface stable enough to pin by commit | **Yes**, at `56381e407` |
+
+Six of seven demonstrated, one available but unexercised, and the one that came back negative landed on the fallback written down before the run.
+
+**Capability 4 is the one worth dwelling on**, because it is the only place the runtime disagreed with the specification.
+`FR-MODEL-002` said "set the per-image visual token budget per call"; the runtime offers `--image-min-tokens` and `--image-max-tokens` as process arguments and nothing on the request.
+
+The effect is available anyway, and more completely than a flag would give it.
+The per-request cost tracks the resolution of the image sent — 83, 123, 258 and 443 image tokens at 256, 512, 768 and 1024 pixels — and rescaling before sending is something this project does itself, depending on nothing the runtime chose to expose.
+The requirement was reworded from setting a budget to controlling a cost, which is satisfiable either way and does not silently become false when a runtime changes its flags.
+
+**What this decision does not claim.**
+The runtime is adequate, not fast enough.
+A tactical tick measures 445 ms against a 150–400 ms target, and no runtime choice closes that gap: the cost is prefill and decoding rather than the server.
+That belongs to `ADR-0007` and to the cadence, not here.
+
+## Consequences
+
+### Good
+
+- The capability ladder was written before the measurements and one rung fell. That is the mechanism working rather than a cost: the fallback for capability 4 was chosen while the answer was still unknown, so it was not chosen because it turned out to be convenient.
+- Grammar-constrained decoding is native and per-request, which is what `ADR-0013` needs and what every rejected candidate lacked.
+- Two pinned slots are available, so the two cadences do not have to share one context and `17-model-contract.md` keeps the layout it describes.
+- The processor fallback in the degradation ladder is real: a full deliberative call takes 41.5 seconds against a 60-second criterion.
+
+### Bad
+
+- llama.cpp moves quickly and its interface changes with it. The pin is by commit for that reason, and every upgrade is a pull request that re-runs both experiments rather than a version bump.
+- The visual budget is a process argument, so changing it means restarting the model host. The agent's own rescaling covers the per-request case, but a session that wanted to change the *cap* would have to reload.
+- Nothing here exercised reasoning depth. Capability 5 is recorded as available on the strength of the runtime's interface, not of a measurement, and that distinction is the reason this row says so.
+- The decision is measured on one build. A runtime pinned by commit is reproducible, and it is also a commit that will be a year old before this project ships.
+
+### Neutral
+
+- A Windows ROCm build exists in the same releases. Vulkan stays the default because the design assumes it and the experiments ran it first; whether ROCm is faster on this card is unmeasured, and the known-good matrix now says so rather than asserting Vulkan is the only path.
 
 ## Pros and cons of the options
 
