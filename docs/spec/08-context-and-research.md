@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, context]
 requirements: [FR-CTX-001, FR-CTX-002, FR-CTX-003, FR-CTX-004, FR-CTX-005, INV-CTX-001, INV-CTX-002, FR-SKILL-003, FR-SKILL-004, FR-SKILL-005, CON-006]
-decisions: []
+decisions: [ADR-0018]
 generated: false
 ---
 
@@ -188,5 +188,5 @@ Restated from [requirements](01-requirements.md), where they are defined:
 
 ## Related decisions
 
-`ADR-0018` will record context as the only memory, `ADR-0019` the compaction strategy, and `ADR-0021` the research backend and its fetch policy.
-None are accepted.
+`ADR-0018` records context as the only memory and is accepted.
+`ADR-0019`, the compaction strategy, and `ADR-0021`, the research backend, are not written.

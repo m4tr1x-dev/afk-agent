@@ -249,5 +249,5 @@ The change summary is small and does real work: it lets the model orient after a
 
 ## Related decisions
 
-`ADR-0008` will record the capture API and `ADR-0015` the preprocessing pipeline.
-Neither is accepted.
+`ADR-0008` records the capture API and `ADR-0015` the preprocessing pipeline.
+Neither is written: the first is blocked on a prototype against several window modes, the second on the recorded corpus.

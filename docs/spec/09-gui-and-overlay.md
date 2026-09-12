@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, gui]
 requirements: [FR-GUI-001, FR-GUI-002, FR-GUI-003, FR-GUI-004, FR-GUI-005, NFR-GUI-001, INV-GUI-001, FR-SAFE-001, FR-SAFE-007]
-decisions: []
+decisions: [ADR-0011]
 generated: false
 ---
 
@@ -162,5 +162,5 @@ Retrofitting string externalisation is tedious and doing it from the start costs
 
 ## Related decisions
 
-`ADR-0010` will record the overlay rendering approach and `ADR-0011` the application framework and packaging.
-Neither is accepted.
+`ADR-0011` records the application framework and packaging and is accepted.
+`ADR-0010`, the overlay rendering approach, is not written and is blocked on a prototype that includes capture-border suppression.

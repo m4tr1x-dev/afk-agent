@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, ipc]
 requirements: [FR-GUI-004, INV-GUI-001, FR-SAFE-001, FR-SAFE-003, NFR-GUI-001, NFR-OBS-001]
-decisions: []
+decisions: [ADR-0004, ADR-0005, ADR-0016]
 generated: false
 ---
 
@@ -164,5 +164,6 @@ Hand-written types on both sides of a boundary drift, and the drift is discovere
 
 ## Related decisions
 
-`ADR-0004` will record the control transport and `ADR-0005` the data-plane transports.
-Neither is accepted.
+`ADR-0004` records the control transport, `ADR-0005` the data-plane transports, and `ADR-0016` where the message catalogue lives.
+All three are accepted.
+`ADR-0017`, the technology that crosses the process boundary from managed code, is not written.

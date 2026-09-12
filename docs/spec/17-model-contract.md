@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, model]
 requirements: [FR-MODEL-001, FR-MODEL-002, FR-MODEL-003, FR-MODEL-004, FR-MODEL-005, NFR-MODEL-001, INV-MODEL-001, FR-CTX-001, FR-CTX-002, FR-CTX-003]
-decisions: []
+decisions: [ADR-0013]
 generated: false
 ---
 
@@ -168,5 +168,5 @@ Where a model-specific detail is unavoidable — a chat template, a token budget
 
 ## Related decisions
 
-`ADR-0006` will record the inference host and compute backend, and `ADR-0007` the model selection.
-Neither is accepted, and both are blocked on the measurements above.
+`ADR-0013` records constrained decoding, which this page turns into a hard requirement on the model host, and is accepted.
+`ADR-0006`, the inference host and compute backend, and `ADR-0007`, the model selection, are not written and are blocked on the measurements above.

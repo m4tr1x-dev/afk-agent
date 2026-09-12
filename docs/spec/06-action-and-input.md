@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, action]
 requirements: [FR-ACT-001, FR-ACT-002, FR-ACT-003, FR-ACT-004, FR-ACT-005, FR-ACT-006, FR-ACT-007, FR-ACT-008, NFR-ACT-001, INV-ACT-001, INV-ACT-002, INV-ACT-003, INV-LOOP-002]
-decisions: []
+decisions: [ADR-0009, ADR-0013, ADR-0035]
 generated: false
 ---
 
@@ -282,5 +282,5 @@ Restated from [requirements](01-requirements.md), where they are defined:
 
 ## Related decisions
 
-`ADR-0009` will record the injection method, `ADR-0013` the action representation, and `ADR-0035` the sustained-action execution model.
-None are accepted.
+`ADR-0009` records the injection method, `ADR-0013` the constrained action representation, and `ADR-0035` the sustained-action execution model.
+All three are accepted.

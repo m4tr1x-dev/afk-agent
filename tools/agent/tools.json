@@ -1,0 +1,28 @@
+{
+  "_comment": [
+    "Absolute paths to the toolchain on the primary development machine.",
+    "",
+    "The shell a coding agent is given starts with a reduced PATH that omits",
+    "dotnet, node, gh and the real python, and in which `python` resolves to a",
+    "Windows Store stub that opens the Store rather than running anything.",
+    "",
+    "Resolve a tool with shutil.which() first and fall back to this file. It is",
+    "a last resort, not the normal path: a tool that has to be found here is a",
+    "sign the environment is wrong, and the fix belongs in",
+    ".claude/settings.local.json rather than in more entries here.",
+    "",
+    "Machine-specific by nature. Keep it in step with",
+    "docs/contributing/development-environment.md."
+  ],
+  "python": "C:\Users\msgum\AppData\Local\Programs\Python\Python312\python.exe",
+  "mkdocs": "C:\Users\msgum\AppData\Local\Programs\Python\Python312\Scripts\mkdocs.exe",
+  "dotnet": "C:\Program Files\dotnet\dotnet.exe",
+  "node": "C:\Program Files\nodejs\node.exe",
+  "npx": "C:\Program Files\nodejs\npx.cmd",
+  "gh": "C:\Program Files\GitHub CLI\gh.exe",
+  "git": "C:\Program Files\Git\cmd\git.exe",
+  "cargo": "C:\Users\msgum\.cargo\bin\cargo.exe",
+  "rustup": "C:\Users\msgum\.cargo\bin\rustup.exe",
+  "vale": "C:\Users\msgum\AppData\Local\Microsoft\WinGet\Packages\errata-ai.Vale_Microsoft.Winget.Source_8wekyb3d8bbwe\vale.exe",
+  "lychee": "C:\Users\msgum\AppData\Local\Microsoft\WinGet\Packages\lycheeverse.lychee_Microsoft.Winget.Source_8wekyb3d8bbwe\lychee-x86_64-pc-windows-msvc\lychee.exe"
+}

@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, safety]
 requirements: [FR-SAFE-001, FR-SAFE-002, FR-SAFE-003, FR-SAFE-004, FR-SAFE-005, FR-SAFE-006, FR-SAFE-007, NFR-SAFE-001, INV-SAFE-001, INV-SAFE-002, INV-ACT-001, INV-ACT-003, FR-ACT-001]
-decisions: []
+decisions: [ADR-0009]
 generated: false
 ---
 
@@ -224,5 +224,5 @@ If any one of these fails, the rest of this page is decoration.
 
 ## Related decisions
 
-`ADR-0024` will record the safety architecture, and `ADR-0009` the input injection method that this page constrains.
-Neither is accepted yet.
+`ADR-0009` records the input injection method that this page constrains and is accepted.
+`ADR-0024`, the safety architecture, is not written.

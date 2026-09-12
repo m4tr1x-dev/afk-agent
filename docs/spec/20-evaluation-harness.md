@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, evaluation]
 requirements: [FR-OBS-002, FR-GND-004, FR-GND-008, INV-OBS-001, NFR-MODEL-001]
-decisions: []
+decisions: [ADR-0014, ADR-0036]
 generated: false
 ---
 
@@ -151,5 +151,6 @@ A system whose text recognition misreads a counter presents as a system whose mo
 
 ## Related decisions
 
-`ADR-0026` will record the testing strategy for a non-deterministic agent.
-It is not accepted, and `ADR-0014` depends on this harness existing first.
+`ADR-0036` records the verification model this harness measures and is accepted.
+`ADR-0014` is proposed and depends on this harness existing first.
+`ADR-0026`, the testing strategy for a non-deterministic agent, is not written.

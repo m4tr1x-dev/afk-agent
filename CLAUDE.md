@@ -59,7 +59,7 @@ tools/           documentation lint scripts
 ```
 
 Source directories do not exist yet.
-When they do, the layout is set by `ADR-0016`, which is not written.
+When they do, the layout is set by `ADR-0016`, which is accepted.
 
 ## Commands
 
@@ -77,8 +77,20 @@ python tools/lint_requirements.py docs
 
 `--strict` is not optional: it is what catches a navigation entry pointing at a missing file, a code snippet whose source marker was deleted, and a broken relative link.
 
-Note that Python and Node are **not** installed on the primary development machine, so these run in CI rather than locally.
-Verify what you can with the repository's own consistency checks and do not claim a build passed when it was not run.
+Python, Node, Vale and lychee are installed on the primary development machine and every check above runs locally.
+Run them. Do not claim a build passed when it was not run.
+
+The shell a coding agent gets is started with a reduced `PATH` that omits `dotnet`, `node`, `gh` and the real `python`, and in which `python` resolves to a Windows Store stub.
+`.claude/settings.local.json` repairs it; when a tool is missing, resolve it through `tools/agent/tools.json` rather than concluding it is absent.
+
+## Working autonomously
+
+The maintainer has granted a standing permission to commit, push, open pull requests and merge them without asking each time.
+It is bounded: branch first, keep every check green, and never force-push or push to `main` directly.
+
+`CON-006` — nothing the agent learns persists beyond the session — governs the **product's** memory at run time.
+It does not govern a build journal written by a coding agent about its own work, which is engineering history and belongs in version control like any other.
+Session recordings remain write-only from the product's perspective, and that is the constraint `INV-CTX-002` protects.
 
 ## Writing documentation
 
@@ -100,7 +112,7 @@ Every specification page follows the same section order: Purpose, Requirements, 
 - Do not wire session recordings back into the prompt. This is the specific change that would quietly undo the memory design, and it looks harmless.
 - Do not create a decision record without an experiment behind it. One written without evidence is a guess in a smart format.
 - Do not mark a specification page `accepted` while its Open questions section still contains something that blocks implementation.
-- Do not commit or push unless asked.
+- Do not force-push, and do not push to `main`. Work on a `feat/` branch, open a pull request, and merge it once every check is green.
 
 ## Language
 

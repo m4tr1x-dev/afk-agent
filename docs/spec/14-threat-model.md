@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, security]
 requirements: [FR-SKILL-005, INV-SKILL-001, INV-CTX-001, INV-CTX-002, INV-SAFE-001, INV-ACT-001, INV-ACT-003, FR-OBS-003, FR-OBS-004, FR-MODEL-005, CON-002]
-decisions: []
+decisions: [ADR-0025]
 generated: false
 ---
 
@@ -199,5 +199,5 @@ T7 is not defended against; it cannot happen. That is worth more than any mitiga
 
 ## Related decisions
 
-`ADR-0021` will record the research fetch policy and its injection defences, `ADR-0024` the safety architecture, and `ADR-0031` crash reporting and privacy.
-None are accepted.
+`ADR-0025` records the posture this page assumes and is accepted.
+`ADR-0021`, the research fetch policy and its injection defences, `ADR-0024`, the safety architecture, and `ADR-0031`, crash reporting and privacy, are not written.

@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, scope]
 requirements: [CON-002, CON-003, CON-005, CON-006]
-decisions: []
+decisions: [ADR-0018, ADR-0025]
 generated: false
 ---
 
@@ -156,5 +156,6 @@ Listed separately because these might arrive, and conflating them with the entri
 
 ## Related decisions
 
-`ADR-0025` will record the terms-of-service and anti-cheat posture.
-The exclusions here are inputs to it and to `ADR-0002`, `ADR-0009` and `ADR-0018`.
+`ADR-0025` records the terms-of-service and anti-cheat posture and `ADR-0018` context as the only memory.
+Both are accepted.
+The exclusions here are also inputs to `ADR-0002` and `ADR-0009`, both accepted.
