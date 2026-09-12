@@ -102,7 +102,10 @@ Read `docs/contributing/documentation-guide.md` first. The rules that catch peop
 - **Never paste code into a page.** Include it from a real source file by marker, so deleting the marker fails the build.
 - **Banned words**: bot, cheat, hack, exploit, aimbot — for legal and positioning reasons. Also simply, just, easily, obviously — they insult a reader who is stuck. Also vague quantifiers in specification pages: fast, robust, reasonable, several. Write the number.
 
-Every specification page follows the same section order: Purpose, Requirements, Design, Interfaces, Invariants, Open questions, Related decisions.
+Every specification page follows the same section order: Purpose, Requirements, Design, Interfaces, Invariants, Known limitations, Open questions, Related decisions.
+
+Every open question carries a disposition — **Blocking**, **Non-blocking** or **Limitation** — and CI fails on one that does not.
+A page cannot reach `accepted` carrying a question marked Blocking or Limitation: the first has to be answered, the second has to move into Known limitations.
 
 ## Things not to do
 

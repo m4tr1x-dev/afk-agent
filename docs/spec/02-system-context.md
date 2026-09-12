@@ -168,9 +168,9 @@ A restatement links; only the definition uses a table row, which is what lets th
 
 ## Open questions
 
-1. Whether the research skills should run in a lower-privilege process, so that hostile web content is parsed somewhere that has no access to the input path. It would strengthen boundary 3 materially and costs a process.
-2. Whether search queries should be scrubbed of anything recognised on screen before being sent. The agent's inferences are already derived from screen content, so the boundary is softer than it looks.
-3. What the agent does when the accessibility tree contradicts what it sees. Currently the tree is preferred where present; there is no case yet where that is known to be wrong.
+1. **Non-blocking.** Whether the research skills should run in a lower-privilege process, so that hostile web content is parsed somewhere that has no access to the input path. It would strengthen boundary 3 materially and costs a process.
+2. **Non-blocking.** Whether search queries should be scrubbed of anything recognised on screen before being sent. The agent's inferences are already derived from screen content, so the boundary is softer than it looks.
+3. **Non-blocking.** What the agent does when the accessibility tree contradicts what it sees. Currently the tree is preferred where present; there is no case yet where that is known to be wrong.
 
 ## Related decisions
 

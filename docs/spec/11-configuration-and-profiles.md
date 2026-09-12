@@ -184,11 +184,11 @@ Silently discarding what a newer build wrote is a good way to lose someone's con
 
 ## Open questions
 
-1. Whether the format should be TOML or JSON. TOML is more comfortable to hand-edit and comments survive a rewrite; JSON has schema tooling. Comments surviving is the stronger argument, since the file is hand-edited.
-2. Whether cadence rates should be configurable at all, or derived from measured latency. Exposing them invites configurations that violate the budgets; deriving them makes a slow machine silently different.
-3. Where the hard ceilings themselves are recorded. They are in the code, and a user cannot see what they are without reading the source.
-4. Whether a user should be able to add to the denied-key list per session rather than globally. It sounds useful and it is the shape of thing that becomes a per-game profile.
-5. Whether disabling recording should also disable the blame histogram. The histogram is derived from events rather than frames, so probably not, and the two are easy to conflate.
+1. **Blocking.** Whether the format should be TOML or JSON. TOML is more comfortable to hand-edit and comments survive a rewrite; JSON has schema tooling. Comments surviving is the stronger argument, since the file is hand-edited.
+2. **Non-blocking.** Whether cadence rates should be configurable at all, or derived from measured latency. Exposing them invites configurations that violate the budgets; deriving them makes a slow machine silently different.
+3. **Non-blocking.** Where the hard ceilings themselves are recorded. They are in the code, and a user cannot see what they are without reading the source.
+4. **Non-blocking.** Whether a user should be able to add to the denied-key list per session rather than globally. It sounds useful and it is the shape of thing that becomes a per-game profile.
+5. **Non-blocking.** Whether disabling recording should also disable the blame histogram. The histogram is derived from events rather than frames, so probably not, and the two are easy to conflate.
 
 ## Related decisions
 

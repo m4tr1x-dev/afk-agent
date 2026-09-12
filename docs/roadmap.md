@@ -59,11 +59,18 @@ The exit criterion is a human one: look at the overlay on five different games a
 If that does not work, no amount of model quality repairs it, and building the reasoning loop first would mean months spent debugging a planner whose real problem is that its eyes do not work.
 This is the most important sequencing decision on the page.
 
+**The overlay is delivered in this milestone**, which the section above states without the roadmap saying so.
+"Look at the overlay on five different games" is not a criterion that can be met by a milestone with no overlay in it, and the interface work is otherwise listed in M7.
+So M2 carries the first C# in the repository: the contract and protocol assemblies, and `AfkAgent.Overlay`.
+The shell stays in M7; the overlay does not, because M3 needs a visible indicator and a panic key, and both live in it.
+
 Exit criteria:
 
 - Perception runs within its reflex budget on the reference hardware.
 - The perception regression suite passes against the labelled corpus.
 - The coordinate transform is correct under mixed display scaling, verified by test.
+- The overlay draws marks over five games and does not appear in a captured frame: 1000 consecutive frames contain zero pixels of the overlay's test colour, with a tooltip and a flyout open.
+- Capture-border suppression is tested in the **packaged** configuration as well as the unpackaged one, because `FR-GUI-001` may behave differently in each and discovering that in M7 means finding a perception feedback loop at the worst moment.
 
 ## M3 — Hands, safely
 

@@ -153,12 +153,12 @@ Retrofitting string externalisation is tedious and doing it from the start costs
 
 ## Open questions
 
-1. Whether the overlay should be moveable by the user. It must not take focus, and a window that cannot be focused is awkward to drag.
-2. What the overlay does when the game is minimised. Hiding matches expectations; staying visible is what a user returning to the desk needs.
-3. Whether the live view should be available when the shell is on the same monitor as a fullscreen game. It cannot be seen there, and rendering it anyway costs graphics time the game wants.
-4. How much annotation is useful versus distracting. Every mark box is informative during debugging and noise during normal running.
-5. Whether the shell should be able to attach to a core it did not start, so a user can reopen the window mid-session. Desirable; needs a discovery and reattach protocol in [the inter-process protocol](10-ipc-protocol.md).
-6. Whether capture-border suppression is available for an unpackaged application on the target Windows build. If not, every captured frame carries a border the perception layer must crop.
+1. **Non-blocking.** Whether the overlay should be moveable by the user. It must not take focus, and a window that cannot be focused is awkward to drag.
+2. **Non-blocking.** What the overlay does when the game is minimised. Hiding matches expectations; staying visible is what a user returning to the desk needs.
+3. **Limitation.** Whether the live view should be available when the shell is on the same monitor as a fullscreen game. It cannot be seen there, and rendering it anyway costs graphics time the game wants.
+4. **Non-blocking.** How much annotation is useful versus distracting. Every mark box is informative during debugging and noise during normal running.
+5. **Non-blocking.** Whether the shell should be able to attach to a core it did not start, so a user can reopen the window mid-session. Desirable; needs a discovery and reattach protocol in [the inter-process protocol](10-ipc-protocol.md).
+6. **Blocking.** Whether capture-border suppression is available for an unpackaged application on the target Windows build. If not, every captured frame carries a border the perception layer must crop.
 
 ## Related decisions
 

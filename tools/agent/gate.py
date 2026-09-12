@@ -110,6 +110,7 @@ def gates() -> dict[str, list[Step]]:
                 "requirements",
                 [py, "tools/lint_requirements.py", "docs", "--source", "crates", "src", "tests", "tools"],
             ),
+            Step("open questions", [py, "tools/lint_open_questions.py"]),
             Step("traceability page", [py, "tools/check_generated.py"]),
             Step("layout", [py, "tools/lint_layout.py"]),
             Step("call sites", [py, "tools/check_call_sites.py"]),

@@ -146,6 +146,22 @@ The quota is a default, it is user-adjustable, and purging is a single action.
 
 The last row is the one that decides whether the project is usable, and it is the only one that cannot be automated.
 
+Its threshold is two numbers, not one, and both come from [the vision](../vision.md):
+
+| Statistic | Floor, against the same scene without the agent |
+| --- | --- |
+| Mean frame rate | 90% |
+| 1% low | 80% |
+
+Measured over ten minutes on the reference hardware, on every game in the roster.
+
+A mean hides a stall and a stall is the symptom a player notices.
+A criterion on the mean alone would pass a build that hitches every time the deliberative model runs, which is the build this design is most likely to produce.
+
+Two details of the method matter as much as the numbers.
+Runs alternate — with, without, with, without, with, without, two minutes each — because a single ordered pair measures thermal drift as well as the agent, and thermal drift alone produces 5% to 8% from nothing.
+The measurement is never taken while a screenshot-driven tool is running, because that path costs frames of its own.
+
 ## When a budget is exceeded
 
 | Budget | Response |
@@ -162,11 +178,10 @@ A safety budget exceeded is a defect to fix, not a threshold to relax.
 
 ## Open questions
 
-1. Every model figure is unvalidated. This blocks `NFR-MODEL-001` and the cadence rates.
-2. The 100 ms panic budget is asserted. It may be unachievable through the ordinary hotkey path under load, in which case the mechanism needs changing rather than the number.
-3. Whether the reflex rate should adapt to the game's own frame rate. A game at 30 fps does not need a 30 Hz agent.
-4. Whether the graphics memory poll at one second is frequent enough. A game loading a level can allocate gigabytes faster than that.
-5. What the acceptable frame-rate impact actually is. "Within a stated fraction" is in the [vision](../vision.md) and the fraction is not stated, which makes the success criterion unmeasurable as written.
+1. **Blocking.** Every model figure is unvalidated. This blocks `NFR-MODEL-001` and the cadence rates.
+2. **Blocking.** The 100 ms panic budget is asserted. It may be unachievable through the ordinary hotkey path under load, in which case the mechanism needs changing rather than the number.
+3. **Non-blocking.** Whether the reflex rate should adapt to the game's own frame rate. A game at 30 fps does not need a 30 Hz agent.
+4. **Blocking.** Whether the graphics memory poll at one second is frequent enough. A game loading a level can allocate gigabytes faster than that.
 
 ## Related decisions
 

@@ -147,11 +147,11 @@ It does **not** contain frames, recognised text, or the note block, because all 
 
 ## Open questions
 
-1. What reflex sampling rate preserves a useful 95th percentile. Too sparse and the tail disappears; too dense and the instrumentation is in the budget it measures.
-2. Whether keyframe selection should follow the change classifier or run on its own schedule. Following it means an idle session records almost nothing, which is correct and also means a failure during a quiet stretch has no frames.
-3. Whether the note block belongs in the recording. It is the clearest record of what the agent believed, and it is also user content by definition.
-4. Whether recordings should be encrypted at rest.
-5. How a user reviews a session without the shell. There is currently no answer, and a recording that needs the application to read it is a recording the user does not really own.
+1. **Non-blocking.** What reflex sampling rate preserves a useful 95th percentile. Too sparse and the tail disappears; too dense and the instrumentation is in the budget it measures.
+2. **Non-blocking.** Whether keyframe selection should follow the change classifier or run on its own schedule. Following it means an idle session records almost nothing, which is correct and also means a failure during a quiet stretch has no frames.
+3. **Non-blocking.** Whether the note block belongs in the recording. It is the clearest record of what the agent believed, and it is also user content by definition.
+4. **Non-blocking.** Whether recordings should be encrypted at rest.
+5. **Non-blocking.** How a user reviews a session without the shell. There is currently no answer, and a recording that needs the application to read it is a recording the user does not really own.
 
 ## Related decisions
 

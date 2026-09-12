@@ -51,7 +51,16 @@ The isolation is free because there is nothing to isolate.
 ```
 
 Ordered so everything stable is on the left, because a change invalidates everything to its right.
-The full reasoning, including why blocks 1 and 2 must be byte-identical between calls, is in [model contract](17-model-contract.md).
+
+**This is the layout.**
+It is stated once, here, and [model contract](17-model-contract.md) refers to it rather than restating it.
+Two copies of a layout whose whole purpose is byte-level stability is the specific defect that produces two implementations agreeing on neither.
+
+Blocks 1 and 2 are **invariant for the session** and byte-identical between calls.
+Blocks 3 and 4 are **append-only**: they grow, and nothing already written in them changes.
+That distinction is what makes them affordable. Appending leaves every byte before the append untouched, so the cached prefix survives up to that point; editing in place would discard it from the edit onwards.
+
+The reasoning behind all of this, and the two rules about images, is in [model contract](17-model-contract.md).
 
 ### The note block
 
@@ -179,12 +188,12 @@ Restated from [requirements](01-requirements.md), where they are defined:
 
 ## Open questions
 
-1. What fraction of the context triggers compaction. Too early wastes capability; too late risks overflowing mid-tick.
-2. Whether the note block should have a size cap independent of compaction. An agent that takes a note every tick fills it with noise, and nothing currently prevents that.
-3. Whether research excerpts should be summarised on arrival rather than at compaction. Summarising early saves context; summarising is also where information gets lost, and the agent may not yet know which part matters.
-4. Whether the agent should be able to mark a note as superseded rather than compaction inferring it. Explicit is better; it is also another thing for the model to get wrong.
-5. How compaction interacts with replay determinism. A compaction performed by a model is not deterministic, which means a replay diverges from the original run at that point.
-6. Whether a user-initiated export of the note block, re-importable into a later session, is a reasonable exception to `INV-CTX-001`. Useful for a multi-session goal; it also breaches the property that makes the isolation free. Currently excluded.
+1. **Blocking.** What fraction of the context triggers compaction. Too early wastes capability; too late risks overflowing mid-tick.
+2. **Non-blocking.** Whether the note block should have a size cap independent of compaction. An agent that takes a note every tick fills it with noise, and nothing currently prevents that.
+3. **Non-blocking.** Whether research excerpts should be summarised on arrival rather than at compaction. Summarising early saves context; summarising is also where information gets lost, and the agent may not yet know which part matters.
+4. **Non-blocking.** Whether the agent should be able to mark a note as superseded rather than compaction inferring it. Explicit is better; it is also another thing for the model to get wrong.
+5. **Limitation.** How compaction interacts with replay determinism. A compaction performed by a model is not deterministic, which means a replay diverges from the original run at that point.
+6. **Non-blocking.** Whether a user-initiated export of the note block, re-importable into a later session, is a reasonable exception to `INV-CTX-001`. Useful for a multi-session goal; it also breaches the property that makes the isolation free. Currently excluded.
 
 ## Related decisions
 

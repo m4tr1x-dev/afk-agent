@@ -233,11 +233,11 @@ Uninstalling removes the executables; recordings and configuration live under th
 
 ## Open questions
 
-1. Whether the research skills should run in a sixth, lower-privilege process, so hostile page content is parsed somewhere with no access to the input path. It strengthens the boundary materially; the cost is a process and a serialisation hop.
-2. Whether the shell should be able to attach to a core it did not start — a user closing and reopening the control window mid-session. Desirable, and it means the pipe needs a discovery and reattach protocol.
-3. Whether the guardian should enforce the session wall-clock budget as well, so that a core which hangs while holding input stops on its own rather than waiting for a human.
-4. Whether the model host should be started by the core or supervised independently. Independent supervision survives a core restart and keeps the model resident, which matters because loading weights is slow.
-5. What happens to a session when the machine sleeps. Currently undefined, and a session that resumes after an hour into a changed game state is a hazard.
+1. **Non-blocking.** Whether the research skills should run in a sixth, lower-privilege process, so hostile page content is parsed somewhere with no access to the input path. It strengthens the boundary materially; the cost is a process and a serialisation hop.
+2. **Non-blocking.** Whether the shell should be able to attach to a core it did not start — a user closing and reopening the control window mid-session. Desirable, and it means the pipe needs a discovery and reattach protocol.
+3. **Blocking.** Whether the guardian should enforce the session wall-clock budget as well, so that a core which hangs while holding input stops on its own rather than waiting for a human.
+4. **Blocking.** Whether the model host should be started by the core or supervised independently. Independent supervision survives a core restart and keeps the model resident, which matters because loading weights is slow.
+5. **Blocking.** What happens to a session when the machine sleeps. Currently undefined, and a session that resumes after an hour into a changed game state is a hazard.
 
 ## Related decisions
 

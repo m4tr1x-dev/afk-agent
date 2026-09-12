@@ -240,12 +240,12 @@ The change summary is small and does real work: it lets the model orient after a
 
 ## Open questions
 
-1. The thresholds separating the four change classes are empirical and need the recorded corpus. Written as configuration with placeholder defaults until then.
-2. Whether the detection pyramid should be one resolution or adaptive per scene class. Menus and world views have very different element scales.
-3. Whether the accessibility probe should run once per session or be re-run on scene change. Some targets populate their tree lazily, and a single probe at start would see an empty one.
-4. How the template atlas ages within a long session. An element confirmed an hour ago may no longer mean what it did, and there is currently no mechanism that notices.
-5. Whether the change summary should be produced by the small model rather than by rules. Rules are free and brittle; a model call is neither.
-6. What happens when the second text tier disagrees with the first on the same region. Currently the higher confidence wins, which is not obviously right when the tiers have different calibration.
+1. **Blocking.** The thresholds separating the four change classes are empirical and need the recorded corpus. Written as configuration with placeholder defaults until then.
+2. **Non-blocking.** Whether the detection pyramid should be one resolution or adaptive per scene class. Menus and world views have very different element scales.
+3. **Non-blocking.** Whether the accessibility probe should run once per session or be re-run on scene change. Some targets populate their tree lazily, and a single probe at start would see an empty one.
+4. **Non-blocking.** How the template atlas ages within a long session. An element confirmed an hour ago may no longer mean what it did, and there is currently no mechanism that notices.
+5. **Non-blocking.** Whether the change summary should be produced by the small model rather than by rules. Rules are free and brittle; a model call is neither.
+6. **Non-blocking.** What happens when the second text tier disagrees with the first on the same region. Currently the higher confidence wins, which is not obviously right when the tiers have different calibration.
 
 ## Related decisions
 

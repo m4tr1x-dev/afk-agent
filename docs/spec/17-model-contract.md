@@ -65,18 +65,11 @@ They have entirely different prefixes, and re-reading a long invariant prefix on
 
 `FR-CTX-001`, `FR-CTX-002`, `FR-CTX-003`.
 
-Ordered so that everything stable is on the left:
+The eight blocks and their order are specified in [context and research](08-context-and-research.md), which owns the layout.
+They are not restated here.
+A layout whose entire purpose is byte-level stability, written down twice, is how two implementations end up agreeing on neither.
 
-```text
-[1] System prompt, tool schemas, safety framing     invariant for the session
-[2] Goal, and the note block                        changes rarely
-[3] Current plan and subgoal                        changes on replan
-[4] Recent action history, as text                  changes per tick
-[5] Current observation, as text                    changes per tick
-[6] The annotated image                             LAST, always
-```
-
-Three rules, each load-bearing.
+Four rules, each load-bearing.
 
 **The image goes last.**
 Everything to the right of a change must be recomputed.
@@ -89,11 +82,21 @@ This is what makes a multi-turn visual loop affordable at all: an agent that car
 
 **Blocks 1 and 2 are byte-identical between calls.**
 `FR-CTX-002`.
+The system prompt with its tool schemas and safety framing, and the goal.
+Both are fixed when the session starts and neither changes until it ends.
 No timestamps, no tick counters, no reordered object keys, no elapsed-time strings.
 A single changed byte discards the whole cached prefix, and since block 1 is the largest invariant part of the prompt, that is the difference between a cheap tick and an expensive one.
 
 This is easy to violate by accident.
 Putting the current time into the system prompt is the classic version, and it costs the prefix on every single call.
+
+**Blocks 3 and 4 are append-only.**
+The note block and the research excerpts grow during a session; nothing already written in either is edited or reordered.
+Append-only is a weaker property than byte-identical and it buys most of the same thing: every byte before the append is unchanged, so the cached prefix survives up to that point and only the appended text is new work.
+Editing a note in place, or rewriting the block in a different order, discards the prefix from that byte onwards — which is why `FR-CTX-005` gives the agent a way to add a note and not a way to revise one.
+
+Compaction is the deliberate exception.
+It rewrites blocks 3 and 4 and therefore costs the prefix from block 3 onwards, once, which is the price of not overflowing the window.
 
 ## Constrained output
 
@@ -159,12 +162,12 @@ Where a model-specific detail is unavoidable — a chat template, a token budget
 
 ## Open questions
 
-1. **Every latency figure on this page is missing**, and the tactical cadence's rate follows directly from them. Measuring requires the model running on the reference hardware **with a game in memory**, since the figure without one is not the figure that matters. This blocks `NFR-MODEL-001` and [performance budgets](15-performance-budgets.md).
-2. Whether the vision encoder loads at all on the required compute backend for the intended variant. There is a known defect in this area on a different backend. Until checked, the tactical cadence has no confirmed implementation.
-3. Whether prefix reuse behaves as assumed with two pinned contexts at different image costs. If the runtime shares one cache between them, the two cadences evict each other and the layout above buys nothing.
-4. Whether image cost is selectable per request or only per session. The two-stage refinement in [grounding](18-grounding-and-verification.md) needs per-request.
-5. Whether extended reasoning can be capped rather than merely switched off. Uncapped reasoning on the deliberative path is an unbounded pause.
-6. What the agent does when the model host reports a context overflow mid-session. Compaction should prevent it; "should" is not a mechanism.
+1. **Blocking.** **Every latency figure on this page is missing**, and the tactical cadence's rate follows directly from them. Measuring requires the model running on the reference hardware **with a game in memory**, since the figure without one is not the figure that matters. This blocks `NFR-MODEL-001` and [performance budgets](15-performance-budgets.md).
+2. **Blocking.** Whether the vision encoder loads at all on the required compute backend for the intended variant. There is a known defect in this area on a different backend. Until checked, the tactical cadence has no confirmed implementation.
+3. **Blocking.** Whether prefix reuse behaves as assumed with two pinned contexts at different image costs. If the runtime shares one cache between them, the two cadences evict each other and the layout above buys nothing.
+4. **Blocking.** Whether image cost is selectable per request or only per session. The two-stage refinement in [grounding](18-grounding-and-verification.md) needs per-request.
+5. **Blocking.** Whether extended reasoning can be capped rather than merely switched off. Uncapped reasoning on the deliberative path is an unbounded pause.
+6. **Blocking.** What the agent does when the model host reports a context overflow mid-session. Compaction should prevent it; "should" is not a mechanism.
 
 ## Related decisions
 

@@ -191,11 +191,11 @@ T7 is not defended against; it cannot happen. That is worth more than any mitiga
 
 ## Open questions
 
-1. T3 remains genuinely unsolved. Detecting a confirmation dialog generalises better than detecting an action, and it is still a heuristic over pixels.
-2. Whether the research skills should run in a lower-privilege process, so hostile page content is parsed somewhere with no access to the input path. It would strengthen T1 materially.
-3. Whether chat-region exclusion can be made reliable without per-game knowledge. Chat is visually distinctive but not uniformly so.
-4. Whether recordings should be encrypted at rest. They are already local and quota-bounded; encryption protects against another user of the same machine.
-5. Whether the agent should refuse to run when a password manager or banking application is the foreground window at session start. Cheap, and it is the shape of thing that becomes a list to maintain.
+1. **Limitation.** T3 remains genuinely unsolved. Detecting a confirmation dialog generalises better than detecting an action, and it is still a heuristic over pixels.
+2. **Non-blocking.** Whether the research skills should run in a lower-privilege process, so hostile page content is parsed somewhere with no access to the input path. It would strengthen T1 materially.
+3. **Limitation.** Whether chat-region exclusion can be made reliable without per-game knowledge. Chat is visually distinctive but not uniformly so.
+4. **Non-blocking.** Whether recordings should be encrypted at rest. They are already local and quota-bounded; encryption protects against another user of the same machine.
+5. **Non-blocking.** Whether the agent should refuse to run when a password manager or banking application is the foreground window at session start. Cheap, and it is the shape of thing that becomes a list to maintain.
 
 ## Related decisions
 

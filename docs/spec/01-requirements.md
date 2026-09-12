@@ -194,11 +194,11 @@ violation is structurally detectable rather than behavioural.
 
 ## Open questions
 
-1. `FR-SAFE-005` needs a concrete definition of "destructive pattern" that does not depend on understanding the game. Candidate approach: detect the confirmation dialogue rather than the action, since games reliably put one in front of irreversible things. Unresolved.
-2. `FR-PERC-010` assumes the accessibility probe can be bounded in time. If a busy target can make it hang past its timeout, it must move off the critical path entirely.
-3. `NFR-MODEL-001` cannot be written as a number until the model spike has run on the reference hardware with a game in the background.
-4. `FR-LOOP-005` lists four no-progress signals but not their thresholds, which are empirical and need the recorded corpus.
-5. Whether `INV-CTX-001` should permit an explicit, user-initiated export and reimport of a note block between sessions. It would be useful and it would breach the isolation property; currently excluded.
+1. **Blocking.** `FR-SAFE-005` needs a concrete definition of "destructive pattern" that does not depend on understanding the game. Candidate approach: detect the confirmation dialogue rather than the action, since games reliably put one in front of irreversible things. Unresolved.
+2. **Blocking.** `FR-PERC-010` assumes the accessibility probe can be bounded in time. If a busy target can make it hang past its timeout, it must move off the critical path entirely.
+3. **Blocking.** `NFR-MODEL-001` cannot be written as a number until the model spike has run on the reference hardware with a game in the background.
+4. **Blocking.** `FR-LOOP-005` lists four no-progress signals but not their thresholds, which are empirical and need the recorded corpus.
+5. **Non-blocking.** Whether `INV-CTX-001` should permit an explicit, user-initiated export and reimport of a note block between sessions. It would be useful and it would breach the isolation property; currently excluded.
 
 ## Related decisions
 
