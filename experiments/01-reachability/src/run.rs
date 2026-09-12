@@ -36,11 +36,23 @@ const STEP_INTERVAL_MS: u64 = 16;
 /// than a small one. It is not a measurement at all.
 const SWEEP: [i32; 4] = [10, 20, 40, 80];
 
-/// Correlation below this is not a measurement, whatever lag it names.
-const MIN_CONFIDENCE: f64 = 0.80;
+/// Correlation below this means the match itself is not trustworthy.
+///
+/// Set low on purpose, and the first two real runs are why. Confidence falls as
+/// the turn grows — a larger rotation shares less of its profile with the frame
+/// before it — so a high bar rejects exactly the measurements that carry the
+/// most signal. The no-input control comes back at 0.998 to 1.000, so high
+/// confidence is the signature of *nothing happening*, not of a good reading.
+const MIN_CONFIDENCE: f64 = 0.50;
 
-/// Fraction of the profile width a displacement must exceed to count as a turn.
-const MIN_TURN_FRACTION: f64 = 0.02;
+/// Smallest displacement worth calling movement, whatever the baseline says.
+///
+/// Quantisation in the emitter and a game's own smoothing put a column or two
+/// of residue on almost any measurement.
+const MIN_TURN_COLUMNS: i32 = 5;
+
+/// How far above the no-input baseline a displacement has to sit.
+const BASELINE_MARGIN: i32 = 3;
 
 /// What went wrong before any verdict could be reached.
 #[derive(Debug)]
@@ -110,14 +122,27 @@ struct Measurement {
     lag: i32,
     /// Correlation at that lag.
     confidence: f64,
-    /// Profile width, so the lag can be read as a fraction.
-    width: usize,
+    /// Profile width. No longer part of the verdict — the baseline decides
+    /// that — but a displacement is meaningless without the frame it sits in,
+    /// so it is reported.
+    pub(crate) width: usize,
 }
 
 impl Measurement {
-    fn is_turn(&self) -> bool {
-        self.confidence >= MIN_CONFIDENCE
-            && f64::from(self.lag.abs()) > (self.width as f64) * MIN_TURN_FRACTION
+    /// Did the scene move, judged against what it does when left alone?
+    ///
+    /// The threshold is measured rather than chosen. The no-input control runs
+    /// first, under identical timing, and reports what this scene does on its
+    /// own — water, a skybox, a flickering light. Anything a turn produces has
+    /// to clear that, in this game, in this run.
+    ///
+    /// An absolute constant cannot do this job. A fraction of the frame width
+    /// was the first attempt and it rejected a clean linear response in one
+    /// game while passing noise in another, because the right number depends on
+    /// the scene rather than on the resolution.
+    fn is_turn(&self, baseline: i32) -> bool {
+        let floor = (baseline + BASELINE_MARGIN).max(MIN_TURN_COLUMNS);
+        self.confidence >= MIN_CONFIDENCE && self.lag.abs() > floor
     }
 }
 
@@ -219,14 +244,23 @@ pub(crate) fn execute(
     let mut report = String::new();
     let _ = writeln!(report, "window: {title:?}");
     let _ = writeln!(report, "capture route: {route}");
-    let _ = writeln!(report);
 
     // --- Null control 1: no input ------------------------------------------
     //
     // If this produces a signal, the detector is measuring animation and every
     // positive result below is worthless.
     let quiet = cycle(&synth, window, route, 0)?;
-    let control_clean = !quiet.is_turn();
+    // Everything below is judged against this. The control is not only a guard
+    // against a false positive; it is the measurement that sets the threshold.
+    let baseline = quiet.lag.abs();
+    let control_clean = quiet.lag.abs() < MIN_TURN_COLUMNS;
+    let _ = writeln!(
+        report,
+        "profile width: {} columns; movement threshold {} columns",
+        quiet.width,
+        (baseline + BASELINE_MARGIN).max(MIN_TURN_COLUMNS)
+    );
+    let _ = writeln!(report);
     let _ = writeln!(
         report,
         "control, no input      lag {:>5}  confidence {:.3}  -> {}",
@@ -235,28 +269,9 @@ pub(crate) fn execute(
         verdict(control_clean, "quiet", "SCENE MOVES ON ITS OWN")
     );
 
-    // --- Test 2: monotonicity and linearity --------------------------------
-    let mut sweep = Vec::new();
-    for total in SWEEP {
-        let measured = cycle(&synth, window, route, total)?;
-        let _ = writeln!(
-            report,
-            "sweep {:>5} units    lag {:>5}  confidence {:.3}  -> {}",
-            measured.requested,
-            measured.lag,
-            measured.confidence,
-            verdict(measured.is_turn(), "moved", "no movement")
-        );
-        sweep.push(measured);
-        // Return the view so each sweep step starts from the same place.
-        emit_relative(&synth, -total)?;
-        settle();
-    }
-    let monotonic = sweep
-        .windows(2)
-        .all(|pair| pair[1].lag.abs() >= pair[0].lag.abs());
+    let (sweep, monotonic, linear) = sweep_test(&synth, window, route, baseline, &mut report)?;
 
-    let signs_oppose = sign_test(&synth, window, route, &mut report)?;
+    let signs_oppose = sign_test(&synth, window, route, baseline, &mut report)?;
 
     // --- Test 3: return to origin ------------------------------------------
     //
@@ -264,7 +279,6 @@ pub(crate) fn execute(
     // that the mapping is stable, and a scene moving on its own has no reason
     // to come back.
     let (origin, _) = profile(window, route)?;
-    let before_return_width = origin.len();
     emit_relative(&synth, SWEEP[2])?;
     settle();
     emit_relative(&synth, -SWEEP[2])?;
@@ -274,8 +288,8 @@ pub(crate) fn execute(
     // Two columns is tighter than a camera returns in practice: the emitted
     // sequence is quantised into steps, and a game's own smoothing leaves a
     // little residue. Judge it against the turn threshold instead of zero.
-    let tolerance = (before_return_width as f64 * MIN_TURN_FRACTION) as i32;
-    let returns = round_trip.lag.abs() <= tolerance.max(2) && round_trip.confidence >= 0.90;
+    let returns = round_trip.lag.abs() <= (baseline + BASELINE_MARGIN).max(MIN_TURN_COLUMNS)
+        && round_trip.confidence >= 0.90;
     let _ = writeln!(
         report,
         "return to origin       lag {:>5}  confidence {:.3}  -> {}",
@@ -284,14 +298,21 @@ pub(crate) fn execute(
         verdict(returns, "returned", "DRIFTED")
     );
 
-    let absolute_quiet = absolute_control(&synth, window, route, &mut report)?;
+    let absolute_quiet = absolute_control(&synth, window, route, baseline, &mut report)?;
 
-    let reached = sweep.iter().any(Measurement::is_turn);
+    let reached = sweep.iter().any(|m| m.is_turn(baseline));
     let verdict_line = match (reached, control_clean, signs_oppose, returns, monotonic) {
-        (true, true, true, true, true) => "REACHED, and linear",
+        (true, true, true, true, true) if linear => {
+            "REACHED, and linear - one ratio describes the response"
+        }
+        (true, true, true, true, true) => {
+            "REACHED and monotonic, but not linear - the response accelerates, so \
+             calibration needs a table rather than a ratio. FR-ACT-004 open \
+             question 4"
+        }
         (true, true, true, true, false) => {
-            "REACHED, but not monotonic - acceleration or a clamp; calibration \
-             needs a table rather than a ratio"
+            "REACHED, but not monotonic - a clamp, or the correlation saturating \
+             past some angle. This run does not separate the two"
         }
         (true, true, _, _, _) => {
             "INCONCLUSIVE - movement detected but the sign or return test failed"
@@ -414,6 +435,54 @@ fn route_is_live(window: capture::Hwnd, route: Route) -> Result<bool, capture::C
     Ok(false)
 }
 
+/// Test two: does the displacement grow with the input, and how?
+///
+/// Returns the measurements, whether they rise monotonically, and whether one
+/// ratio describes them. Those last two are different questions, and the
+/// difference decides whether calibration can be a number or has to be a table.
+fn sweep_test(
+    synth: &Synthesiser,
+    window: capture::Hwnd,
+    route: Route,
+    baseline: i32,
+    report: &mut String,
+) -> Result<(Vec<Measurement>, bool, bool), ProbeError> {
+    // --- Test 2: monotonicity and linearity --------------------------------
+    let mut sweep = Vec::new();
+    for total in SWEEP {
+        let measured = cycle(synth, window, route, total)?;
+        let _ = writeln!(
+            report,
+            "sweep {:>5} units    lag {:>5}  confidence {:.3}  -> {}",
+            measured.requested,
+            measured.lag,
+            measured.confidence,
+            verdict(measured.is_turn(baseline), "moved", "no movement")
+        );
+        sweep.push(measured);
+        // Return the view so each sweep step starts from the same place.
+        emit_relative(synth, -total)?;
+        settle();
+    }
+    let monotonic = sweep
+        .windows(2)
+        .all(|pair| pair[1].lag.abs() >= pair[0].lag.abs());
+
+    // Monotonic is not linear, and the difference decides whether calibration
+    // can be a ratio or has to be a table. Fit a line through the origin and
+    // report how well it holds: a game applying mouse acceleration produces a
+    // rising sequence that no single ratio describes.
+    let fit = linear_fit(&sweep);
+    if let Some((slope, r_squared)) = fit {
+        let _ = writeln!(
+            report,
+            "fit                    {slope:.3} columns per unit, R2 {r_squared:.3}"
+        );
+    }
+    let linear = fit.is_some_and(|(_, r_squared)| r_squared >= 0.95);
+    Ok((sweep, monotonic, linear))
+}
+
 /// Test one: reversing the input reverses the displacement.
 ///
 /// A scene changing on its own has no reason to correlate with the sign of
@@ -423,6 +492,7 @@ fn sign_test(
     synth: &Synthesiser,
     window: capture::Hwnd,
     route: Route,
+    baseline: i32,
     report: &mut String,
 ) -> Result<bool, ProbeError> {
     let amount = SWEEP[2];
@@ -435,7 +505,9 @@ fn sign_test(
     emit_relative(synth, amount)?;
     settle();
 
-    let opposed = right.is_turn() && left.is_turn() && right.lag.signum() != left.lag.signum();
+    let opposed = right.is_turn(baseline)
+        && left.is_turn(baseline)
+        && right.lag.signum() != left.lag.signum();
     let _ = writeln!(
         report,
         "sign                   +{amount} -> {:>5}, -{amount} -> {:>5}  -> {}",
@@ -456,6 +528,7 @@ fn absolute_control(
     synth: &Synthesiser,
     window: capture::Hwnd,
     route: Route,
+    baseline: i32,
     report: &mut String,
 ) -> Result<bool, ProbeError> {
     let (before, _) = profile(window, route)?;
@@ -468,7 +541,8 @@ fn absolute_control(
     // A lag with no correlation behind it is not evidence of movement. The
     // first real run reported "ABSOLUTE ALSO TURNS" at confidence 0.257, which
     // is the correlation saying it found nothing, not that the view moved.
-    let quiet = moved.confidence < MIN_CONFIDENCE || moved.lag.abs() <= 2;
+    let quiet = moved.confidence < MIN_CONFIDENCE
+        || moved.lag.abs() <= (baseline + BASELINE_MARGIN).max(MIN_TURN_COLUMNS);
     let _ = writeln!(
         report,
         "control, absolute move lag {:>5}  confidence {:.3}  -> {}",
@@ -477,6 +551,37 @@ fn absolute_control(
         verdict(quiet, "no turn, as specified", "ABSOLUTE ALSO TURNS")
     );
     Ok(quiet)
+}
+
+/// Least-squares slope through the origin, with the fraction of variance it
+/// explains.
+///
+/// Through the origin rather than with an intercept, because zero input must
+/// mean zero displacement: an intercept would be the fit absorbing the scene's
+/// own movement, which is what the control measures instead.
+fn linear_fit(sweep: &[Measurement]) -> Option<(f64, f64)> {
+    if sweep.len() < 3 {
+        return None;
+    }
+    let points: Vec<(f64, f64)> = sweep
+        .iter()
+        .map(|m| (f64::from(m.requested.abs()), f64::from(m.lag.abs())))
+        .collect();
+
+    let cross: f64 = points.iter().map(|(x, y)| x * y).sum();
+    let square: f64 = points.iter().map(|(x, _)| x * x).sum();
+    if square <= f64::EPSILON {
+        return None;
+    }
+    let slope = cross / square;
+
+    let mean_y: f64 = points.iter().map(|(_, y)| y).sum::<f64>() / points.len() as f64;
+    let spread: f64 = points.iter().map(|(_, y)| (y - mean_y).powi(2)).sum();
+    let unexplained: f64 = points.iter().map(|(x, y)| (y - slope * x).powi(2)).sum();
+    if spread <= f64::EPSILON {
+        return None;
+    }
+    Some((slope, 1.0 - unexplained / spread))
 }
 
 fn verdict(ok: bool, yes: &'static str, no: &'static str) -> &'static str {
