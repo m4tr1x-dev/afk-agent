@@ -44,6 +44,7 @@ mod border;
 mod gdi;
 mod measure;
 mod overlay;
+mod recorder;
 mod target;
 mod wgc;
 
@@ -77,6 +78,9 @@ fn main() -> ExitCode {
     let mut overlay_only = false;
     let mut save: Option<String> = None;
     let mut frames = 1_usize;
+    let mut record_to: Option<String> = None;
+    let mut clicks = 400_usize;
+    let mut minutes = 20_u64;
 
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -96,6 +100,14 @@ fn main() -> ExitCode {
             "--overlay" => overlay_only = true,
             "--save" => save = args.next(),
             "--frames" => frames = args.next().and_then(|v| v.parse().ok()).unwrap_or(1),
+            "--record" => {
+                record_to = Some(
+                    args.next()
+                        .unwrap_or_else(|| recorder::DEFAULT_DIRECTORY.to_owned()),
+                );
+            }
+            "--clicks" => clicks = args.next().and_then(|v| v.parse().ok()).unwrap_or(clicks),
+            "--minutes" => minutes = args.next().and_then(|v| v.parse().ok()).unwrap_or(minutes),
             "--list" => {
                 for title in visible_windows() {
                     println!("{title}");
@@ -111,6 +123,10 @@ fn main() -> ExitCode {
                 return ExitCode::from(2);
             }
         }
+    }
+
+    if let Some(directory) = record_to {
+        return report(run_recorder(&needle, &directory, clicks, minutes));
     }
 
     if let Some(directory) = save {
@@ -179,6 +195,14 @@ capture-probe --window <title substring> [--seconds N] [--route NAME] [--arm N]
              Answer question 7 against a window the probe creates itself: flat
              grey, topmost, still. The only way to get a target that is
              visible, unchanging and not somebody else's browser.
+  --record [DIR]
+             Record a corpus: play normally, and every click that changes the
+             screen within 200 ms becomes a labelled frame. The ground truth
+             for the grounding benchmark, which cannot come from the system
+             under test. Writes outside the repository by default.
+  --clicks N How many labels to collect. Default 400.
+  --minutes N
+             Stop after this long regardless. Default 20.
   --save DIR Write captured frames to DIR as PNG, through the compositor
              route. A model measured on a real game frame is a different
              number from one measured on a synthetic image.
@@ -401,6 +425,19 @@ fn find_window(needle: &str) -> Option<HWND> {
         .map(|raw| HWND(raw as *mut core::ffi::c_void))
 }
 
+/// Record a corpus from the person playing.
+fn run_recorder(
+    needle: &str,
+    directory: &str,
+    clicks: usize,
+    minutes: u64,
+) -> Result<String, String> {
+    recorder::refuse_repository_path(directory)?;
+    let window = find_window(needle)
+        .ok_or_else(|| format!("no visible window with a title containing {needle:?}"))?;
+    recorder::record(window, directory, clicks, minutes)
+}
+
 /// Capture frames from a window and write them to disk as PNG.
 ///
 /// The compositor route only: it is the one the product will ship, and a frame
@@ -437,7 +474,7 @@ fn capture_to_disk(needle: &str, directory: &str, wanted: usize) -> Result<Strin
 }
 
 /// Write one frame as a PNG.
-fn write_png(path: &str, frame: &measure::Frame) -> Result<(), String> {
+pub(crate) fn write_png(path: &str, frame: &measure::Frame) -> Result<(), String> {
     let file = std::fs::File::create(path).map_err(|error| format!("{path}: {error}"))?;
     let mut encoder = png::Encoder::new(
         std::io::BufWriter::new(file),
