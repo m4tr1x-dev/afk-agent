@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, grounding]
 requirements: [FR-GND-001, FR-GND-002, FR-GND-003, FR-GND-004, FR-GND-005, FR-GND-006, FR-GND-007, FR-GND-008, INV-GND-001, INV-GND-002]
-decisions: []
+decisions: [ADR-0013, ADR-0014, ADR-0036]
 generated: false
 ---
 
@@ -207,5 +207,5 @@ Restated from [requirements](01-requirements.md), where they are defined:
 
 ## Related decisions
 
-`ADR-0014` will record the grounding strategy and `ADR-0036` the verification model.
-Neither is accepted, and `ADR-0014` is blocked on the benchmark in [evaluation harness](20-evaluation-harness.md).
+`ADR-0036` records the three-valued verification model and is accepted, as is `ADR-0013`, which makes an unavailable mark inexpressible.
+`ADR-0014`, the grounding strategy, is proposed rather than accepted, and is blocked on the benchmark in [evaluation harness](20-evaluation-harness.md).

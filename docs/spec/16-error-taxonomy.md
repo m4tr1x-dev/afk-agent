@@ -115,5 +115,5 @@ This page specifies the scheme; the code list is not written by hand, because a 
 
 ## Related decisions
 
-`ADR-0027` will record the error handling and recovery policy.
-It is not accepted.
+`ADR-0027` records the error handling and recovery policy.
+It is not written, and it needs the blame histogram over real sessions behind it.

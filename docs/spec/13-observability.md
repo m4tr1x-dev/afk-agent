@@ -155,5 +155,5 @@ It does **not** contain frames, recognised text, or the note block, because all 
 
 ## Related decisions
 
-`ADR-0023` will record the logging, tracing and recording format, and `ADR-0031` crash reporting and privacy.
-Neither is accepted.
+`ADR-0023` records the logging, tracing and recording format, and `ADR-0031` crash reporting and privacy.
+Neither is written.

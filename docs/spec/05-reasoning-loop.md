@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, reasoning]
 requirements: [FR-LOOP-001, FR-LOOP-002, FR-LOOP-003, FR-LOOP-004, FR-LOOP-005, FR-LOOP-006, FR-LOOP-007, FR-LOOP-008, NFR-LOOP-001, INV-LOOP-001, INV-LOOP-002]
-decisions: []
+decisions: [ADR-0012]
 generated: false
 ---
 
@@ -250,5 +250,5 @@ This is the only way to test a stochastic agent repeatably, and it is also the o
 
 ## Related decisions
 
-`ADR-0012` will record the loop architecture and `ADR-0027` the error and recovery policy.
-Neither is accepted.
+`ADR-0012` records the three-cadence architecture and is accepted.
+`ADR-0027`, the error and recovery policy, is not written.

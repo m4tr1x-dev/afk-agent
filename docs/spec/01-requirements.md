@@ -195,5 +195,5 @@ Constraints are defined in [scope and goals](00-scope-and-goals.md) as `CON-001`
 
 ## Related decisions
 
-None accepted yet.
-The blocking set is listed in the [decision index](../decisions/index.md).
+This page defines identifiers rather than citing decisions, so it lists none of its own.
+Every record's `affects` field names the identifiers it touches, and the decision index carries the set that is still blocked on an experiment.

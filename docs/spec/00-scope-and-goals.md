@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, scope]
 requirements: [CON-001, CON-002, CON-003, CON-004, CON-005, CON-006, CON-007]
-decisions: []
+decisions: [ADR-0002, ADR-0003, ADR-0009, ADR-0025]
 generated: false
 ---
 
@@ -124,5 +124,5 @@ The full list with reasoning is in [non-goals](19-non-goals.md); the short versi
 
 ## Related decisions
 
-None accepted yet.
-The constraints above are inputs to `ADR-0002`, `ADR-0003`, `ADR-0008` and `ADR-0009`, all of which are blocking.
+The constraints above are inputs to `ADR-0002`, `ADR-0003` and `ADR-0009`, all accepted, and to `ADR-0025`, which records the posture `CON-002` states.
+`ADR-0008`, the capture API, is not written and is blocked on a prototype.

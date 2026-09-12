@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, architecture]
 requirements: [FR-SAFE-003, FR-GUI-004, INV-GUI-001, FR-MODEL-001, FR-MODEL-004, CON-007]
-decisions: []
+decisions: [ADR-0003, ADR-0004, ADR-0005]
 generated: false
 ---
 
@@ -241,5 +241,6 @@ Uninstalling removes the executables; recordings and configuration live under th
 
 ## Related decisions
 
-`ADR-0003` will record the topology, `ADR-0004` and `ADR-0005` the two transports, and `ADR-0006` the model host.
-None are accepted.
+`ADR-0003` records the topology, `ADR-0004` the control transport and `ADR-0005` the data-plane transports.
+All three are accepted.
+`ADR-0006`, the model host, is not written and is blocked on the backend measurement.

@@ -192,5 +192,5 @@ Silently discarding what a newer build wrote is a good way to lose someone's con
 
 ## Related decisions
 
-`ADR-0022` will record the configuration format and layering.
-It is not accepted.
+`ADR-0022` records the configuration format and layering.
+It is not written, and it is written after the settings it describes exist rather than before.

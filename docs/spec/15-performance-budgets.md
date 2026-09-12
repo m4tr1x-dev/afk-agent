@@ -171,4 +171,4 @@ A safety budget exceeded is a defect to fix, not a threshold to relax.
 ## Related decisions
 
 `ADR-0006` and `ADR-0007` govern the model figures, and `ADR-0024` the safety path.
-None are accepted.
+None are written, and the first two are blocked on measurements taken with a game running.

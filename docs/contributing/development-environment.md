@@ -98,7 +98,7 @@ winget install --id Rustlang.Rustup --accept-package-agreements --accept-source-
 ```
 
 **.NET SDK**, pinned by a version file at the repository root once one exists.
-The project targets the current release; the exact version is `ADR-0011`, which is not accepted.
+The project targets the current release; `ADR-0011` is accepted and the exact version is pinned by that file rather than stated here.
 
 **Visual Studio 2026**, with the desktop development and Windows application development workloads.
 The workload names are unverified; check them in the installer rather than trusting this page.
@@ -112,10 +112,32 @@ A version written in prose is a version that disagrees with the build within a m
 
 ## A note about paths
 
-If you install Python or Node while a shell is already open, the new entries will not be on that shell's path.
+If you install Python or Node while a shell is already open, the new entries are not on that shell's path.
 Open a new shell, or call the executables by full path.
 
 This catches people once per machine and costs twenty minutes of confusion.
+
+### A coding agent gets a reduced path
+
+An agent working in this repository is given a shell whose `PATH` carries the
+system directories and Git, and nothing else. `dotnet`, `node`, `gh` and
+`cargo` are absent, and `python` resolves to the Windows Store stub in
+`WindowsApps`, which opens the Store rather than running an interpreter.
+
+Two mechanisms exist, in this order:
+
+1. `.claude/settings.local.json` sets a full `PATH` with the real Python ahead
+   of `WindowsApps`. It is machine-specific and is not in version control.
+2. `tools/agent/tools.json` maps each tool to its absolute path, and
+   `tools/agent/env.sh` repairs the path of a shell that is already running.
+
+The second is a fallback rather than the normal route. A tool that has to be
+found through it is a sign the environment is wrong, and the fix belongs in the
+settings file.
+
+The failure this prevents is the expensive one: an agent that concludes a tool
+is not installed, records that as a finding, and works around a problem that
+does not exist.
 
 ## Continuous integration
 

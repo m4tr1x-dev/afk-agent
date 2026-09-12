@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, architecture]
 requirements: [CON-002, CON-003, CON-004, CON-006, FR-PERC-001, FR-SKILL-005, INV-CTX-001]
-decisions: []
+decisions: [ADR-0009, ADR-0018, ADR-0025]
 generated: false
 ---
 
@@ -174,4 +174,6 @@ A restatement links; only the definition uses a table row, which is what lets th
 
 ## Related decisions
 
-None accepted. `ADR-0021` will govern the web research boundary, and `ADR-0009` the input boundary.
+`ADR-0009` governs the input boundary, `ADR-0018` the absence of anything crossing a session, and `ADR-0025` the posture towards the game.
+All three are accepted.
+`ADR-0021`, the web research boundary, is not written.

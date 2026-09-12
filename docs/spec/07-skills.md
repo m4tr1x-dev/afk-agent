@@ -188,5 +188,5 @@ Before this is reopened, [the threat model](14-threat-model.md) needs a section 
 
 ## Related decisions
 
-`ADR-0020` will record the skill format and execution model, and `ADR-0021` the research backend.
-Neither is accepted.
+`ADR-0020` records the skill format and execution model, and `ADR-0021` the research backend and its fetch policy.
+Neither is written; both are written when the subsystem is designed.
