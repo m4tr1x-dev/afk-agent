@@ -43,6 +43,7 @@
 mod border;
 mod gdi;
 mod measure;
+mod overlay;
 mod target;
 mod wgc;
 
@@ -73,6 +74,7 @@ fn main() -> ExitCode {
     let mut border_only = false;
     let mut front = false;
     let mut own = false;
+    let mut overlay_only = false;
 
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -89,6 +91,7 @@ fn main() -> ExitCode {
             "--border" => border_only = true,
             "--front" => front = true,
             "--own-target" => own = true,
+            "--overlay" => overlay_only = true,
             "--list" => {
                 for title in visible_windows() {
                     println!("{title}");
@@ -104,6 +107,19 @@ fn main() -> ExitCode {
                 return ExitCode::from(2);
             }
         }
+    }
+
+    if overlay_only {
+        return match overlay::check() {
+            Ok(report) => {
+                print!("{report}");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("capture-probe: {error}");
+                ExitCode::from(1)
+            }
+        };
     }
 
     // The border comparison can supply its own target, which is the only way
@@ -169,6 +185,10 @@ capture-probe --window <title substring> [--seconds N] [--route NAME] [--arm N]
              Answer question 7 against a window the probe creates itself: flat
              grey, topmost, still. The only way to get a target that is
              visible, unchanging and not somebody else's browser.
+  --overlay  Answer the other half of the overlay question: does an overlay
+             marked EXCLUDEFROMCAPTURE appear in captured frames? Runs a
+             positive control first, because an absolute assertion of absence
+             is worthless without one.
   --border   Skip the route comparison and answer question 7 instead: capture
              the window twice, with the capture border required and
              suppressed, and difference the outermost pixels. A setter that
