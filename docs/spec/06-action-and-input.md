@@ -107,7 +107,7 @@ They read **relative movement deltas** from the raw input stream, and they typic
 Consequently:
 
 - Repositioning the cursor produces **no delta at all**, one enormous delta that the game clamps or discards as implausible, or one enormous delta that the game simply applies.
-  All three have been measured: no turn at all in one engine, and a swing of roughly a quarter of the frame width in another, reproducibly, from a single reposition.
+  All three have been measured across four engines: two ignore the reposition entirely, and two apply it, swinging the view about a quarter of the frame width from a single event.
   The third case is the one that matters most, because it is the one that looks like it worked.
 - A single large movement is frequently rejected by the game's own sanity checks.
 - The cursor's absolute position is meaningless while the game holds it captured.
