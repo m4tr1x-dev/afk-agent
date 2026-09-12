@@ -1,7 +1,8 @@
 # Question 1 — does synthesised relative mouse movement reach a real game?
 
-**Status: in progress.** The detection method is built and tested. Capture and
-input synthesis are not yet wired, so the question is not answered.
+**Status: in progress.** The probe is built and runs end to end against a real
+game. It has not yet produced a verdict, because no run has reached live
+gameplay — see `results/2026-09-12-xonotic.md`.
 
 ## Why this probe exists
 
@@ -101,6 +102,29 @@ pulled forward, and it is the right order: the experiment's whole purpose is to
 learn whether the public input API reaches a game, and answering that about a
 different piece of code would answer a different question.
 
+## A fourth control, added after the first real run
+
+The three null controls above all guard against a false **positive**: they stop
+a moving scene being read as a camera turn.
+
+The first run against Xonotic exposed the opposite failure. Every measurement
+came back at correlation exactly 1.000 with zero displacement, and the probe
+reported "NOT REACHED by relative movement" — a confident, complete and wrong
+answer to the question that gates the project.
+
+A correlation of exactly 1.000 is not a measurement; it is the signature of
+comparing something with itself. Nothing in the design noticed.
+
+So there is now a **liveness precondition**, checked per capture route before
+any test runs: consecutive captures must actually differ. If none do, the probe
+refuses to reach a verdict and says which route was static, because that is an
+`ADR-0008` finding rather than an answer to question 1.
+
+The general lesson is worth more than the fix: **a control that catches a false
+positive does not catch a false negative.** Both need designing for, and the
+apparatus reporting perfect agreement is exactly what perfect failure looks
+like.
+
 ## Results
 
-None yet. `results/` is empty.
+`results/2026-09-12-xonotic.md` — no verdict, and why.
