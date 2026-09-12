@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T14:35:43Z",
+  "updated": "2026-09-12T15:14:20Z",
   "milestone": "M1",
   "exit_criteria": [
     {
@@ -18,7 +18,8 @@
     {
       "id": "M1.3",
       "text": "model loads on Vulkan with its vision encoder; latency measured with a game running",
-      "state": "todo"
+      "state": "partial",
+      "detail": "Vision encoder answered for E4B: 7 of 8 synthetic scenes exact on all three fields, graphics processor confirmed at 8.42x processor-only throughput. The visual budget is a process flag, not a per-request parameter, which reworded FR-MODEL-002. The 26B A4B variant and latency with a game running are still to run."
     },
     {
       "id": "M1.4",
@@ -27,11 +28,11 @@
     }
   ],
   "task": {
-    "id": "T-0021",
-    "title": "E2: does the vision encoder load on the Vulkan backend, and is the visual budget a per-request knob",
+    "id": "T-0022",
+    "title": "Pre-register ADR-0006 and ADR-0007, then E2 on 26B A4B",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T14:35:43Z"
+    "started": "2026-09-12T15:14:20Z"
   },
   "gates": {
     "G0": "pass",
@@ -77,8 +78,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0021 E2: vision encoder on Vulkan, eight synthetic images, 7/8 exact on all three fields",
-    "T-0022 E-CAP: three capture backends, then the overlay's zero-magenta-pixel assertion",
-    "T-0023 E3/E5/E6: one harness, three questions, with a game running"
+    "T-0022 pre-register ADR-0006 and ADR-0007 with Decision deliberately absent",
+    "T-0023 E2 against 26B A4B once its download completes",
+    "T-0024 E-CAP: three capture backends, then the overlay's zero-leak assertion"
   ]
 }

@@ -38,3 +38,16 @@
 {"t": "2026-09-12T14:33:49Z", "kind": "gate", "gates": {"G1": "pass", "G2": "pass"}, "result": "pass", "tests_passed": 17}
 {"t": "2026-09-12T14:34:48Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 17}
 {"at": "2026-09-12T14:35:43Z", "gates": ["G1", "G2"], "result": "pass", "tests_declared": 17, "detail": "17 codegen tests added; G2 grew four steps covering the generator, which --workspace does not see"}
+{"t": "2026-09-12T14:50:01Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 31}
+{"t": "2026-09-12T14:51:58Z", "kind": "gate", "gates": {"G1": "fail"}, "result": "fail", "tests_passed": 31}
+{"t": "2026-09-12T14:52:15Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 31}
+{"t": "2026-09-12T14:54:55Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 31}
+{"t": "2026-09-12T14:57:49Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 31}
+{"t": "2026-09-12T14:58:32Z", "kind": "gate", "gates": {"G1": "fail"}, "result": "fail", "tests_passed": 31}
+{"t": "2026-09-12T14:59:05Z", "kind": "gate", "gates": {"G1": "fail"}, "result": "fail", "tests_passed": 31}
+{"t": "2026-09-12T14:59:17Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 31}
+{"t": "2026-09-12T15:07:06Z", "kind": "gate", "gates": {"G1": "fail", "G2": "pass"}, "result": "fail", "tests_passed": 31}
+{"t": "2026-09-12T15:07:24Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 31}
+{"t": "2026-09-12T15:11:20Z", "kind": "gate", "gates": {"G1": "fail", "G2": "pass"}, "result": "fail", "tests_passed": 36}
+{"t": "2026-09-12T15:11:39Z", "kind": "gate", "gates": {"G1": "pass", "G2": "pass"}, "result": "pass", "tests_passed": 36}
+{"at": "2026-09-12T15:14:20Z", "gates": ["G1", "G2"], "result": "pass", "tests_declared": 36}

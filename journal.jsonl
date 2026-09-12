@@ -29,3 +29,7 @@
 {"at": "2026-09-12T14:35:43Z", "event": "pr_opened", "pr": 22, "title": "build: pin the toolchain, add the task runner, and record four decisions", "detail": "just, Directory.Build.props, Directory.Packages.props, .config/dotnet-tools.json, LFS, ADR-0040..0043"}
 {"at": "2026-09-12T14:35:43Z", "event": "question_answered", "matrix_question": 9, "detail": "slnx is the default; WinUI 3 builds from the CLI with no workload; single-project MSIX works from the CLI; Native AOT WORKS, contradicting the plan"}
 {"at": "2026-09-12T14:35:43Z", "event": "defect_fixed", "where": ".github/workflows/docs-publish.yml", "detail": "cargo doc ran on ubuntu against a Windows-only workspace; moved to a windows-latest job that uploads an artefact"}
+{"at": "2026-09-12T15:14:20Z", "event": "question_answered", "matrix_question": 2, "detail": "E4B sees: 7/8 exact; GPU confirmed by throughput ratio; visual budget is a server flag, not a per-request parameter"}
+{"at": "2026-09-12T15:14:20Z", "event": "attempt_failed", "what": "device control by free graphics memory", "why": "this runtime's device enumeration returns a static figure; the reading never moves, so the control could only accuse", "dont_retry": true}
+{"at": "2026-09-12T15:14:20Z", "event": "spec_change", "detail": "FR-MODEL-002 reworded from 'set the budget' to 'control the cost'; prompt layout unified on page 08; vision criterion 4 given two numbers; guardian watches three processes"}
+{"at": "2026-09-12T15:14:20Z", "event": "merged", "prs": [24, 25, 26, 27, 28]}

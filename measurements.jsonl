@@ -11,3 +11,6 @@
 {"at": "2026-09-12T14:35:43Z", "what": "native_aot_working_set_mib", "value": 87.9, "conditions": "one window, one text block, six seconds after launch", "lands_in": "docs/decisions/0043-target-net-10-and-keep-ahead-of-time-compilation-off.md"}
 {"at": "2026-09-12T14:35:43Z", "what": "msix_package_bytes", "value": 28286658, "conditions": "single-project packaging from the CLI, SideloadOnly, AppxBundle=Never", "lands_in": "experiments/09-toolchain/findings.md"}
 {"at": "2026-09-12T14:35:43Z", "what": "winui_publish_directory_mib", "value": 133, "conditions": "self-contained, win-x64", "lands_in": "experiments/09-toolchain/findings.md"}
+{"at": "2026-09-12T15:14:20Z", "what": "e4b_q4_generation_tokens_per_second_gpu", "value": 148.37, "conditions": "llama.cpp b10930 Vulkan, all layers offloaded, tg32", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T15:14:20Z", "what": "e4b_q4_generation_tokens_per_second_cpu", "value": 18.3, "conditions": "same build, zero layers offloaded, i7-13700K", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T15:14:20Z", "what": "image_tokens_by_input_side_px", "value": {"256": 83, "512": 123, "768": 258, "1024": 443}, "conditions": "E4B, BF16 projector, text baseline 50 tokens subtracted", "lands_in": "docs/spec/17-model-contract.md"}
