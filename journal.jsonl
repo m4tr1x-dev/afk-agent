@@ -3,3 +3,6 @@
 {"t":"2026-09-12T00:00:00Z","kind":"task_start","task":"T-0003","note":"autonomy harness"}
 {"t": "2026-09-12T12:45:53Z", "kind": "gate", "task": "T-0003", "note": "docs gate green before harness commit", "gate": "G1", "result": "pass"}
 {"t": "2026-09-12T12:49:53Z", "kind": "task_done", "task": "T-0003", "note": "autonomy harness committed"}
+{"t": "2026-09-12T12:54:32Z", "kind": "task_done", "task": "T-0005", "note": "evidence field enforced, PR #10 merged"}
+{"t": "2026-09-12T12:54:33Z", "kind": "task_done", "task": "T-0004", "note": "experiments/ listed as planned; ADR amendment deferred to first probe"}
+{"t": "2026-09-12T12:54:55Z", "kind": "task_start", "task": "T-0007", "note": "M0 complete; installing Rust"}
