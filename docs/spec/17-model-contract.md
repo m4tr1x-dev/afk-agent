@@ -163,9 +163,9 @@ Where a model-specific detail is unavoidable — a chat template, a token budget
 ## Open questions
 
 1. **Blocking.** **Every latency figure on this page is missing**, and the tactical cadence's rate follows directly from them. Measuring requires the model running on the reference hardware **with a game in memory**, since the figure without one is not the figure that matters. This blocks `NFR-MODEL-001` and [performance budgets](15-performance-budgets.md).
-2. **Blocking.** Whether the vision encoder loads at all on the required compute backend for the intended variant. There is a known defect in this area on a different backend. Until checked, the tactical cadence has no confirmed implementation.
+2. **Blocking.** Whether the vision encoder loads on the required compute backend for the **intended variant**. Answered for Gemma 4 E4B on 2026-09-12 — it loads, and it reads 7 of 8 synthetic scenes exactly on all three fields, with the graphics processor confirmed in use at 8.42 times processor-only throughput. The 26B A4B variant the model configuration assumes has not been run yet, so the question stays open on its own terms. See `experiments/02-vision-encoder/`.
 3. **Blocking.** Whether prefix reuse behaves as assumed with two pinned contexts at different image costs. If the runtime shares one cache between them, the two cadences evict each other and the layout above buys nothing.
-4. **Blocking.** Whether image cost is selectable per request or only per session. The two-stage refinement in [grounding](18-grounding-and-verification.md) needs per-request.
+4. **Non-blocking.** Whether a per-request budget parameter is worth asking the runtime for. Measured 2026-09-12: the budget is a process-level flag (`--image-min-tokens`, `--image-max-tokens`), and the per-request cost is set by the resolution of the image sent — 83, 123, 258 and 443 image tokens at 256, 512, 768 and 1024 pixels. The two-stage refinement therefore has the control it needs, by rescaling. See `experiments/02-vision-encoder/`.
 5. **Blocking.** Whether extended reasoning can be capped rather than merely switched off. Uncapped reasoning on the deliberative path is an unbounded pause.
 6. **Blocking.** What the agent does when the model host reports a context overflow mid-session. Compaction should prevent it; "should" is not a mechanism.
 
