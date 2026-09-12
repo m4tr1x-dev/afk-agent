@@ -119,6 +119,17 @@ addstore
 worktree
 worktrees
 
+# Games in the experiment roster. Named because the findings pages have to say
+# which title a measurement came from.
+Breathedge
+Xonotic
+Wesnoth
+SuperTuxKart
+Veloren
+Mindustry
+# Engine console variables quoted verbatim in a findings page.
+uidtracking
+
 # Tooling and platform names
 Rustlang
 winget

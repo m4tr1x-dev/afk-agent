@@ -54,6 +54,8 @@ use std::process::ExitCode;
 fn main() -> ExitCode {
     let mut window = String::new();
     let mut arm_seconds = 8_u64;
+    let mut forced_route: Option<String> = None;
+    let mut turn_only: Option<i32> = None;
 
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -62,6 +64,8 @@ fn main() -> ExitCode {
             "--arm" => {
                 arm_seconds = args.next().and_then(|v| v.parse().ok()).unwrap_or(8);
             }
+            "--route" => forced_route = args.next(),
+            "--turn" => turn_only = args.next().and_then(|v| v.parse().ok()),
             "--help" | "-h" => {
                 println!("{USAGE}");
                 return ExitCode::SUCCESS;
@@ -78,7 +82,20 @@ fn main() -> ExitCode {
         return ExitCode::from(2);
     }
 
-    match run::execute(&window, arm_seconds) {
+    if let Some(units) = turn_only {
+        return match run::turn_only(&window, arm_seconds, units) {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(error) => {
+                eprintln!(
+                    "
+{error}"
+                );
+                ExitCode::from(1)
+            }
+        };
+    }
+
+    match run::execute(&window, arm_seconds, forced_route.as_deref()) {
         Ok(report) => {
             println!("\n{report}");
             ExitCode::SUCCESS
@@ -101,6 +118,14 @@ reachability-probe --window <title substring> [--arm <seconds>]
   --window   Part of the target window's title. First visible match wins.
   --arm      Seconds to wait before starting, so you can bring the game
              forward. Default 8.
+  --route    Force one capture route: PrintWindow, BitBlt or ScreenCrop.
+             Default is the first that proves live. Forcing ScreenCrop is the
+             control that separates an input that never arrived from a capture
+             that does not reflect the rendered scene.
+
+  --turn     Emit this many mouse units horizontally and exit, measuring
+             nothing. The control a person can check by eye: screenshot, turn,
+             screenshot, look.
 
 The probe refuses to send input unless the target is in the foreground, so the
 arming delay is not a convenience.

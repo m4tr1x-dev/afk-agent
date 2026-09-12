@@ -1,8 +1,9 @@
 # Question 1 — does synthesised relative mouse movement reach a real game?
 
-**Status: in progress.** The probe is built and runs end to end against a real
-game. It has not yet produced a verdict, because no run has reached live
-gameplay — see `results/2026-09-12-xonotic.md`.
+**Status: reached on one game of the five.** Synthesised relative movement turns
+the camera in Breathedge — see `results/2026-09-12-breathedge.md`. The
+criterion is four of five across engines, so the question stays open; what is
+gone is the possibility that the answer was no everywhere.
 
 ## Why this probe exists
 
@@ -125,6 +126,22 @@ positive does not catch a false negative.** Both need designing for, and the
 apparatus reporting perfect agreement is exactly what perfect failure looks
 like.
 
+## A precondition the probe cannot check
+
+Three runs returned a well-formed, internally consistent "not reached" while the
+game was working perfectly. The camera was locked each time: a Join prompt, a
+disclaimer screen, a scripted tutorial with an overlay open.
+
+"No displacement" has two causes and **the difference is not in the frames**. No
+refinement of the correlation reaches it. The verdict wording now names both
+rather than asserting the interesting one, and reaching free look is a setup
+step the operator performs, not something the probe can verify.
+
+The general shape is the same as the first Xonotic run: a measurement with an
+unstated precondition, reported as a conclusion.
+
 ## Results
 
-`results/2026-09-12-xonotic.md` — no verdict, and why.
+- `results/2026-09-12-breathedge.md` — **reached**, with the evidence and the
+  three things it does not establish.
+- `results/2026-09-12-xonotic.md` — no verdict, and why.
