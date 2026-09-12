@@ -357,6 +357,101 @@ pub(crate) fn turn_only(title: &str, arm_seconds: u64, units: i32) -> Result<(),
     Ok(())
 }
 
+/// Turn until the view comes back round, and report degrees per mouse unit.
+///
+/// The calibration `FR-ACT-004` actually needs. Every other number this probe
+/// produces is in columns, which depends on the window size, the field of view
+/// and how far away the scenery is. Degrees do not.
+///
+/// The method needs none of those: keep emitting in one direction, and watch
+/// for the frame to match where it started. The total emitted for one
+/// revolution is the whole calibration, and it costs nothing but time.
+///
+/// It fails informatively on a game with a yaw limit — a vehicle, a turret, a
+/// fixed camera — because the view stops changing and never returns. That is a
+/// result rather than an error.
+pub(crate) fn wrap_test(
+    title: &str,
+    arm_seconds: u64,
+    forced_route: Option<&str>,
+) -> Result<String, ProbeError> {
+    let window =
+        capture::find_window(title).ok_or_else(|| ProbeError::WindowNotFound(title.to_owned()))?;
+    println!("bring {title:?} to the foreground; starting in {arm_seconds}s");
+    sleep(Duration::from_secs(arm_seconds));
+
+    let synth = Synthesiser::bind(window.cast());
+    if !synth.target_is_foreground() {
+        return Err(ProbeError::NeverForeground);
+    }
+    let route = choose_route(&synth, window, forced_route)?;
+
+    let (origin, _) = profile(window, route)?;
+    let mut emitted = 0_i32;
+    let mut best: Option<(i32, f64)> = None;
+    let mut left_home = false;
+
+    while emitted < WRAP_LIMIT {
+        emit_relative(&synth, WRAP_STEP)?;
+        settle();
+        emitted += WRAP_STEP;
+
+        let (now, _) = profile(window, route)?;
+        let Some(found) = displacement(&origin, &now) else {
+            continue;
+        };
+        let home = found.lag.abs() <= MIN_TURN_COLUMNS && found.confidence >= WRAP_MATCH;
+
+        // The view has to leave before coming back means anything, or the very
+        // first sample counts as a revolution.
+        if !left_home {
+            if !home {
+                left_home = true;
+            }
+            continue;
+        }
+        if home {
+            best = Some((emitted, found.confidence));
+            break;
+        }
+    }
+
+    synth.release_all();
+
+    let mut report = String::new();
+    let _ = writeln!(report, "window: {title:?}, route {route}");
+    match best {
+        Some((units, confidence)) => {
+            let degrees = 360.0 / f64::from(units);
+            let _ = writeln!(
+                report,
+                "one revolution: {units} mouse units (match confidence {confidence:.3})"
+            );
+            let _ = writeln!(
+                report,
+                "calibration:    {degrees:.4} degrees per mouse unit"
+            );
+        }
+        None => {
+            let _ = writeln!(
+                report,
+                "the view never returned within {WRAP_LIMIT} units. Either this                  camera has a yaw limit, or the scene changed enough on the way                  round that the frames no longer match. Both are results; neither                  is a calibration"
+            );
+        }
+    }
+    Ok(report)
+}
+
+/// Mouse units emitted per step of the wrap test.
+const WRAP_STEP: i32 = 40;
+
+/// Give up after this many units. A camera that has not come round by here has
+/// a limit, or the correlation has lost it.
+const WRAP_LIMIT: i32 = 40_000;
+
+/// How well the returning frame has to match the one it started from.
+const WRAP_MATCH: f64 = 0.90;
+
 /// Pick the capture route: the one named, or the first that proves live.
 fn choose_route(
     synth: &Synthesiser,

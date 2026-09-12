@@ -91,6 +91,34 @@ That is `FR-ACT-005` observed in the wild, on the first game that exercised it:
 The requirement calls motion synthesis functional rather than cosmetic. This is
 what that means in practice, and it was found by accident rather than by test.
 
+## Calibration, and a cross-check that passed
+
+The wrap test turns until the view comes back round:
+
+```text
+one revolution: 3960 mouse units (match confidence 1.000)
+calibration:    0.0909 degrees per mouse unit
+```
+
+That is the figure `FR-ACT-004` needs, and it needs nothing else: no field of
+view, no knowledge of the player's sensitivity setting, no assumption about how
+far away the scenery is. Keep turning and watch for the frame to match where it
+started.
+
+**The two measurements agree, and they were taken by different means.** The
+sweep gave 1.072 columns per unit on a profile spanning 80% of a 1286-pixel
+window. If that profile covers 0.8 × FOV, then
+
+    degrees per unit = 1.072 x 0.8 x FOV / 1036
+
+Setting that equal to the wrap test's 0.0909 gives **FOV ≈ 110 degrees**, which
+is an ordinary widescreen-corrected field of view for this game.
+
+Neither measurement was derived from the other. The sweep correlates two frames
+a few columns apart; the wrap counts a full revolution and never looks at a
+displacement at all. Agreeing to a plausible field of view is the kind of check
+that catches a method fooling itself, and this one passed.
+
 ## Question 1 status
 
 **Three of five.** Unreal Engine 4, DarkPlaces, Cube.

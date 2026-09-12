@@ -47,6 +47,13 @@ An explosion moves pixels too. A result counts only when all four hold:
    player's sensitivity setting, and failing informatively on a game with a yaw
    limit.
 
+   Built and run. AssaultCube comes round in 3960 units, giving 0.0909 degrees
+   per unit, and that figure agrees with the sweep's columns-per-unit at a
+   field of view of about 110 degrees. The two were measured by different means
+   — one correlates frames a few columns apart, the other counts a revolution
+   and never looks at a displacement — so their agreement is a real check
+   rather than a restatement.
+
 ## Three null controls
 
 Without these, a positive result is not evidence of anything.

@@ -56,6 +56,7 @@ fn main() -> ExitCode {
     let mut arm_seconds = 8_u64;
     let mut forced_route: Option<String> = None;
     let mut turn_only: Option<i32> = None;
+    let mut wrap = false;
 
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -66,6 +67,7 @@ fn main() -> ExitCode {
             }
             "--route" => forced_route = args.next(),
             "--turn" => turn_only = args.next().and_then(|v| v.parse().ok()),
+            "--wrap" => wrap = true,
             "--help" | "-h" => {
                 println!("{USAGE}");
                 return ExitCode::SUCCESS;
@@ -80,6 +82,25 @@ fn main() -> ExitCode {
     if window.is_empty() {
         eprintln!("--window is required\n\n{USAGE}");
         return ExitCode::from(2);
+    }
+
+    if wrap {
+        return match run::wrap_test(&window, arm_seconds, forced_route.as_deref()) {
+            Ok(report) => {
+                println!(
+                    "
+{report}"
+                );
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!(
+                    "
+{error}"
+                );
+                ExitCode::from(1)
+            }
+        };
     }
 
     if let Some(units) = turn_only {
@@ -126,6 +147,10 @@ reachability-probe --window <title substring> [--arm <seconds>]
   --turn     Emit this many mouse units horizontally and exit, measuring
              nothing. The control a person can check by eye: screenshot, turn,
              screenshot, look.
+
+  --wrap     Turn until the view comes back round, and report degrees per
+             mouse unit. The only calibration that does not depend on the
+             window size or the field of view.
 
 The probe refuses to send input unless the target is in the foreground, so the
 arming delay is not a convenience.
