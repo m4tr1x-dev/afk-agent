@@ -1,0 +1,27 @@
+overlay self-exclusion, 2026-09-12, reference hardware
+Windows 11 Pro build 26200; unpackaged process; a window the probe owns.
+
+--- run 1 ---
+--- overlay self-exclusion ---
+  default affinity     window-scoped: 0 of 60 frames carry the mark;  screen-scoped: 24000 pixels
+  EXCLUDEFROMCAPTURE   window-scoped: 0 of 800 frames, 0 pixels total;  screen-scoped: 0 pixels
+
+  window-scoped: the overlay never appears, with or without the affinity. A per-window capture composites that window alone, so an overlay drawn as a separate top-level window is excluded by construction rather than by a flag.
+  screen-scoped: EXCLUDED. The overlay is plainly visible by default and contributes zero pixels under EXCLUDEFROMCAPTURE.
+
+--- run 2 ---
+--- overlay self-exclusion ---
+  default affinity     window-scoped: 0 of 60 frames carry the mark;  screen-scoped: 24000 pixels
+  EXCLUDEFROMCAPTURE   window-scoped: 0 of 800 frames, 0 pixels total;  screen-scoped: 0 pixels
+
+  window-scoped: the overlay never appears, with or without the affinity. A per-window capture composites that window alone, so an overlay drawn as a separate top-level window is excluded by construction rather than by a flag.
+  screen-scoped: EXCLUDED. The overlay is plainly visible by default and contributes zero pixels under EXCLUDEFROMCAPTURE.
+
+--- run 3 ---
+--- overlay self-exclusion ---
+  default affinity     window-scoped: 0 of 60 frames carry the mark;  screen-scoped: 24000 pixels
+  EXCLUDEFROMCAPTURE   window-scoped: 0 of 800 frames, 0 pixels total;  screen-scoped: 0 pixels
+
+  window-scoped: the overlay never appears, with or without the affinity. A per-window capture composites that window alone, so an overlay drawn as a separate top-level window is excluded by construction rather than by a flag.
+  screen-scoped: EXCLUDED. The overlay is plainly visible by default and contributes zero pixels under EXCLUDEFROMCAPTURE.
+

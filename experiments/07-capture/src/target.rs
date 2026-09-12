@@ -24,18 +24,22 @@
 //! So the probe makes its own: a small topmost window filled with one flat
 //! colour, which is also what makes a border unmistakable when one is drawn.
 
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{Sender, channel};
 use std::thread::{JoinHandle, sleep, spawn};
 use std::time::Duration;
 
 use windows::Win32::Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM};
-use windows::Win32::Graphics::Gdi::{CreateSolidBrush, HBRUSH};
+use windows::Win32::Graphics::Gdi::{
+    BeginPaint, CreateSolidBrush, DeleteObject, EndPaint, FillRect, HBRUSH, InvalidateRect,
+    PAINTSTRUCT,
+};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::WindowsAndMessaging::{
     CW_USEDEFAULT, CreateWindowExW, DefWindowProcW, DestroyWindow, DispatchMessageW, GetMessageW,
     HWND_TOPMOST, MSG, PostMessageW, PostQuitMessage, RegisterClassW, SW_SHOW, SWP_NOMOVE,
-    SWP_NOSIZE, SetWindowPos, ShowWindow, TranslateMessage, WM_CLOSE, WM_DESTROY, WNDCLASSW,
-    WS_EX_TOPMOST, WS_OVERLAPPEDWINDOW, WS_VISIBLE,
+    SWP_NOSIZE, SetTimer, SetWindowPos, ShowWindow, TranslateMessage, WM_CLOSE, WM_DESTROY,
+    WM_PAINT, WM_TIMER, WNDCLASSW, WS_EX_TOPMOST, WS_OVERLAPPEDWINDOW, WS_VISIBLE,
 };
 use windows::core::{PCWSTR, w};
 
@@ -190,6 +194,9 @@ fn create() -> Result<HWND, String> {
 
     // SAFETY: `handle` is the window just created.
     unsafe {
+        // Roughly sixty times a second, so the compositor has something to
+        // deliver. Without it a sweep of eight hundred frames never finishes.
+        SetTimer(Some(handle), 1, 16, None);
         let _ = ShowWindow(handle, SW_SHOW);
         let _ = SetWindowPos(
             handle,
@@ -204,19 +211,54 @@ fn create() -> Result<HWND, String> {
     Ok(handle)
 }
 
-/// The window procedure. Nothing is drawn: the class brush fills the client
-/// area, which is all this window is for.
+/// Which of the two near-identical greys the next paint uses.
+///
+/// The window has to *change*, or the compositor delivers almost nothing: it
+/// publishes on change rather than on a clock, and a still window yields one
+/// frame in eight seconds. A sweep that needs eight hundred frames needs the
+/// target to be alive.
+///
+/// Two greys one unit apart, because the change has to be real to the
+/// compositor without being large enough to matter to anything measuring
+/// colours in the frame.
+static PHASE: AtomicBool = AtomicBool::new(false);
+
+/// The window procedure.
 unsafe extern "system" fn procedure(
     window: HWND,
     message: u32,
     wparam: WPARAM,
     lparam: LPARAM,
 ) -> LRESULT {
-    if message == WM_DESTROY {
-        // SAFETY: called from the window's own thread.
-        unsafe { PostQuitMessage(0) };
-        return LRESULT(0);
+    match message {
+        WM_DESTROY => {
+            // SAFETY: called from the window's own thread.
+            unsafe { PostQuitMessage(0) };
+            LRESULT(0)
+        }
+        WM_TIMER => {
+            // SAFETY: `window` is live and the rectangle argument is optional.
+            unsafe {
+                let _ = InvalidateRect(Some(window), None, true);
+            };
+            LRESULT(0)
+        }
+        WM_PAINT => {
+            let phase = PHASE.fetch_xor(true, Ordering::Relaxed);
+            let shade = if phase { 0x60 } else { 0x61 };
+            let mut paint = PAINTSTRUCT::default();
+            // SAFETY: `paint` is a valid writable structure and EndPaint is
+            // called on every path below.
+            unsafe {
+                let dc = BeginPaint(window, &raw mut paint);
+                let brush = CreateSolidBrush(COLORREF(shade << 16 | shade << 8 | shade));
+                FillRect(dc, &raw const paint.rcPaint, brush);
+                let _ = DeleteObject(brush.into());
+                let _ = EndPaint(window, &raw const paint);
+            }
+            LRESULT(0)
+        }
+        // SAFETY: forwarding the message the window manager delivered.
+        _ => unsafe { DefWindowProcW(window, message, wparam, lparam) },
     }
-    // SAFETY: forwarding the message the window manager delivered.
-    unsafe { DefWindowProcW(window, message, wparam, lparam) }
 }

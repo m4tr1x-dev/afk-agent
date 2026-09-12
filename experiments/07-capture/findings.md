@@ -1,4 +1,4 @@
-# Question 7 — can the capture border be suppressed from an unpackaged application?
+# Question 7 — the capture border, the routes, and whether the overlay sees itself
 
 **Status: yes, reproduced three times with a positive control, a null control
 and a stability control.** The route comparison `ADR-0008` needs came out of the
@@ -120,6 +120,61 @@ why `too few frames` exists at all: the first version of this harness read a
 single frame from a static window and called the route **usable**. One sample
 supports neither verdict.
 
+## The overlay does not see itself, for two different reasons
+
+`INV-GUI-001` makes this catastrophic rather than untidy: the agent draws marks
+over the game, and if those marks reach the frames the agent captures,
+perception sees its own annotations and the loop feeds on itself. The
+specification calls the assertion absolute rather than statistical, and one
+leaked pixel is the whole defect.
+
+Three runs, 2400 captured frames under `WDA_EXCLUDEFROMCAPTURE`, **zero pixels
+of the overlay's colour**.
+
+```text
+default affinity     window-scoped: 0 of  60 frames carry the mark;  screen-scoped: 24000 pixels
+EXCLUDEFROMCAPTURE   window-scoped: 0 of 800 frames,  0 pixels;      screen-scoped:     0 pixels
+```
+
+**The positive control changed what the question was.** The first run asserted
+absence and got it — and the control failed, because the overlay did not appear
+in window-scoped captures *even with the default affinity*. An absolute
+assertion of absence with a failed positive control proves nothing, and this one
+turned out to be measuring something other than what it claimed.
+
+The reason is worth more than the original answer:
+
+| Capture scope | Why the overlay is absent |
+| --- | --- |
+| **Window-scoped** (`CreateForWindow`) | A per-window capture composites that window alone. An overlay drawn as a separate top-level window is excluded **by construction** — the flag is irrelevant |
+| **Screen-scoped** (reading the desktop) | The overlay is plainly there — 24000 pixels, exactly the 200x120 it occupies — and `WDA_EXCLUDEFROMCAPTURE` removes every one of them |
+
+So the product gets the property twice over, from two independent mechanisms,
+and the one it actually relies on is the stronger: **window-scoped capture
+cannot see the overlay even if somebody removes the flag.**
+
+That is worth knowing precisely because a future change might remove it. A
+property that survives its own guard being deleted is a different kind of
+property from one that does not.
+
+The screen-scoped reading is the positive control that makes the window-scoped
+result meaningful, and it is also the case that matters if the capture route
+ever changes to desktop duplication — which reads the whole display and would
+see an overlay the window route cannot.
+
+### Two defects the controls found in the harness itself
+
+**The overlay never painted.** Its first version had no message loop, and a
+window whose messages nobody pumps never receives `WM_PAINT`. There was nothing
+on screen to exclude, and the screen reading — 0 pixels — said so on the first
+run.
+
+**The target was too still to deliver frames.** The compositor publishes on
+change, so a static window yields one frame in eight seconds and a sweep of 800
+never finishes. The target now repaints about sixty times a second, alternating
+between two greys one unit apart: a real change to the compositor, and too small
+to matter to anything counting colours.
+
 ## What this settles and what it does not
 
 **Settled.** The capture border can be suppressed from an unpackaged process on
@@ -130,6 +185,10 @@ loses the branch it was worried about.
 Cursor suppression is accepted on every run as well, which `FR-PERC-006` needs:
 the pointer in a captured frame is the agent's own, and perception that treats
 it as an element will click on itself.
+
+The overlay does not appear in captured frames, twice over: excluded by
+construction from a window-scoped capture, and by `WDA_EXCLUDEFROMCAPTURE` from
+a screen-scoped one.
 
 **Not settled.** This is one window mode on one build.
 
@@ -145,6 +204,11 @@ it as an element will click on itself.
   bad model rather than as bad arithmetic.
 - **Graphics memory per route** is not measured, which the plan asked for. The
   probe reads frames back into main memory, so its own footprint would dominate.
+- **The overlay is a plain window, not the real one.** `09-gui-and-overlay.md`
+  warns that a tooltip and a flyout are separate top-level windows and easy to
+  forget, and this probe has neither. The assertion has to be repeated against
+  the real overlay in M2, with both open. What is established here is that the
+  mechanism works and that window-scoped capture does not need it.
 
 ## Method
 
