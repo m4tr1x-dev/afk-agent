@@ -106,8 +106,13 @@ def gates() -> dict[str, list[Step]]:
         "G1": [
             Step("mkdocs strict", [py, "-m", "mkdocs", "build", "--strict"]),
             Step("front matter", [py, "tools/lint_frontmatter.py", "docs"]),
-            Step("requirements", [py, "tools/lint_requirements.py", "docs"]),
+            Step(
+                "requirements",
+                [py, "tools/lint_requirements.py", "docs", "--source", "crates", "src", "tests", "tools"],
+            ),
+            Step("traceability page", [py, "tools/check_generated.py"]),
             Step("layout", [py, "tools/lint_layout.py"]),
+            Step("call sites", [py, "tools/check_call_sites.py"]),
             Step("markdownlint", [npx, "--yes", "markdownlint-cli2", "**/*.md"]),
             Step("cspell", [npx, "--yes", "cspell", "docs/**/*.md", "*.md"]),
             Step("vale", [vale, "--minAlertLevel=error", "docs/", "CLAUDE.md"]),
