@@ -38,16 +38,57 @@ Frames come from real games played by a human, captured with the agent in dry-ru
 Dry run means the perception pipeline runs in full while nothing is synthesised, which is what makes collection safe on any game.
 
 **Breadth matters more than depth.**
-Three hundred frames from five games across three genres is worth more than three thousand from one, because the thing being measured is whether the approach generalises.
+Frames from five games across three genres are worth more than the same number from one, because the thing being measured is whether the approach generalises.
 
 At least one game is held aside entirely, never used while tuning, so there is one measurement that has not been fitted to.
+That rule is enforced by the harness rather than by intention: the held-aside game lives in a separate directory, the harness refuses to read it without `--final`, and `--final` writes an immutable timestamped result file.
+The failure mode here is convenience rather than dishonesty, so the mechanism has to be mechanical.
+
+**Size: 1000 to 1500 frames, not the few hundred this page first named.**
+The arithmetic is what changed the number, and it is worth stating because the original figure does not support the reporting this same page requires.
+
+At 300 frames the standard error on a proportion near one half is 2.9 points, so the interval is about ±5.7 — usable in aggregate.
+But the grounding results are reported **per scene class and per game**, and with five games and three or four classes the count per cell falls to 30–60, where the interval widens to ±13–18 points.
+That is too wide to decide anything per cell.
+
+So: the **aggregate with its interval is the decision statistic**, and per-cell figures are printed with their own intervals and labelled directional.
+Collection is cheap enough to make the larger number reachable, because the method below records only frames where something changed.
 
 ### Labelling
 
-Element boxes and scene classes are labelled by hand.
-It is laborious, and there is no way around it: a benchmark labelled by the system under test measures agreement rather than accuracy.
+Three labels, with very different exposure to circularity, and the distinction is the most useful thing on this page.
 
-Labels record the true box, a natural-language description of the target, and whether the element is reachable by each grounding path — an element the detector never proposes is not a Path B failure, it is a perception failure, and conflating the two makes the arbiter's input meaningless.
+| Label | Circular when produced by |
+| --- | --- |
+| The true box | The perception pipeline — which is the thing under test for `FR-PERC-005` |
+| The target description | The model under test — which measures self-agreement, not accuracy |
+| Reachability per path | Both |
+
+**The true box comes from interaction, not from a detector.**
+A person plays each title for 15 to 20 minutes with the recorder running, and the recorder captures **their own clicks**.
+A click at a point followed by a screen change within 200 ms gives a point that is *by definition* inside a real interactive element, the frame immediately before it, and evidence that the element was interactive — with no model, no detector, and no circle.
+
+This is not a new capability.
+`FR-SAFE-002` already requires observing the user's real input and distinguishing it from synthesised input, and `ADR-0025` excludes hooking the *game* and injecting into the *game's* process.
+Observing the user's own input inside the agent's own process is neither.
+
+A box is accepted when the click point lies inside a box from one source and a second source agrees with it at an intersection over union of 0.5 or better.
+Sources are the accessibility tree where the game exposes one, classical proposals, and the changed region after the click.
+Everything else goes on a **rejected pile that is counted and reported**, because its size is itself a finding about how complete perception is.
+
+Each accepted label also records **`proposed_by`**: which perception sources put forward this element in the run that produced the frame.
+It is written from a real perception pass and reviewed by hand, which makes it an observation rather than an assumption — and it is what answers open question 4 with data instead of a definition.
+
+**The description comes from anywhere except the model under test.**
+In order of preference: derived from text, where the element carries readable text and the description is that text plus a generic noun; typed by a person, for targets in the world with no text, which is 50 to 80 descriptions and ten minutes of scrubbing a recording; or drafted by a different model family and accepted by a person.
+
+### What these numbers deserve to be used for
+
+Stated here rather than left for a reader to assume, because the wrong use of them is one sentence away.
+
+- **The relative comparison of Path A, Path B and refinement is sound in aggregate.** All three are measured against the same ground truth, so its bias applies to all three equally. This is the number `ADR-0014` actually needs.
+- **The absolute hit rate is not sound**, and must never be compared with published figures from other benchmarks. Those have different labels, different tasks and different definitions of a hit.
+- **The benchmark over-represents easy targets.** Two-source agreement accepts what is easy to detect, so the measured rate is an **upper bound rather than an estimate**. The rejected pile quantifies the bias: if two clicks in five land on something no source boxed, the benchmark covers three fifths of the real problem, and that fraction goes in the report.
 
 ### Privacy
 
@@ -142,12 +183,11 @@ A system whose text recognition misreads a counter presents as a system whose mo
 
 ## Open questions
 
-1. **Blocking.** How large the grounding set needs to be for the confidence interval to be useful. A few hundred frames is a guess; the interval itself will say.
-2. **Blocking.** Whether the corpus can be published. It is images of real games, which raises questions this project has not answered.
-3. **Blocking.** Whether replay should tolerate small divergence or require exact equality. Exact is a clear signal and will make every model-host update look like a regression.
-4. **Blocking.** How to label "reachable by Path A but not Path B" without assuming which elements perception ought to have found.
-5. **Limitation.** Whether the latency suite can run anywhere but the reference machine. Almost certainly not, which makes it a nightly job on a self-hosted runner.
-6. **Non-blocking.** What baseline the grounding suite compares against before there is a baseline.
+1. **Blocking.** Whether the corpus can be published. It is images of real games, which raises questions this project has not answered.
+2. **Blocking.** Whether replay should tolerate small divergence or require exact equality. Exact is a clear signal and will make every model-host update look like a regression.
+3. **Non-blocking.** Whether `in_mark_list` and `visually_distinct` are the right two replacements for the per-path reachability flag. The flag as written was not well defined — Path A may emit any coordinate, so every element is nominally reachable by it and the flag is always empty — and it conflated two different facts. It is replaced by `in_mark_list`, which is **computed and reported** rather than labelled, and a separate human label `visually_distinct` on the perception set. Whether that pair is sufficient is what remains open.
+4. **Limitation.** Whether the latency suite can run anywhere but the reference machine. Almost certainly not, which makes it a nightly job on a self-hosted runner.
+5. **Non-blocking.** What baseline the grounding suite compares against before there is a baseline.
 
 ## Related decisions
 
