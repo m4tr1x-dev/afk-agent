@@ -164,6 +164,7 @@ nav:
   - Reference:
       - reference/index.md
       - reference/sensor-expressions.md
+      - reference/traceability.md
       - reference/api/index.md
   - Contributing:
       - contributing/index.md

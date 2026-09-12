@@ -55,3 +55,22 @@ jobs:
       # already worked around.
       - name: Input synthesis occurs in exactly one component
         run: python tools/check_call_sites.py
+
+  traceability:
+    name: Requirement traceability
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # Unfiltered. The point of this check is that a change touching only code
+      # cannot skip it, which is the case where a requirement quietly loses its
+      # covering test.
+      - name: Identifiers, implementation sites and covering tests
+        run: python tools/lint_requirements.py docs --source crates src tests tools
+
+      - name: The generated traceability page is current
+        run: python tools/check_generated.py

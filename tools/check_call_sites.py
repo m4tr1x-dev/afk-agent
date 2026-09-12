@@ -43,6 +43,7 @@ import sys
 from pathlib import Path
 
 # Where input may be synthesised. Nowhere else, in any language.
+# COVERS: FR-ACT-008 - this check is the requirement's Lint verification.
 INPUT_CRATES = ("crates/afk-input/", "crates/afk-guardian/")
 
 # Crates permitted to contain `unsafe`. Each one binds to a platform interface

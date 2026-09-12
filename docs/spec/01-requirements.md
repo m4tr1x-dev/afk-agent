@@ -35,6 +35,13 @@ Constraints are defined in [scope and goals](00-scope-and-goals.md) as `CON-001`
 | Integration | An automated test that exercises several components together |
 | Manual | A scripted manual procedure, because no automated form exists |
 | Bench | A timed measurement against a stated budget |
+| Lint | A check in continuous integration that makes the violation impossible to merge |
+
+**`Lint` is not a weaker `Unit`.** A unit test shows that the code behaved
+correctly once. A lint shows that the incorrect form cannot be merged at all,
+which is the stronger claim and the right one for a requirement whose failure
+mode is "somebody added a second one of these". It is used only where the
+violation is structurally detectable rather than behavioural.
 
 ## Perception
 
@@ -82,7 +89,7 @@ Constraints are defined in [scope and goals](00-scope-and-goals.md) as `CON-001`
 | `FR-ACT-005` | The system MUST synthesise mouse motion along a path with a non-uniform velocity profile, and MUST vary key hold durations and inter-event gaps. | Functional, not cosmetic: interfaces that activate on hover drop an instantaneous click, and input code that debounces discards a zero-duration press. | Manual |
 | `FR-ACT-006` | Every action MUST be validated against the current observation and the safety rules before any input is synthesised, and a rejected action MUST be logged and reported back to the model. | A rejected action is information the model needs; silently dropping it produces a loop. | Unit |
 | `FR-ACT-007` | The system MUST maintain an authoritative record of which keys and buttons are held, by which subgoal, and since when. | Every release guarantee in the project reads from it. | Unit |
-| `FR-ACT-008` | Input synthesis MUST occur in exactly one component, with no other call site anywhere in the system. | A second call site is a second place the release guarantees can be violated, and it is found by a user rather than by a test. | Manual, review |
+| `FR-ACT-008` | Input synthesis MUST occur in exactly one component, with no other call site anywhere in the system. | A second call site is a second place the release guarantees can be violated, and it is found by a user rather than by a test. | Lint, Manual |
 | `NFR-ACT-001` | The executor MUST step held input at a rate no lower than the reflex cadence. | Below it, held keys visibly stutter in-game. | Bench |
 | `INV-ACT-001` | No input event is delivered while the target window is not the foreground window. | The primary blast-radius control: it is what stops the agent typing into another application. | Unit, Integration |
 | `INV-ACT-002` | The set of held inputs recorded by the executor matches the set actually held by the operating system. | If they diverge, the release path releases the wrong things. | Integration |
@@ -101,7 +108,7 @@ Constraints are defined in [scope and goals](00-scope-and-goals.md) as `CON-001`
 | `FR-GND-007` | On a refuted grounding, the system MUST suppress that target for a bounded number of ticks and increment the no-progress counters. | Without suppression the agent retries the same wrong target indefinitely. | Unit |
 | `FR-GND-008` | The system MUST record, for every failure, an attributed cause among grounding, action choice, perception, plan, execution, and the game itself. | This histogram is the project's primary diagnostic instrument, and without it optimisation proceeds on intuition. | Replay |
 | `INV-GND-001` | A verification outcome is exactly one of confirmed, refuted or inconclusive; an outcome that cannot be determined is never recorded as either of the other two. | Collapsing inconclusive into confirmed makes the agent credulous; collapsing it into refuted makes it thrash. | Unit |
-| `INV-GND-002` | Every coordinate that reaches input synthesis has passed through the single defined transform chain. | Coordinate arithmetic performed anywhere else is how mixed-scaling bugs enter, and they are invisible until a user has two monitors. | Unit, review |
+| `INV-GND-002` | Every coordinate that reaches input synthesis has passed through the single defined transform chain. | Coordinate arithmetic performed anywhere else is how mixed-scaling bugs enter, and they are invisible until a user has two monitors. | Unit, Lint |
 
 ## Skills
 
