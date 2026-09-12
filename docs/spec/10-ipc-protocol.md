@@ -160,7 +160,6 @@ Hand-written types on both sides of a boundary drift, and the drift is discovere
 2. **Blocking.** What the control channel does when the shell is slow enough to hit the buffer bound repeatedly. Dropping with a counter is specified; whether the shell should be disconnected instead is not.
 3. **Non-blocking.** Whether the frame channel should publish when no live view is attached. Publishing unconditionally is simpler; it also costs graphics time for nothing.
 4. **Blocking.** Whether the overlay's heartbeat interval and the dead-man timeout are correct at their current values. Too short and a momentary stall stops a session; too long and the user is without a stop control for that period.
-5. **Blocking.** Whether the guardian should also watch the overlay. It would close the gap where the overlay dies and the core has not yet noticed.
 
 ## Related decisions
 
