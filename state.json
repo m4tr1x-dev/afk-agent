@@ -1,51 +1,37 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T13:02:25Z",
-  "milestone": "M0.5",
+  "updated": "2026-09-12T13:07:27Z",
+  "milestone": "M1",
   "exit_criteria": [
     {
-      "id": "M0.5.1",
-      "text": "Rust toolchain installed and pinned",
-      "state": "done"
+      "id": "M1.1",
+      "text": "reachability probe works against five games across engines",
+      "state": "in_progress",
+      "detail": "detection method built and tested; capture and input synthesis pending"
     },
     {
-      "id": "M0.5.2",
-      "text": "toolchain pinning files land: rust-toolchain.toml, global.json, Directory.Build.props, Directory.Packages.props, clippy.toml, deny.toml",
-      "state": "partial",
-      "detail": "Rust and .NET pins landed; Directory.Build.props and Directory.Packages.props wait for the first C# project"
+      "id": "M1.2",
+      "text": "camera calibration derives a usable ratio without a model",
+      "state": "blocked",
+      "on": "M1.1"
     },
     {
-      "id": "M0.5.3",
-      "text": "check_call_sites.py lands BEFORE afk-input exists",
-      "state": "done"
-    },
-    {
-      "id": "M0.5.4",
-      "text": "lint_requirements.py scans source trees; traceability page generated",
-      "state": "done"
-    },
-    {
-      "id": "M0.5.5",
-      "text": "code-quality workflow",
+      "id": "M1.3",
+      "text": "model loads on Vulkan with its vision encoder; latency measured with a game running",
       "state": "todo"
     },
     {
-      "id": "M0.5.6",
-      "text": "spikes: .slnx in VS 2026, MSIX packaging shape, contract codegen",
-      "state": "todo"
-    },
-    {
-      "id": "M0.5.7",
-      "text": "ADR-0039..0042 written from the spikes",
+      "id": "M1.4",
+      "text": "grounding benchmark run against a labelled corpus",
       "state": "todo"
     }
   ],
   "task": {
     "id": "T-0011",
-    "title": "E1 reachability probe: the question that gates everything",
+    "title": "E1: minimal afk-input, then wire capture and synthesis into the probe",
     "branch": "feat/reachability-probe",
-    "pr": null,
-    "started": "2026-09-12T13:02:25Z"
+    "pr": 13,
+    "started": "2026-09-12T13:07:27Z"
   },
   "gates": {
     "G0": "pass",
@@ -75,6 +61,11 @@
       "id": "ADR-0042",
       "title": "enforcing the single input call site",
       "blocked_on": "M0.5"
+    },
+    {
+      "id": "ADR-0039..0042",
+      "title": "contract format, task runner, CI topology, call-site enforcement",
+      "blocked_on": "M0.5 spikes"
     }
   ],
   "blockers": [],
@@ -88,8 +79,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0012 acquire the game roster",
-    "T-0013 E9 toolchain spikes",
-    "T-0014 ADR-0039..0042"
+    "T-0012 minimal crates/afk-input so the probe measures what ships",
+    "T-0013 window capture for the probe",
+    "T-0014 run E1 against Breathedge and Xonotic"
   ]
 }
