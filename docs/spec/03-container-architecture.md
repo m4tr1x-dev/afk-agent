@@ -90,6 +90,25 @@ A mechanism for handling the core's death cannot live inside the core.
 It holds a handle to the core process and a read-only view of the shared memory the executor publishes held input into.
 When the core exits without having cleared that set, the guardian releases it.
 
+**It watches three processes, not one.**
+
+| Watched | What the guardian does when it dies |
+| --- | --- |
+| Core | Releases every held input, then stands down |
+| Overlay | Releases every held input and stops the session |
+| Model host | Terminates it if the core is already gone |
+
+The overlay is on the list because of a gap that closes only here.
+`INV-GUI-001` makes the overlay's death end the session, and the core is what enforces that — so an overlay that dies *while the core is wedged* leaves a running agent with no panic key, no visible indicator, and nothing watching for either.
+That is the precise state this project must never produce, and a guardian watching only the core cannot detect it.
+
+The model host is on the list for a different reason.
+If it is supervised independently — which is the arrangement open question 4 below weighs, and the one that keeps weights resident across a core restart — then a core crash leaves it alive holding several gigabytes of graphics memory that nothing will reclaim.
+The guardian releases input; without this rule, nothing releases the graphics device, and the user's game has lost that memory until they find the process themselves.
+
+Terminating a process is an operating-system call, not a graphics one.
+The guardian gains no dependency from this, which matters: its dependency set is a requirement in its own right.
+
 It contains no model, no capture, no configuration, and as little code as the job permits, because the one failure it must not share is whatever killed the core.
 
 ### The core is not a Windows service
@@ -149,9 +168,9 @@ It is separate from everything else because it must work when the pipe is dead, 
 | What fails | Effect | Recovery |
 | --- | --- | --- |
 | Shell | Session continues; live view lost | Restart the shell, reattach to the running core |
-| Overlay | **Session stops.** The dead-man switch requires it. | Restart the overlay, then the session |
-| Core | Guardian releases all input; session ends | Restart; session state is not resumed |
-| Model host | Core pauses the session, reports, and offers a retry | Restart the host, or point at another endpoint |
+| Overlay | **Session stops.** The dead-man switch requires it, and the guardian enforces it when the core cannot. | Restart the overlay, then the session |
+| Core | Guardian releases all input, terminates an orphaned model host, then stands down | Restart; session state is not resumed |
+| Model host | Core pauses the session, reports, and offers a retry. If the core is already gone, the guardian terminates it so its graphics memory returns to the game | Restart the host, or point at another endpoint |
 | Guardian | Logged as degraded; session continues without the crash-safety net | Restart the core to restart the guardian |
 | Game | Detected as target-window loss; session stops | User's problem |
 
@@ -236,7 +255,7 @@ Uninstalling removes the executables; recordings and configuration live under th
 1. **Non-blocking.** Whether the research skills should run in a sixth, lower-privilege process, so hostile page content is parsed somewhere with no access to the input path. It strengthens the boundary materially; the cost is a process and a serialisation hop.
 2. **Non-blocking.** Whether the shell should be able to attach to a core it did not start — a user closing and reopening the control window mid-session. Desirable, and it means the pipe needs a discovery and reattach protocol.
 3. **Blocking.** Whether the guardian should enforce the session wall-clock budget as well, so that a core which hangs while holding input stops on its own rather than waiting for a human.
-4. **Blocking.** Whether the model host should be started by the core or supervised independently. Independent supervision survives a core restart and keeps the model resident, which matters because loading weights is slow.
+4. **Non-blocking.** Whether the model host should be started by the core or supervised independently. Independent supervision survives a core restart and keeps the model resident, which matters because loading weights is slow. The interaction that made this blocking is handled: either way, the guardian terminates a model host whose core is gone, so the arrangement no longer decides whether graphics memory is reclaimed.
 5. **Blocking.** What happens to a session when the machine sleeps. Currently undefined, and a session that resumes after an hour into a changed game state is a hazard.
 
 ## Related decisions
