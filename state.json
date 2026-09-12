@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T14:10:18Z",
+  "updated": "2026-09-12T14:35:43Z",
   "milestone": "M1",
   "exit_criteria": [
     {
@@ -27,19 +27,19 @@
     }
   ],
   "task": {
-    "id": "T-0019",
-    "title": "M0.5 spikes and ADR-0039..0042, then the remaining M1 questions",
+    "id": "T-0021",
+    "title": "E2: does the vision encoder load on the Vulkan backend, and is the visual budget a per-request knob",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T14:10:18Z"
+    "started": "2026-09-12T14:35:43Z"
   },
   "gates": {
     "G0": "pass",
     "G1": "pass",
-    "G2": "n/a",
+    "G2": "pass",
     "G3": "n/a",
     "G4": "n/a",
-    "G7": "n/a"
+    "G7": "pass"
   },
   "open_decisions": [
     {
@@ -54,9 +54,16 @@
       "blocked_on": "E1"
     },
     {
-      "id": "ADR-0039..0042",
-      "title": "contract format, task runner, CI topology, call-site enforcement",
-      "blocked_on": "M0.5 spikes"
+      "id": "ADR-0006",
+      "title": "model runtime",
+      "blocked_on": "E2 must establish whether the visual token budget is a per-request knob or a projector setting",
+      "evidence": null
+    },
+    {
+      "id": "ADR-0007",
+      "title": "model variant and quantisation",
+      "blocked_on": "E3/E4: all six variants in one table, grounding as the quality axis rather than MMMU",
+      "evidence": null
     }
   ],
   "blockers": [],
@@ -70,8 +77,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0019 M0.5 spikes: .slnx in VS 2026, MSIX packaging shape, contract codegen",
-    "T-0020 ADR-0039..0042 from those spikes",
-    "T-0021 E2: does the vision encoder load on the Vulkan backend"
+    "T-0021 E2: vision encoder on Vulkan, eight synthetic images, 7/8 exact on all three fields",
+    "T-0022 E-CAP: three capture backends, then the overlay's zero-magenta-pixel assertion",
+    "T-0023 E3/E5/E6: one harness, three questions, with a game running"
   ]
 }
