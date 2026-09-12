@@ -1,20 +1,20 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T13:49:35Z",
+  "updated": "2026-09-12T14:01:05Z",
   "milestone": "M1",
   "exit_criteria": [
     {
       "id": "M1.1",
       "text": "reachability probe works against five games across engines",
       "state": "in_progress",
-      "detail": "2 of 5. Breathedge (Unreal Engine 4) reached; Xonotic (DarkPlaces) reached and linear, 0.892 columns per mouse unit at R2 0.957. Installing Luanti (Irrlicht), AssaultCube (Cube) and Sauerbraten (Cube 2) for the remaining three engines."
+      "detail": "3 of 5. Breathedge (Unreal Engine 4), Xonotic (DarkPlaces, 0.892 col/unit R2 0.957), AssaultCube (Cube, 1.072 col/unit R2 1.000). Installing OpenArena (id Tech 3) for a fourth."
     },
     {
       "id": "M1.2",
       "text": "camera calibration derives a usable ratio without a model",
       "state": "in_progress",
       "on": "M1.1",
-      "detail": "A ratio exists for Xonotic in columns per unit. Degrees needs the field of view or the wrap test, neither run."
+      "detail": "Ratios exist in columns per unit for two engines. Degrees needs the field of view or the wrap test, neither run."
     },
     {
       "id": "M1.3",
@@ -28,11 +28,11 @@
     }
   ],
   "task": {
-    "id": "T-0017",
-    "title": "E1 on three more engines: Luanti, AssaultCube, Sauerbraten",
+    "id": "T-0018",
+    "title": "E1 on a fourth engine: OpenArena (id Tech 3)",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T13:49:35Z"
+    "started": "2026-09-12T14:01:05Z"
   },
   "gates": {
     "G0": "pass",
@@ -71,8 +71,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0017 E1 on Xonotic (needs a Join click; it is not reachable by computer use), 0 A.D., Wesnoth, SuperTuxKart",
-    "T-0018 a sweep the correlation can still match, to get degrees_per_unit",
-    "T-0019 M0.5 spikes and ADR-0039..0042"
+    "T-0018 OpenArena, for a fourth engine",
+    "T-0019 the wrap test, to turn columns per unit into degrees per unit",
+    "T-0020 M0.5 spikes and ADR-0039..0042"
   ]
 }
