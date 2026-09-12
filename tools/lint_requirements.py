@@ -38,6 +38,14 @@ Hard errors:
 
 Not an error: an identifier defined with no implementation site. That is the
 backlog, and making it visible for free is one of the reasons the scheme exists.
+
+`experiments/` is deliberately **not** scanned by the checks that run in
+continuous integration. Probes are timeboxed and deleted when their question is
+resolved, and a requirement whose only covering test lives in one would lose
+its coverage the day the probe is archived — silently, because deleting a
+directory does not look like removing a test. Markers inside a probe are
+welcome as a record of intent for whoever ports the code into a real crate;
+they simply do not discharge the obligation.
 """
 
 from __future__ import annotations
