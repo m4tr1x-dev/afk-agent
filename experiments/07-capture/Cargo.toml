@@ -13,6 +13,11 @@ description = "Known-good-matrix question 7 and the evidence ADR-0008 needs: whi
 workspace = true
 
 [dependencies]
+# Saved frames feed the model-latency experiment and, later, the corpus. A
+# measurement of what the model costs on a real game frame is a different
+# number from one taken on a synthetic image.
+png = "0.18"
+
 # The platform bindings, for the two routes that cannot be reached through a
 # hand-written extern block without writing a COM and WinRT activation layer
 # first. `deny.toml` permits this crate here for the life of the experiment and

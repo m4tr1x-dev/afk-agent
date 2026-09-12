@@ -27,7 +27,7 @@ It sits between [perception](04-perception.md), which produces observations, and
 | Cadence | Rate | Model | Question it answers |
 | --- | --- | --- | --- |
 | **Reflex** | 20–30 Hz | None | What input should be delivered this instant? |
-| **Tactical** | 1–4 Hz | Small visual budget, no extended reasoning | Given this subgoal and this screen, what next? |
+| **Tactical** | 1–2 Hz | Small visual budget, no extended reasoning | Given this subgoal and this screen, what next? |
 | **Deliberative** | Every 10–60 s, or on trigger | Large visual budget, extended reasoning | Is the plan still right? |
 
 ```mermaid
@@ -35,7 +35,7 @@ flowchart LR
     subgraph fast["Reflex — 20–30 Hz"]
         s["Sensors"] --> i["Interlocks"] --> e["Step sustained actions"]
     end
-    subgraph mid["Tactical — 1–4 Hz"]
+    subgraph mid["Tactical — 1–2 Hz"]
         o["Observation"] --> m1["Model call"] --> a["Action"]
     end
     subgraph slow["Deliberative — every 10–60 s"]

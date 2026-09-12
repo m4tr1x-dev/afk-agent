@@ -75,6 +75,8 @@ fn main() -> ExitCode {
     let mut front = false;
     let mut own = false;
     let mut overlay_only = false;
+    let mut save: Option<String> = None;
+    let mut frames = 1_usize;
 
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -92,6 +94,8 @@ fn main() -> ExitCode {
             "--front" => front = true,
             "--own-target" => own = true,
             "--overlay" => overlay_only = true,
+            "--save" => save = args.next(),
+            "--frames" => frames = args.next().and_then(|v| v.parse().ok()).unwrap_or(1),
             "--list" => {
                 for title in visible_windows() {
                     println!("{title}");
@@ -109,41 +113,18 @@ fn main() -> ExitCode {
         }
     }
 
+    if let Some(directory) = save {
+        return report(capture_to_disk(&needle, &directory, frames));
+    }
+
     if overlay_only {
-        return match overlay::check() {
-            Ok(report) => {
-                print!("{report}");
-                ExitCode::SUCCESS
-            }
-            Err(error) => {
-                eprintln!("capture-probe: {error}");
-                ExitCode::from(1)
-            }
-        };
+        return report(overlay::check());
     }
 
     // The border comparison can supply its own target, which is the only way
     // to get a window that is visible, still and not somebody's browser.
     if own {
-        let target = match target::Target::open() {
-            Ok(target) => target,
-            Err(error) => {
-                eprintln!("capture-probe: {error}");
-                return ExitCode::from(1);
-            }
-        };
-        let outcome = border::compare(target.handle());
-        drop(target);
-        return match outcome {
-            Ok(report) => {
-                print!("{report}");
-                ExitCode::SUCCESS
-            }
-            Err(error) => {
-                eprintln!("capture-probe: {error}");
-                ExitCode::from(1)
-            }
-        };
+        return report(own_target_border());
     }
 
     if needle.is_empty() {
@@ -156,9 +137,14 @@ fn main() -> ExitCode {
         sleep(Duration::from_secs(arm));
     }
 
-    match run(&needle, seconds, only.as_deref(), border_only, front) {
-        Ok(report) => {
-            print!("{report}");
+    report(run(&needle, seconds, only.as_deref(), border_only, front))
+}
+
+/// Print an outcome and turn it into an exit code.
+fn report(outcome: Result<String, String>) -> ExitCode {
+    match outcome {
+        Ok(text) => {
+            print!("{text}");
             ExitCode::SUCCESS
         }
         Err(error) => {
@@ -166,6 +152,14 @@ fn main() -> ExitCode {
             ExitCode::from(1)
         }
     }
+}
+
+/// The border comparison against a window the probe creates for the purpose.
+fn own_target_border() -> Result<String, String> {
+    let target = target::Target::open()?;
+    let outcome = border::compare(target.handle());
+    drop(target);
+    outcome
 }
 
 const USAGE: &str = "\
@@ -185,6 +179,10 @@ capture-probe --window <title substring> [--seconds N] [--route NAME] [--arm N]
              Answer question 7 against a window the probe creates itself: flat
              grey, topmost, still. The only way to get a target that is
              visible, unchanging and not somebody else's browser.
+  --save DIR Write captured frames to DIR as PNG, through the compositor
+             route. A model measured on a real game frame is a different
+             number from one measured on a synthetic image.
+  --frames N How many to save. Default 1.
   --overlay  Answer the other half of the overlay question: does an overlay
              marked EXCLUDEFROMCAPTURE appear in captured frames? Runs a
              positive control first, because an absolute assertion of absence
@@ -401,6 +399,59 @@ fn find_window(needle: &str) -> Option<HWND> {
         .ok()
         .and_then(|found| *found)
         .map(|raw| HWND(raw as *mut core::ffi::c_void))
+}
+
+/// Capture frames from a window and write them to disk as PNG.
+///
+/// The compositor route only: it is the one the product will ship, and a frame
+/// saved through a route the product does not use would be measuring the wrong
+/// pipeline.
+fn capture_to_disk(needle: &str, directory: &str, wanted: usize) -> Result<String, String> {
+    let window = find_window(needle)
+        .ok_or_else(|| format!("no visible window with a title containing {needle:?}"))?;
+    std::fs::create_dir_all(directory).map_err(|error| format!("{directory}: {error}"))?;
+
+    let (mut session, _) = wgc::Wgc::start(window)?;
+    let mut written = 0;
+    let deadline = Instant::now() + Duration::from_secs(60);
+
+    while written < wanted && Instant::now() < deadline {
+        match session.next() {
+            Ok(Some(frame)) => {
+                let path = format!("{directory}/frame-{written:04}.png");
+                write_png(&path, &frame)?;
+                written += 1;
+            }
+            Ok(None) => sleep(Duration::from_millis(4)),
+            Err(error) => return Err(error),
+        }
+    }
+
+    if written == 0 {
+        return Err("no frames arrived within a minute".to_owned());
+    }
+    Ok(format!(
+        "wrote {written} frame(s) to {directory}
+"
+    ))
+}
+
+/// Write one frame as a PNG.
+fn write_png(path: &str, frame: &measure::Frame) -> Result<(), String> {
+    let file = std::fs::File::create(path).map_err(|error| format!("{path}: {error}"))?;
+    let mut encoder = png::Encoder::new(
+        std::io::BufWriter::new(file),
+        u32::try_from(frame.width).map_err(|_| "width does not fit".to_owned())?,
+        u32::try_from(frame.height).map_err(|_| "height does not fit".to_owned())?,
+    );
+    encoder.set_color(png::ColorType::Rgb);
+    encoder.set_depth(png::BitDepth::Eight);
+    let mut writer = encoder
+        .write_header()
+        .map_err(|error| format!("{path}: {error}"))?;
+    writer
+        .write_image_data(&frame.pixels)
+        .map_err(|error| format!("{path}: {error}"))
 }
 
 /// Every visible window that has a title.

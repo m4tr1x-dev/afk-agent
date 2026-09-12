@@ -10,6 +10,7 @@ members = [
   "crates/*",
   "experiments/01-reachability",
   "experiments/02-vision-encoder",
+  "experiments/03-model-latency",
   "experiments/07-capture",
 ]
 

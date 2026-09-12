@@ -73,9 +73,19 @@ load, and compared the difference against the weights on disk.
 
 **It reported a fallback that had not happened.**
 
-This runtime's device enumeration returns a static figure — 23749 MiB free on
-this card, before the load, during it, and after the server stopped. The reading
-never moves, so the control could only ever say "it fell back".
+This runtime's device enumeration does not report what is resident. The reading
+was 23749 MiB free before the load and 23749 MiB after it, so the control could
+only ever say "it fell back".
+
+**Corrected on the same day, by a later experiment.** An earlier version of this
+page called the figure static, which was too strong: `experiments/03-model-latency/`
+found that it reads 22550 MiB with a 16 GiB model resident, and 23749 MiB with a
+game holding 2.3 GiB. So it moves — by a thirteenth of what the agent allocates,
+and not at all for another process.
+
+It is not static; it is unrelated to what is actually resident, which is worse
+for a control and worth stating precisely. It also means `FR-MODEL-004` cannot
+be implemented against this report, and that requirement now says so.
 
 That is the project's own recorded lesson arriving from the other direction.
 `experiments/01-reachability` learned that a control which catches a false
