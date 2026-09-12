@@ -40,10 +40,17 @@
 #![cfg_attr(test, allow(clippy::expect_used))]
 
 mod client;
+mod slots;
 
 use std::fmt::Write as _;
 use std::process::ExitCode;
 use std::time::Instant;
+
+/// How long an answer a tactical tick produces.
+///
+/// One tool call. A deliberative call produces a plan and is measured with
+/// `--max-tokens` raised, which is question 6 rather than question 3.
+const TACTICAL_TOKENS: usize = 24;
 
 /// How many requests per condition.
 ///
@@ -64,6 +71,10 @@ fn main() -> ExitCode {
     let mut label = "unlabelled".to_owned();
     let mut requests = REQUESTS;
     let mut prefix = 0_usize;
+    let mut max_tokens = TACTICAL_TOKENS;
+    let mut only_width: Option<usize> = None;
+    let mut free = false;
+    let mut slots_only = false;
 
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -73,6 +84,15 @@ fn main() -> ExitCode {
             "--label" => label = args.next().unwrap_or(label),
             "--requests" => requests = args.next().and_then(|v| v.parse().ok()).unwrap_or(REQUESTS),
             "--prefix" => prefix = args.next().and_then(|v| v.parse().ok()).unwrap_or(0),
+            "--max-tokens" => {
+                max_tokens = args
+                    .next()
+                    .and_then(|v| v.parse().ok())
+                    .unwrap_or(TACTICAL_TOKENS);
+            }
+            "--width" => only_width = args.next().and_then(|v| v.parse().ok()),
+            "--free" => free = true,
+            "--slots" => slots_only = true,
             "--help" | "-h" => {
                 println!("{USAGE}");
                 return ExitCode::SUCCESS;
@@ -89,7 +109,31 @@ fn main() -> ExitCode {
         return ExitCode::from(2);
     }
 
-    match run(&host, &frame, &label, requests, prefix) {
+    if slots_only {
+        return match run_slots(&host, &frame) {
+            Ok(text) => {
+                print!("{text}");
+                ExitCode::SUCCESS
+            }
+            Err(error) => {
+                eprintln!("model-latency-probe: {error}");
+                ExitCode::from(1)
+            }
+        };
+    }
+
+    let settings = Settings {
+        host,
+        frame,
+        label,
+        requests,
+        prefix,
+        max_tokens,
+        only_width,
+        free,
+    };
+
+    match run(&settings) {
         Ok(report) => {
             print!("{report}");
             ExitCode::SUCCESS
@@ -110,19 +154,55 @@ model-latency-probe --frame PATH [--host HOST:PORT] [--label TEXT] [--requests N
               or 'no game'. The difference between the two is the finding.
   --requests  Requests per visual budget. Default 50, because a 95th
               percentile from ten samples is the largest of ten.
+  --max-tokens N
+              How long an answer to ask for. Default 24, one tool call. Raise
+              it for a deliberative-shaped call, which is question 6.
+  --slots     Answer question 5 instead: alternate two contexts at different
+              visual budgets and report whether each keeps its cache, with a
+              one-byte negative control. A runtime can report a cache hit and
+              prefill anyway, so time is recorded beside the counter.
+  --free      Drop the grammar, so the answer runs to --max-tokens instead of
+              stopping at one tool call. A deliberative call produces a plan;
+              measuring it under a grammar that admits two short calls measures
+              a tactical tick with a larger limit.
+  --width N   Measure only this image width, for a long run where the sweep
+              would cost hours.
   --prefix N  Pad the prompt with N stable sentences before the question, to
               the size the product's context actually is. Without it the
               prompt is forty tokens and the prefix cache appears to buy
               nothing, which says more about the probe than about the cache.
 ";
 
-fn run(
-    host: &str,
-    frame: &str,
-    label: &str,
+/// Run the two-slot experiment against one frame at two budgets.
+fn run_slots(host: &str, frame: &str) -> Result<String, String> {
+    let image = load(frame)?;
+    let small = image.resample(256).to_png()?;
+    let large = image.resample(1024.min(image.width)).to_png()?;
+    slots::check(host, &small, &large)
+}
+
+/// Everything one run is configured by.
+struct Settings {
+    host: String,
+    frame: String,
+    label: String,
     requests: usize,
+    /// Sentences of stable preamble before the question.
     prefix: usize,
-) -> Result<String, String> {
+    max_tokens: usize,
+    /// Measure only this image width, for a run where the sweep would cost
+    /// hours.
+    only_width: Option<usize>,
+    /// Drop the grammar, so the answer runs to `max_tokens`.
+    free: bool,
+}
+
+fn run(settings: &Settings) -> Result<String, String> {
+    let frame = settings.frame.as_str();
+    let label = settings.label.as_str();
+    let requests = settings.requests;
+    let prefix = settings.prefix;
+    let max_tokens = settings.max_tokens;
     // A stable preamble of the size the product's prompt actually is.
     //
     // Without this the measurement is misleading in a way that matters: the
@@ -150,6 +230,15 @@ fn run(
         image.width, image.height
     );
     let _ = writeln!(out, "requests    {requests} per budget");
+    let _ = writeln!(
+        out,
+        "answer      up to {max_tokens} tokens, {}",
+        if settings.free {
+            "no grammar"
+        } else {
+            "under the tactical grammar"
+        }
+    );
     let _ = writeln!(
         out,
         "preamble    {} characters of stable prefix",
@@ -185,73 +274,91 @@ fn run(
         ),
     ] {
         let _ = writeln!(out, "  prefix cache {label}");
-
-        // The floor: the same request with no image at all. Without it there is
-        // no way to tell what the image costs from what the round trip costs,
-        // and a conclusion about the vision tower would rest on both.
-        ask_text(host, cached, &preamble)?;
-        let mut floor = Vec::with_capacity(requests);
-        for _ in 0..requests {
-            let started = Instant::now();
-            ask_text(host, cached, &preamble)?;
-            floor.push(started.elapsed().as_secs_f64() * 1000.0);
-        }
-        floor.sort_by(f64::total_cmp);
-        let _ = writeln!(
-            out,
-            "{:>7}  {:>8.1}  {:>8.1}  {:>8.1}  {:>8.1}  {:>7}",
-            "none",
-            percentile(&floor, 50.0),
-            percentile(&floor, 95.0),
-            floor.first().copied().unwrap_or(0.0),
-            floor.last().copied().unwrap_or(0.0),
-            "-"
-        );
-
-        for width in WIDTHS {
-            if width > image.width {
-                continue;
-            }
-            let scaled = image.resample(width);
-            let png = scaled.to_png()?;
-
-            // One request outside the measurement, to load whatever the first
-            // one loads and to warm the cache when it is on. Including it makes
-            // the first sample an outlier that says nothing about a steady tick.
-            let _ = ask(host, &png, cached, &preamble)?;
-
-            let mut samples = Vec::with_capacity(requests);
-            let mut tokens = 0;
-            for index in 0..requests {
-                // A fresh image per request, which is what a real tick sends:
-                // the scene moved. Perturbing a handful of pixels is enough to
-                // make the encoded image differ, which is all the cache cares
-                // about.
-                let bytes = if fresh {
-                    scaled.perturbed(index).to_png()?
-                } else {
-                    png.clone()
-                };
-                let started = Instant::now();
-                let answer = ask(host, &bytes, cached, &preamble)?;
-                samples.push(started.elapsed().as_secs_f64() * 1000.0);
-                tokens = answer;
-            }
-            samples.sort_by(f64::total_cmp);
-
-            let _ = writeln!(
-                out,
-                "{width:>7}  {:>8.1}  {:>8.1}  {:>8.1}  {:>8.1}  {tokens:>7}",
-                percentile(&samples, 50.0),
-                percentile(&samples, 95.0),
-                samples.first().copied().unwrap_or(0.0),
-                samples.last().copied().unwrap_or(0.0),
-            );
-        }
+        condition(settings, &image, &preamble, cached, fresh, &mut out)?;
         let _ = writeln!(out);
     }
 
     Ok(out)
+}
+
+/// One cache condition: the text-only floor, then each image width.
+fn condition(
+    settings: &Settings,
+    image: &Image,
+    preamble: &str,
+    cached: bool,
+    fresh: bool,
+    out: &mut String,
+) -> Result<(), String> {
+    let host = settings.host.as_str();
+    let requests = settings.requests;
+    let max_tokens = settings.max_tokens;
+    let free = settings.free;
+    let only_width = settings.only_width;
+
+    // The floor: the same request with no image at all. Without it there is
+    // no way to tell what the image costs from what the round trip costs,
+    // and a conclusion about the vision tower would rest on both.
+    ask_text(host, cached, preamble, max_tokens, free)?;
+    let mut floor = Vec::with_capacity(requests);
+    for _ in 0..requests {
+        let started = Instant::now();
+        ask_text(host, cached, preamble, max_tokens, free)?;
+        floor.push(started.elapsed().as_secs_f64() * 1000.0);
+    }
+    floor.sort_by(f64::total_cmp);
+    let _ = writeln!(
+        out,
+        "{:>7}  {:>8.1}  {:>8.1}  {:>8.1}  {:>8.1}  {:>7}",
+        "none",
+        percentile(&floor, 50.0),
+        percentile(&floor, 95.0),
+        floor.first().copied().unwrap_or(0.0),
+        floor.last().copied().unwrap_or(0.0),
+        "-"
+    );
+
+    for width in WIDTHS {
+        if width > image.width || only_width.is_some_and(|only| only != width) {
+            continue;
+        }
+        let scaled = image.resample(width);
+        let png = scaled.to_png()?;
+
+        // One request outside the measurement, to load whatever the first
+        // one loads and to warm the cache when it is on. Including it makes
+        // the first sample an outlier that says nothing about a steady tick.
+        let _ = ask(host, &png, cached, preamble, max_tokens, free)?;
+
+        let mut samples = Vec::with_capacity(requests);
+        let mut tokens = 0;
+        for index in 0..requests {
+            // A fresh image per request, which is what a real tick sends:
+            // the scene moved. Perturbing a handful of pixels is enough to
+            // make the encoded image differ, which is all the cache cares
+            // about.
+            let bytes = if fresh {
+                scaled.perturbed(index).to_png()?
+            } else {
+                png.clone()
+            };
+            let started = Instant::now();
+            let answer = ask(host, &bytes, cached, preamble, max_tokens, free)?;
+            samples.push(started.elapsed().as_secs_f64() * 1000.0);
+            tokens = answer;
+        }
+        samples.sort_by(f64::total_cmp);
+
+        let _ = writeln!(
+            out,
+            "{width:>7}  {:>8.1}  {:>8.1}  {:>8.1}  {:>8.1}  {tokens:>7}",
+            percentile(&samples, 50.0),
+            percentile(&samples, 95.0),
+            samples.first().copied().unwrap_or(0.0),
+            samples.last().copied().unwrap_or(0.0),
+        );
+    }
+    Ok(())
 }
 
 /// Nearest-rank, because interpolating between fifty samples invents precision.
@@ -264,7 +371,14 @@ fn percentile(sorted: &[f64], percentile: f64) -> f64 {
 }
 
 /// One request shaped like a tactical tick, returning its prompt token count.
-fn ask(host: &str, png: &[u8], cached: bool, preamble: &str) -> Result<u64, String> {
+fn ask(
+    host: &str,
+    png: &[u8],
+    cached: bool,
+    preamble: &str,
+    max_tokens: usize,
+    free: bool,
+) -> Result<u64, String> {
     let data = client::base64(png);
     let request = serde_json::json!({
         "messages": [{
@@ -275,11 +389,11 @@ fn ask(host: &str, png: &[u8], cached: bool, preamble: &str) -> Result<u64, Stri
                  "image_url": {"url": format!("data:image/png;base64,{data}")}}
             ]
         }],
-        "grammar": GRAMMAR,
+        "grammar": if free { "" } else { GRAMMAR },
         "temperature": 0.0,
         // A tactical answer is one short tool call. Measuring a long generation
         // would measure decoding, and decoding is not what a tick spends.
-        "max_tokens": 24,
+        "max_tokens": max_tokens,
         // Measured both ways, because neither alone is the product's tick.
         // Off is the worst case and the honest floor. On is what the product
         // actually does: FR-CTX-002 makes blocks 1 and 2 byte-identical
@@ -297,12 +411,18 @@ fn ask(host: &str, png: &[u8], cached: bool, preamble: &str) -> Result<u64, Stri
 }
 
 /// The same request with no image, for the floor.
-fn ask_text(host: &str, cached: bool, preamble: &str) -> Result<(), String> {
+fn ask_text(
+    host: &str,
+    cached: bool,
+    preamble: &str,
+    max_tokens: usize,
+    free: bool,
+) -> Result<(), String> {
     let request = serde_json::json!({
         "messages": [{"role": "user", "content": format!("{preamble}{PROMPT}")}],
-        "grammar": GRAMMAR,
+        "grammar": if free { "" } else { GRAMMAR },
         "temperature": 0.0,
-        "max_tokens": 24,
+        "max_tokens": max_tokens,
         "cache_prompt": cached,
     });
     client::post_json(host, "/v1/chat/completions", &request.to_string()).map(|_| ())

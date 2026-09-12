@@ -1,0 +1,28 @@
+question 6 - the deliberative call on the processor alone, 2026-09-12
+llama.cpp b10930 commit 56381e407, --n-gpu-layers 0, i7-13700K, 16 threads
+26B A4B Q4_K_M, 1024 px frame, 4800-token prefix, answer free-running to 512 tokens
+
+The criterion was written into ADR-0006 before this ran: step 3 of the
+degradation ladder is a usable fallback if a full deliberative call finishes
+under 60 seconds. Above that it is a hang rather than a degradation, and both
+15-performance-budgets.md and 17-model-contract.md need rewriting.
+
+condition   26B A4B on the processor alone, deliberative shape, no grammar
+frame       E:/afk-agent/frames/frame-0000.png  (1282x752)
+requests    3 per budget
+answer      up to 512 tokens, no grammar
+preamble    17890 characters of stable prefix
+
+  width    p50 ms    p95 ms    min ms    max ms   tokens
+  prefix cache OFF                (nothing reused)
+   none   53506.2   54888.4   53257.1   54888.4        -
+   1024   57497.0   58295.7   56298.1   58295.7     5007
+
+  prefix cache ON, same image     (best case, not a real tick)
+   none   37592.4   38330.5   37422.2   38330.5        -
+   1024   31718.0   37690.1   31596.0   37690.1     5007
+
+  prefix cache ON, fresh image    (the tick: prefix hits, image does not)
+   none   37286.2   37300.6   37233.7   37300.6        -
+   1024   41508.5   41968.3   41333.3   41968.3     5007
+

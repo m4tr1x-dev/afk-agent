@@ -99,7 +99,9 @@ Available memory is polled once a second, and when the game's headroom shrinks:
 
 1. **Reduce context length.** Cheapest, and the attention cache is the largest variable cost.
 2. **Reduce tactical image cost.** Directly trades grounding accuracy for memory and latency.
-3. **Move the deliberative cadence to the processor.** Viable because only a fraction of the chosen model's parameters are active per token. **Measured 2026-09-12: 12.6 tokens per second** for 26B A4B at Q4_K_M on this processor, against 141.8 with every layer on the graphics device — so the estimate of single-digit to low-double-digit was right. Whether that is acceptable for a call that fires twice a minute depends on the deliberative call's shape, which is open question 6 in the known-good matrix and is not this measurement. Taken on an idle machine with no game resident; see `experiments/02-vision-encoder/`.
+3. **Move the deliberative cadence to the processor.** Viable because only a fraction of the chosen model's parameters are active per token. **Measured 2026-09-12 and it works, with 31% to spare.** A full deliberative call — a 1024-pixel frame, a 4800-token prefix and an answer running to 512 tokens — takes **41.5 seconds** on this processor, against the 60-second criterion `ADR-0006` fixed before the run. Raw generation is 12.6 tokens per second against 141.8 with every layer on the graphics device.
+
+    Two things follow. At 41.5 seconds the call consumes most of the 10–60 second deliberative cadence, so **degrading residency degrades cadence too**, and the ladder says so rather than leaving it to be discovered. And `FR-CTX-002` is load-bearing here as well: without the byte-identical prefix the same call is 57.5 seconds, clearing the criterion by 4%, which is not a margin to design against. See `experiments/03-model-latency/`.
 4. **Pause and tell the user.**
 
 The ladder is ordered by what the user notices last.

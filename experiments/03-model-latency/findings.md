@@ -1,4 +1,4 @@
-# Question 3 — what a tactical tick costs, with a game resident
+# Questions 3, 5 and 6 — what the model costs, with a game resident
 
 **Status: answered, and two specification numbers are wrong.**
 
@@ -112,14 +112,79 @@ That matters for where to look next. Reducing the visual budget is the dial the
 specification reaches for first, and it is worth about 70 ms between 256 px and
 1024 px on E4B. Shortening the answer would be worth more.
 
+## Question 5 — the two slots keep their caches
+
+`17-model-contract.md` assumes two pinned contexts at different visual budgets
+do not evict each other. `ADR-0006` listed that as negotiable and wrote the
+fallback down before the measurement: one slot, and a deliberative call costs
+the tactical slot one prefill.
+
+Twenty alternating rounds, E4B, slot A at 256 pixels and slot B at 1024:
+
+```text
+  slot                 reused    prefilled   prefill ms
+  A tactical              123            5         27.3
+  B deliberative          312            5         37.8
+
+  A mutated                 7          121        137.7   (one byte changed)
+```
+
+Each slot reuses its own prefix while the other alternates against it. Five
+tokens prefilled out of 128 and 317.
+
+**The negative control is the part that makes this mean anything.** A runtime
+can report a cache hit and prefill anyway, so the counter alone proves nothing —
+which is why prefill time is recorded beside it, and why one byte of slot A's
+prefix is changed at the end.
+
+The reuse collapses from 123 tokens to 7, the prefill rises from 5 tokens to
+121, and the time goes from 27.3 ms to 137.7. That is a five-fold jump, in the
+direction and of the size a real cache miss produces. Without it, every number
+above would be consistent with a server reporting whatever it liked.
+
+**So `ADR-0006`'s one-slot fallback is not needed**, and `17-model-contract.md`
+is claiming a property the stack actually has.
+
+## Question 6 — the processor fallback is usable, and marginal
+
+Step 3 of the degradation ladder moves the deliberative cadence off the graphics
+processor when the game needs the memory. `ADR-0006` fixed the criterion before
+the run: **a full deliberative call under 60 seconds** is a degradation; above
+that it is a hang, and both `15-performance-budgets.md` and
+`17-model-contract.md` would need rewriting.
+
+26B A4B with every layer on the processor, a 1024-pixel frame, a 4800-token
+prefix, and an answer free-running to 512 tokens:
+
+| Condition | Deliberative call |
+| --- | --- |
+| Prefix cache **off** | **57.5 s** |
+| Prefix cache **on**, fresh image | **41.5 s** |
+
+**It passes, with 31% headroom, and only because of the prefix cache.**
+
+Two things follow that the page should say rather than leave to be discovered.
+
+At 41.5 s a deliberative call consumes most of the 10–60 second cadence the
+specification gives it. The fallback sustains the slow end of that range and not
+the fast end, so degrading to the processor also means degrading the cadence.
+
+And `FR-CTX-002` is load-bearing here too. Without the byte-identical prefix the
+same call is 57.5 s — inside the criterion by 4%, which is not a margin anybody
+should design against.
+
+The answer had to run free to measure this at all. Under the tactical grammar
+the model stops after one short tool call, the 512-token limit never binds, and
+the call reads a comfortable 3.7 s — a number that says nothing about
+deliberation.
+
 ## What this does not settle
 
-- **The deliberative figure**, 3–15 s, is untouched. A deliberative call has a
-  different shape — extended reasoning, a larger visual budget — and question 6
-  is its own experiment.
-- **Two pinned slots.** Everything here uses one. Whether two contexts at
-  different visual budgets evict each other is question 5, and this measurement
-  says nothing about it.
+- **The deliberative figure on the graphics processor**, 3–15 s, is untouched.
+  Question 6 measured it on the processor alone, which is the fallback rather
+  than the normal path.
+- **Extended reasoning is off** in every measurement here. Question 6's answer
+  runs free to 512 tokens, which is a long answer but not a reasoning trace.
 - **The frame rate the game keeps.** That needs event-tracing instrumentation
   this project does not yet have, and it is the criterion in `vision.md` that
   decides whether any of this is usable.
