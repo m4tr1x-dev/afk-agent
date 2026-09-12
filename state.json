@@ -1,19 +1,20 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T13:37:56Z",
+  "updated": "2026-09-12T13:49:35Z",
   "milestone": "M1",
   "exit_criteria": [
     {
       "id": "M1.1",
       "text": "reachability probe works against five games across engines",
       "state": "in_progress",
-      "detail": "REACHED on Breathedge (UE4), 1 of 5. Xonotic, 0 A.D., Wesnoth, SuperTuxKart outstanding."
+      "detail": "2 of 5. Breathedge (Unreal Engine 4) reached; Xonotic (DarkPlaces) reached and linear, 0.892 columns per mouse unit at R2 0.957. Installing Luanti (Irrlicht), AssaultCube (Cube) and Sauerbraten (Cube 2) for the remaining three engines."
     },
     {
       "id": "M1.2",
       "text": "camera calibration derives a usable ratio without a model",
-      "state": "blocked",
-      "on": "M1.1"
+      "state": "in_progress",
+      "on": "M1.1",
+      "detail": "A ratio exists for Xonotic in columns per unit. Degrees needs the field of view or the wrap test, neither run."
     },
     {
       "id": "M1.3",
@@ -28,10 +29,10 @@
   ],
   "task": {
     "id": "T-0017",
-    "title": "run E1 against the remaining roster",
+    "title": "E1 on three more engines: Luanti, AssaultCube, Sauerbraten",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T13:37:56Z"
+    "started": "2026-09-12T13:49:35Z"
   },
   "gates": {
     "G0": "pass",
