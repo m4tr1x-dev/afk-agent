@@ -1,0 +1,23 @@
+# FR-ACT-008: input synthesis occurs in exactly one component.
+#
+# This is the second of four layers. The first is that `afk-input` declares its
+# own `extern` block rather than depending on a binding crate, which matters
+# because Cargo unifies features across the whole dependency graph: if any
+# crate enables the keyboard and mouse feature of a bindings crate, every crate
+# that depends on it can reach these functions, and a dependency ban will not
+# notice.
+#
+# Because `afk-input` does not use these paths, it needs no `#[allow]`. There
+# is therefore no exemption anywhere in the workspace for anyone to copy, which
+# is the property that makes this hold up over years rather than weeks.
+
+disallowed-methods = [
+  { path = "windows::Win32::UI::Input::KeyboardAndMouse::SendInput", reason = "FR-ACT-008: input synthesis lives only in afk-input" },
+  { path = "windows::Win32::UI::Input::KeyboardAndMouse::keybd_event", reason = "FR-ACT-008: input synthesis lives only in afk-input" },
+  { path = "windows::Win32::UI::Input::KeyboardAndMouse::mouse_event", reason = "FR-ACT-008: input synthesis lives only in afk-input" },
+  { path = "windows::Win32::UI::Input::Pointer::InjectSyntheticPointerInput", reason = "FR-ACT-008: input synthesis lives only in afk-input" },
+]
+
+disallowed-types = [
+  { path = "windows::Win32::UI::Input::KeyboardAndMouse::INPUT", reason = "FR-ACT-008: the input structure belongs to afk-input" },
+]

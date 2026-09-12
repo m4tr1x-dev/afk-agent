@@ -1,0 +1,37 @@
+# Supply-chain policy for the Rust workspace.
+#
+# The second half of the FR-ACT-008 enforcement: `clippy.toml` forbids the
+# call, this forbids the dependency that would make the call reachable.
+# `afk-input` is deliberately absent from the wrapper list — it declares its
+# own extern block rather than depending on a bindings crate, which is what
+# keeps Cargo's feature unification from handing the whole graph an input API.
+
+[graph]
+targets = ["x86_64-pc-windows-msvc"]
+
+[advisories]
+yanked = "deny"
+
+[licenses]
+# The project is MIT and redistributes binaries. Copyleft arrives as a decision
+# record, not as a transitive dependency.
+allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unicode-3.0", "Zlib"]
+confidence-threshold = 0.9
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+
+[[bans.deny]]
+name = "windows-sys"
+reason = "FR-ACT-008: no crate may reach the platform through it; afk-input declares its own extern"
+wrappers = []
+
+[[bans.deny]]
+name = "windows"
+reason = "FR-ACT-008: the platform surface is confined to the crates that bind it"
+wrappers = ["afk-capture", "afk-uia", "afk-ipc", "afk-shm", "afk-perception", "afk-guardian"]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

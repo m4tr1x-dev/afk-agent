@@ -1,0 +1,16 @@
+# Pinned to an exact version rather than to `stable`.
+#
+# Clippy gains lints every six weeks, and the Rust coding standards run it with
+# `-D warnings`. On `stable`, a toolchain release turns somebody else's
+# unrelated pull request red, on a morning when nothing in this repository
+# changed. Pinned, a version bump is its own pull request carrying its own
+# Clippy fallout, which is where that work belongs.
+#
+# One target. `CON-001` makes this Windows-only and CLAUDE.md forbids
+# portability shims, so a second target would be dead weight that rots.
+
+[toolchain]
+channel = "1.98.1"
+components = ["rustfmt", "clippy", "rust-src", "rust-docs"]
+targets = ["x86_64-pc-windows-msvc"]
+profile = "minimal"
