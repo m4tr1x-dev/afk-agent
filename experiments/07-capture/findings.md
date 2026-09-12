@@ -1,4 +1,4 @@
-# Question 7 — the capture border, the routes, and whether the overlay sees itself
+# Question 7 — the capture border, the routes, the overlay, and the recorder
 
 **Status: yes, reproduced three times with a positive control, a null control
 and a stability control.** The route comparison `ADR-0008` needs came out of the
@@ -174,6 +174,68 @@ change, so a static window yields one frame in eight seconds and a sweep of 800
 never finishes. The target now repaints about sixty times a second, alternating
 between two greys one unit apart: a real change to the compositor, and too small
 to matter to anything counting colours.
+
+## The corpus recorder
+
+`20-evaluation-harness.md` is blunt about why this exists: *"a benchmark
+labelled by the system under test measures agreement rather than accuracy."*
+If perception proposes the boxes and the model describes the targets, the
+grounding benchmark measures the system agreeing with itself.
+
+The way out is a person. A click at a point followed by a screen change within
+200 milliseconds gives a point that is **by definition** inside a real
+interactive element — no model, no detector, no circle. The frame immediately
+before the click is the input, the point is the label, and the change is the
+evidence that the element was interactive at all.
+
+```text
+capture-probe --window "AssaultCube" --record --clicks 400 --minutes 20
+```
+
+It keeps a rolling history of frames so the one *before* the click is available,
+watches the user's own raw input stream for a left-button press, converts the
+screen point into the window's client space, and waits out the response window.
+A click the screen ignores is counted rather than dropped, because the ratio is
+itself a finding about how much of a session is spent clicking on nothing.
+
+**Nothing is synthesised, and the check enforces it.**
+`tools/check_call_sites.py` rule A confines the synthesis spellings to
+`afk-input` and `afk-guardian` and it scans this directory. Raw input is
+observation, which is a different surface: `FR-SAFE-002` already requires
+watching the user's real input, and `ADR-0025` excludes hooking the *game* and
+injecting into the *game's* process. Watching our own process's input stream is
+neither.
+
+### The destination guard, which was wrong twice
+
+Frames of commercial titles must not reach a public repository, and whether the
+corpus can be published at all is still an open question on the harness page.
+So the recorder refuses to write inside the working tree.
+
+It got there after two failures, both caught by tests rather than by review:
+
+| Attempt | Why it let a repository path through |
+| --- | --- |
+| Canonicalise the destination and compare | On Windows `canonicalize` returns the verbatim path form; the working directory does not. One never starts with the other |
+| Join a relative path, then canonicalise | A destination that does not exist yet cannot be canonicalised, so `--record ./corpus` stayed relative and never started with an absolute path |
+
+The second one **actually wrote into the repository** during a verification run.
+The guard now compares the joined path and the canonical path, and either being
+inside is enough to refuse.
+
+### What is not tested, and cannot be here
+
+**The recorder's positive path has never run.** Confirming that a click produces
+a label requires somebody to click, and this probe may not synthesise input —
+not as a matter of convenience but because the project's central rule forbids a
+second input call site, and because the roster refuses synthesis against titles
+whose terms prohibit it.
+
+What has been verified is the null case: run against a live game for a minute
+with nobody clicking, it records nothing and says so.
+
+So the recorder is ready and unproven, and it is the thing the maintainer's
+ninety minutes would prove and feed at the same time.
 
 ## What this settles and what it does not
 
