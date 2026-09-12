@@ -91,7 +91,7 @@ Available memory is polled once a second, and when the game's headroom shrinks:
 
 1. **Reduce context length.** Cheapest, and the attention cache is the largest variable cost.
 2. **Reduce tactical image cost.** Directly trades grounding accuracy for memory and latency.
-3. **Move the deliberative cadence to the processor.** Viable because only a fraction of the chosen model's parameters are active per token — an estimated single-digit to low-double-digit tokens per second, which is acceptable for a call that fires twice a minute. **Unvalidated.**
+3. **Move the deliberative cadence to the processor.** Viable because only a fraction of the chosen model's parameters are active per token. **Measured 2026-09-12: 12.6 tokens per second** for 26B A4B at Q4_K_M on this processor, against 141.8 with every layer on the graphics device — so the estimate of single-digit to low-double-digit was right. Whether that is acceptable for a call that fires twice a minute depends on the deliberative call's shape, which is open question 6 in the known-good matrix and is not this measurement. Taken on an idle machine with no game resident; see `experiments/02-vision-encoder/`.
 4. **Pause and tell the user.**
 
 The ladder is ordered by what the user notices last.
