@@ -106,11 +106,16 @@ They read **relative movement deltas** from the raw input stream, and they typic
 
 Consequently:
 
-- Repositioning the cursor produces **no delta at all**, or one enormous delta that the game clamps or discards as implausible.
+- Repositioning the cursor produces **no delta at all**, one enormous delta that the game clamps or discards as implausible, or one enormous delta that the game simply applies.
+  All three have been measured: no turn at all in one engine, and a swing of roughly a quarter of the frame width in another, reproducibly, from a single reposition.
+  The third case is the one that matters most, because it is the one that looks like it worked.
 - A single large movement is frequently rejected by the game's own sanity checks.
 - The cursor's absolute position is meaningless while the game holds it captured.
 
 A `look` action is therefore decomposed by the executor into a sequence of small relative movements, emitted across reflex ticks, each within a plausible per-tick magnitude.
+
+The measured case makes the reason sharper than the original wording did.
+A reposition that a game ignores costs an action; a reposition that a game applies costs control of the camera, and the agent has no way to know which kind of game it is pointed at.
 
 **How far a given delta turns the camera is unknown and varies per game**, because it depends on the player's own sensitivity setting.
 It is measured at session start by a calibration procedure: emit a known sequence of deltas, detect when the view returns to where it started using frame correlation, and derive the ratio.
