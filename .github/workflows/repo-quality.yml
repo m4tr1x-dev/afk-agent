@@ -39,3 +39,19 @@ jobs:
 
       - name: Every tracked top-level directory is documented
         run: python tools/lint_layout.py
+
+  call-sites:
+    name: Single input call site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # FR-ACT-008. Runs unfiltered and before the crate it guards exists,
+      # because a rule added after the code it governs is a rule people have
+      # already worked around.
+      - name: Input synthesis occurs in exactly one component
+        run: python tools/check_call_sites.py

@@ -80,13 +80,24 @@ Checked 2026-09-12.
 | Component | State |
 | --- | --- |
 | Windows App SDK | 2.4.0 stable, released 2026-08-13. The 1.8 line left maintenance on 2026-09-09. |
-| .NET | 11 at release candidate with a go-live licence; general availability 2026-11-10, standard-term support. |
-| C# | 15, shipping with .NET 11. |
+| .NET | **10.0.401 is what is installed**, and it is the long-term support release. 11 is at release candidate with a go-live licence; general availability 2026-11-10, **standard-term support**. |
+| C# | 14 with .NET 10; 15 ships with .NET 11. |
+| Rust | 1.98.1, installed 2026-09-12. `rustup` 1.29.1. |
 
 Use the **stable** Windows App SDK channel, not the experimental one, unless a specific API forces otherwise.
 The project is already carrying enough preview-stage risk elsewhere.
 
-Two C# 15 features are genuinely useful here rather than incidental: union types suit the inter-process message envelope and the tool-result sum type, both of which are otherwise modelled awkwardly.
+**Target .NET 10 rather than 11**, and the reason is in the table above: 10 is the long-term support release and 11 is standard-term.
+A product that ships an installer to users belongs on long-term support unless a capability forces otherwise, and the earlier version of this page recorded the support terms without drawing that conclusion.
+
+The one cited reason for 11 was C# 15 union types, which suit the inter-process message envelope and the tool-result sum type.
+That reason weakens under the contract design: the union is a representation the code generator owns, so the closed-hierarchy form emitted today and the union form emitted after general availability differ by a generator flag rather than by hand-written code.
+
+Revisit when .NET 11 reaches general availability **and** the stable Windows App SDK channel declares support for it.
+That is one pull request bumping `global.json`, the target frameworks and the generator flag.
+
+The Rust toolchain is pinned to an exact version rather than to `stable`.
+Clippy gains lints every six weeks and the coding standards run it with warnings denied, so on `stable` a toolchain release turns an unrelated pull request red on a morning when nothing in this repository changed.
 
 ## Pinned versions
 
@@ -94,8 +105,8 @@ Two C# 15 features are genuinely useful here rather than incidental: union types
 | --- | --- | --- |
 | Documentation toolchain | Exact versions, **resolved and verified 2026-09-12** | `docs/requirements.txt` |
 | GitHub Actions | By major version today; move to commit hashes before a public release | `.github/workflows/` |
-| .NET SDK | To be pinned with `rollForward: disable` | `global.json`, not yet created |
-| Rust toolchain | To be pinned by channel and components | `rust-toolchain.toml`, not yet created |
+| .NET SDK | 10.0.401 with `rollForward: disable`, **verified 2026-09-12** | `global.json` |
+| Rust toolchain | 1.98.1, exact, **installed and verified 2026-09-12** | `rust-toolchain.toml` |
 | NuGet packages | Central package management | `Directory.Packages.props`, not yet created |
 | Inference runtime | To be pinned by commit, recorded in the model metadata | Not yet created |
 

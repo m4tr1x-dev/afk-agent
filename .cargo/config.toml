@@ -1,0 +1,4 @@
+# Windows only, by CON-001.
+
+[build]
+target = "x86_64-pc-windows-msvc"

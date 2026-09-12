@@ -22,6 +22,7 @@ directory exists today or is part of the shape `ADR-0016` sets.
 
 | Directory | State | Contents |
 | --- | --- | --- |
+| `.cargo/` | present | Cargo configuration; the build target is fixed by `CON-001` |
 | `.claude/` | present | Coding-agent permissions and hooks; see [autonomous builds](autonomous-builds.md) |
 | `.github/` | present | Workflows, issue and pull request templates, code owners |
 | `docs/` | present | The specification and all other documentation |
