@@ -1,0 +1,19 @@
+[package]
+name = "reachability-probe"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Known-good-matrix question 1: does synthesised relative mouse movement reach a real game?"
+
+[lints]
+workspace = true
+
+[dependencies]
+
+[[bin]]
+name = "reachability-probe"
+path = "src/main.rs"

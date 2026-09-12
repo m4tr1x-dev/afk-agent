@@ -32,7 +32,7 @@ directory exists today or is part of the shape `ADR-0016` sets.
 | `crates/` | planned | The Rust core, one crate per subsystem boundary |
 | `src/` | planned | The C# shell and overlay |
 | `tests/` | planned | Corpus, benchmark harness, replay fixtures |
-| `experiments/` | planned | Timeboxed probes that answer a known-good-matrix question |
+| `experiments/` | present | Timeboxed probes that answer a known-good-matrix question |
 
 Everything else at the root is configuration: the site, the linters, the
 editor, and the repository metadata.
@@ -60,10 +60,9 @@ fail on a clean working copy.
 
 `ADR-0016` is accepted and sets `contract/`, `crates/`, `src/` and `tests/`.
 
-`experiments/` is not in that record. It is listed here because the probes
-that answer the [known-good matrix](../known-good-matrix.md) need somewhere to
-live, and a record amending the layout is written when the first one lands
-rather than in advance of it.
+`experiments/` is not in that record. The first probe has landed, so a record
+amending `ADR-0016` to name the directory is now owed, and it has the evidence
+it needs: a probe that exists and a rule about where it may live.
 
 `contract/` is the one worth noting. The inter-process message catalogue and
 the tool schemas are defined once and generate types for both languages and the

@@ -1,0 +1,61 @@
+# The Rust workspace. One crate per subsystem boundary, per ADR-0016.
+#
+# The lint policy, the profiles and the toolchain pin live here so that they are
+# in force on the first crate rather than applied to it afterwards. A lint added
+# to existing code is a lint somebody turns off.
+
+[workspace]
+resolver = "3"
+members = ["experiments/01-reachability"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.98"
+license = "MIT"
+repository = "https://github.com/m4tr1x-dev/afk-agent"
+authors = ["m4tr1x-dev"]
+
+[workspace.lints.rust]
+missing_docs = "warn"
+unreachable_pub = "warn"
+unsafe_op_in_unsafe_fn = "deny"
+rust_2018_idioms = { level = "warn", priority = -1 }
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+
+# "An unsafe block without a SAFETY comment stating the invariant that makes it
+# sound does not pass review" is called the single convention most worth
+# enforcing here. This turns it from a review habit into a compile error.
+undocumented_unsafe_blocks = "deny"
+missing_safety_doc = "deny"
+
+# The reflex loop has a hard deadline and unattended runs last hours. A panic in
+# either is a defect that reaches a user rather than a test.
+unwrap_used = "deny"
+expect_used = "warn"
+
+# Coordinate arithmetic; INV-GND-002 exists because a wrong transform lands
+# clicks near the target, and "near" reads as a bad model rather than bad maths.
+float_cmp = "deny"
+
+# A forgotten guard over held input is INV-SAFE-002, the one failure a user
+# cannot recover from without external help.
+mem_forget = "deny"
+
+[workspace.lints.rustdoc]
+broken_intra_doc_links = "deny"
+
+# Image work is unusable at -O0 and the probe correlates real frames.
+[profile.dev.package."*"]
+opt-level = 2
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+debug = "line-tables-only"
+# Unwind rather than abort, deliberately. Shutdown releases every held input at
+# step 3, before anything that can fail, and abort would skip the Drop
+# implementations that do it.
+panic = "unwind"
