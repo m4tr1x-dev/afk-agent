@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, perception]
 requirements: [FR-PERC-001, FR-PERC-002, FR-PERC-003, FR-PERC-004, FR-PERC-005, FR-PERC-006, FR-PERC-007, FR-PERC-008, FR-PERC-009, FR-PERC-010, NFR-PERC-001, NFR-PERC-002, INV-PERC-001, INV-PERC-002, INV-GND-002]
-decisions: []
+decisions: [ADR-0008]
 generated: false
 ---
 

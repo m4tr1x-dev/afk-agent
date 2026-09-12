@@ -125,4 +125,4 @@ The full list with reasoning is in [non-goals](19-non-goals.md); the short versi
 ## Related decisions
 
 The constraints above are inputs to `ADR-0002`, `ADR-0003` and `ADR-0009`, all accepted, and to `ADR-0025`, which records the posture `CON-002` states.
-`ADR-0008`, the capture API, is not written and is blocked on a prototype.
+`ADR-0008`, the capture API, is accepted: Windows Graphics Capture, chosen from a measured comparison of five routes and carrying the failure signatures `FR-PERC-009` needs.
