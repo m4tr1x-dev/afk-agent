@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T17:25:11Z",
+  "updated": "2026-09-12T17:54:55Z",
   "milestone": "M1",
   "exit_criteria": [
     {
@@ -28,11 +28,11 @@
     }
   ],
   "task": {
-    "id": "T-0028",
-    "title": "E8 terms pack, then E-CAP part C the corpus recorder",
+    "id": "T-0029",
+    "title": "E-CAP part C: the corpus recorder",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T17:25:11Z"
+    "started": "2026-09-12T17:54:55Z"
   },
   "gates": {
     "G0": "pass",
@@ -49,12 +49,6 @@
       "blocked_on": "E1"
     },
     {
-      "id": "ADR-0006",
-      "title": "model runtime",
-      "blocked_on": "E2 must establish whether the visual token budget is a per-request knob or a projector setting",
-      "evidence": null
-    },
-    {
       "id": "ADR-0007",
       "title": "model variant and quantisation",
       "blocked_on": "E3/E4: all six variants in one table, grounding as the quality axis rather than MMMU",
@@ -65,6 +59,12 @@
       "title": "screen capture API",
       "blocked_on": "nothing; WGC measured at 2.27 ms and 55 fps against 12.92 ms for PrintWindow, with failure signatures for FR-PERC-009",
       "evidence": "experiments/07-capture/"
+    },
+    {
+      "id": "ADR-0006",
+      "title": "model runtime",
+      "blocked_on": "nothing measurable remains: grammar, Vulkan, two slots, per-request visual cost and reasoning depth are all answered. The Decision section can be written.",
+      "evidence": "experiments/02-vision-encoder/, experiments/03-model-latency/"
     }
   ],
   "blockers": [
@@ -88,8 +88,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0028 E8: verbatim clause pack for the installed roster titles; a human signs off",
     "T-0029 E-CAP part C: the corpus recorder, which the maintainer's 100 minutes feeds",
-    "T-0030 E6: deliberative throughput on the processor, and E5 two pinned slots"
+    "T-0030 E8: the verbatim clause pack for the installed roster titles",
+    "T-0031 write ADR-0006 and ADR-0007's Decision sections from the measurements"
   ]
 }

@@ -22,3 +22,7 @@
 {"at": "2026-09-12T17:25:11Z", "what": "tactical_tick_p50_ms_26b_a4b", "value": 596, "conditions": "same conditions", "lands_in": "docs/spec/15-performance-budgets.md"}
 {"at": "2026-09-12T17:25:11Z", "what": "prefix_cache_saving_ms_per_tick", "value": 2686, "conditions": "26B A4B, 4800-token prefix, 256 px: 3282 ms off against 596 ms on", "lands_in": "docs/spec/15-performance-budgets.md"}
 {"at": "2026-09-12T17:25:11Z", "what": "text_only_floor_ms_e4b", "value": 333, "conditions": "no image, same conditions", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T17:54:55Z", "what": "deliberative_cpu_seconds_cached", "value": 41.5, "conditions": "26B A4B, ngl 0, 1024 px, 4800-token prefix, 512-token answer", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T17:54:55Z", "what": "deliberative_cpu_seconds_uncached", "value": 57.5, "conditions": "same, prefix cache off", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T17:54:55Z", "what": "slot_a_tokens_reused", "value": 123, "conditions": "of 128, alternating with slot B for 20 rounds", "lands_in": "docs/spec/15-performance-budgets.md"}
+{"at": "2026-09-12T17:54:55Z", "what": "slot_a_tokens_reused_after_one_byte_change", "value": 7, "conditions": "the negative control", "lands_in": "docs/spec/15-performance-budgets.md"}

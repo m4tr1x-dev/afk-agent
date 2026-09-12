@@ -43,3 +43,7 @@
 {"at": "2026-09-12T17:25:11Z", "event": "correction", "what": "the claim that the runtime's device report is static", "detail": "it moves by 1199 MiB for a 16 GiB model and not at all for another process; unrelated to residency rather than static. FR-MODEL-004 now requires a platform query."}
 {"at": "2026-09-12T17:25:11Z", "event": "spec_change", "detail": "05-reasoning-loop cadence 1-4 Hz -> 1-2 Hz; 15-performance-budgets tactical row measured; 17-model-contract FR-CTX-002 gains its number; FR-MODEL-004 gains the source requirement"}
 {"at": "2026-09-12T17:25:11Z", "event": "merged", "prs": [33]}
+{"at": "2026-09-12T17:54:55Z", "event": "question_answered", "matrix_question": 5, "detail": "two slots keep their caches: 123 of 128 and 312 of 317 reused; one-byte control collapses reuse to 7 and quintuples prefill. ADR-0006 fallback not needed."}
+{"at": "2026-09-12T17:54:55Z", "event": "question_answered", "matrix_question": 6, "detail": "deliberative on the processor: 41.5 s with the cache, 57.5 s without, against a 60 s criterion. Usable and marginal."}
+{"at": "2026-09-12T17:54:55Z", "event": "attempt_failed", "what": "measuring a deliberative call under the tactical grammar", "why": "the model stops after one tool call so max_tokens never binds; reads 3.7 s and says nothing about deliberation", "dont_retry": true}
+{"at": "2026-09-12T17:54:55Z", "event": "merged", "prs": [34]}
