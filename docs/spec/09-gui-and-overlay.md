@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, gui]
 requirements: [FR-GUI-001, FR-GUI-002, FR-GUI-003, FR-GUI-004, FR-GUI-005, NFR-GUI-001, INV-GUI-001, FR-SAFE-001, FR-SAFE-007]
-decisions: [ADR-0011]
+decisions: [ADR-0011, ADR-0043]
 generated: false
 ---
 

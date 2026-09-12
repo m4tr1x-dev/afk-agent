@@ -1,0 +1,27 @@
+<Project>
+
+  <!--
+    Central package management: a version appears once, here, and a project file
+    references a package without naming a version.
+
+    The whole known-good matrix is an argument for pinning exact versions and
+    recording what each was verified against. A repository where two projects
+    can reference two versions of the same package undoes that quietly, because
+    nothing fails - the two just load different code.
+  -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Verified 2026-09-12: these two alone build a WinUI 3 application from
+         the command line, with no Visual Studio workload installed. See
+         experiments/09-toolchain/. The stable channel, per the known-good
+         matrix; the experimental one only if a specific interface forces it. -->
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4948" />
+  </ItemGroup>
+
+</Project>

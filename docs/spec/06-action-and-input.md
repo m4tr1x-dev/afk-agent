@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, action]
 requirements: [FR-ACT-001, FR-ACT-002, FR-ACT-003, FR-ACT-004, FR-ACT-005, FR-ACT-006, FR-ACT-007, FR-ACT-008, NFR-ACT-001, INV-ACT-001, INV-ACT-002, INV-ACT-003, INV-LOOP-002]
-decisions: [ADR-0009, ADR-0013, ADR-0035]
+decisions: [ADR-0009, ADR-0013, ADR-0035, ADR-0042]
 generated: false
 ---
 
