@@ -34,8 +34,13 @@ Every measured number in the specification is measured here unless it says other
 | Operating system | Windows 11 Pro, build 26200 |
 
 The choice of vendor is load-bearing and shapes several decisions.
-This is an AMD card, so there is no CUDA, and on Windows the practical inference path is Vulkan rather than ROCm.
-Because the project does no training, **Vulkan is the only GPU path in the system** — there is no second toolchain and no seam between a training runtime and an inference runtime.
+This is an AMD card, so there is no CUDA.
+Because the project does no training, there is no second toolchain and no seam between a training runtime and an inference runtime: whatever path is chosen is the only one in the system.
+
+**Vulkan is the default path, and it is no longer the only candidate.**
+An earlier version of this page said the practical path on Windows is Vulkan rather than ROCm.
+That is now worth checking rather than asserting: the inference runtime's own releases carry a Windows ROCm build alongside the Vulkan one, verified 2026-09-12 against release b10930.
+Vulkan stays the default because it is the path the rest of the design assumes and the one the experiments run first; whether ROCm is faster on this card is a measurement for question 3, not a claim for this page.
 
 ## Verified — models
 
@@ -53,8 +58,16 @@ Also verified: the per-image visual token budget is configurable, with supported
 Native function calling and configurable thinking modes are documented.
 The weights are published under Apache 2.0, which means they may be redistributed — relevant to whether an installer may bundle them rather than fetching them.
 
-**The gap between E4B and 26B A4B on vision is the reason the model configuration looks the way it does.**
-A model that inspects the screen several times a second cannot be the weakest one available at looking at screens, which rules out the intuitive arrangement of a small fast model for the tactical cadence and a large one for deliberation.
+**The gap between E4B and 26B A4B on that column is why the model configuration looks the way it does — and it is a hypothesis, not a finding.**
+
+The argument runs: a model that inspects the screen several times a second cannot be the weakest one available at looking at screens, so the intuitive arrangement of a small fast model for the tactical cadence and a large one for deliberation is ruled out.
+
+The benchmark it rests on does not support that weight.
+MMMU Pro measures graduate-level multimodal **reasoning**.
+Locating a button in a stylised heads-up display is a different task, and the section below records that **no public grounding results exist for this family at all**.
+An earlier version of this page drew the conclusion anyway and presented it as settled.
+
+It is question 4's job to test it, and the test is specific: if the 12B variant at four-bit quantisation lands inside the confidence interval of 26B A4B at three-bit on the grounding benchmark, **the 12B wins** on latency, on memory, and on the frames it leaves the game.
 
 ## Verified — the grounding baseline
 
@@ -107,8 +120,9 @@ Clippy gains lints every six weeks and the coding standards run it with warnings
 | GitHub Actions | By major version today; move to commit hashes before a public release | `.github/workflows/` |
 | .NET SDK | 10.0.401 with `rollForward: disable`, **verified 2026-09-12** | `global.json` |
 | Rust toolchain | 1.98.1, exact, **installed and verified 2026-09-12** | `rust-toolchain.toml` |
-| NuGet packages | Central package management | `Directory.Packages.props`, not yet created |
-| Inference runtime | To be pinned by commit, recorded in the model metadata | Not yet created |
+| NuGet packages | Central package management with transitive pinning, **created 2026-09-12** | `Directory.Packages.props` |
+| Inference runtime | llama.cpp build b10930, commit `56381e407`, Vulkan, Windows x64, **downloaded and run 2026-09-12** | To be recorded in the model manifest |
+| .NET tools | Restored from a manifest rather than installed at workflow time, **created 2026-09-12** | `.config/dotnet-tools.json` |
 
 ### Verified toolchain
 
@@ -157,7 +171,7 @@ Each is an experiment with an end, not a topic.
 | 5 | Does the prompt prefix cache behave as assumed with two pinned slots at different visual budgets? | Measure prefix reuse across consecutive ticks on each slot. | Model contract | |
 | 6 | What is the 26B A4B throughput on the processor alone? | Measure on the reference hardware. This is the fallback when the game needs the graphics memory, so the number decides whether the fallback is usable. | Model residency | |
 | 7 | Can the capture border be suppressed for an unpackaged application on this Windows build? | Prototype. | Overlay, capture | |
-| 8 | What do the current terms of service of the games we intend to use as examples actually say about automation? | Read them. Not a summary, and not a similar game's terms. | Vision, and the terms-of-service decision record | |
+| 8 | What do the current terms of service of the games we intend to use as examples actually say about automation? | Assemble the verbatim clause pack: the publisher's agreement **as it sits in the installation directory**, plus the store terms, each with a retrieval date and a SHA-256. Extract the operative clauses word for word with their section numbers into `docs/reference/terms/<game>.md`, and classify on a fixed three-value scale — prohibits automation, silent on automation, permits automation. Anything ambiguous is **silent**, never **permits**; that value needs a quoted permitting clause. **A human reviews the pack and signs off.** | Vision, and the terms-of-service decision record | |
 | 9 | Does the newer solution file format work in the installed Visual Studio, and does ahead-of-time compilation work with the UI framework? | Prototype both. | Repository layout | **Answered 2026-09-12, and the second half contradicts what was expected.** The solution format is the **default**: `dotnet new sln` emits `Probe.slnx` with no flag, and `dotnet sln migrate` converts the old one. Ahead-of-time compilation **works** — a 4,385,280-byte native binary with no assembly and no runtime configuration file beside it, which launches and composes its window (87.9 MiB working set). The first attempt failed with `MSB3073` naming `vswhere.exe`, which is a missing `PATH` entry rather than a framework limitation, and is exactly the error that would have closed this question in the wrong direction. Two neighbouring results fell out: the framework **builds from the command line with no workload installed**, from `Microsoft.WindowsAppSDK` 2.4.0 and `Microsoft.Windows.SDK.BuildTools` 10.0.26100.4948 alone, so a hosted runner can build the C# side; and **single-project packaging works from the command line**, producing a 27 MiB installer with no `.wapproj`, so packaging need not be self-hosted. See `experiments/09-toolchain/`. |
 
 Question 1's experiment column says the probe "confirms the camera turned",
