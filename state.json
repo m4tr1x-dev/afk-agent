@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T15:32:59Z",
+  "updated": "2026-09-12T16:17:23Z",
   "milestone": "M1",
   "exit_criteria": [
     {
@@ -28,11 +28,11 @@
     }
   ],
   "task": {
-    "id": "T-0024",
-    "title": "E-CAP: capture backends, overlay self-exclusion, corpus recorder",
+    "id": "T-0026",
+    "title": "E-CAP part C: the corpus recorder",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T15:32:59Z"
+    "started": "2026-09-12T16:17:23Z"
   },
   "gates": {
     "G0": "pass",
@@ -88,8 +88,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0024 E-CAP part A: three capture backends across window modes",
-    "T-0025 E-CAP part B: overlay, and 1000 frames with zero leaked pixels",
-    "T-0026 E-CAP part C: the corpus recorder, which the maintainer's 100 minutes feeds"
+    "T-0026 E-CAP part C: the corpus recorder, which the maintainer's 100 minutes feeds",
+    "T-0027 E3: model latency with a game resident, the figure the specification says is the only one that matters",
+    "T-0028 E8: the verbatim terms pack for the roster titles that are installed"
   ]
 }

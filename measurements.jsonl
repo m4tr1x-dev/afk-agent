@@ -14,3 +14,7 @@
 {"at": "2026-09-12T15:14:20Z", "what": "e4b_q4_generation_tokens_per_second_gpu", "value": 148.37, "conditions": "llama.cpp b10930 Vulkan, all layers offloaded, tg32", "lands_in": "docs/spec/15-performance-budgets.md"}
 {"at": "2026-09-12T15:14:20Z", "what": "e4b_q4_generation_tokens_per_second_cpu", "value": 18.3, "conditions": "same build, zero layers offloaded, i7-13700K", "lands_in": "docs/spec/15-performance-budgets.md"}
 {"at": "2026-09-12T15:14:20Z", "what": "image_tokens_by_input_side_px", "value": {"256": 83, "512": 123, "768": 258, "1024": 443}, "conditions": "E4B, BF16 projector, text baseline 50 tokens subtracted", "lands_in": "docs/spec/17-model-contract.md"}
+{"at": "2026-09-12T16:17:23Z", "what": "wgc_frame_latency_p50_ms", "value": 2.27, "conditions": "AssaultCube windowed 1280x720, 8 s, 30 Hz requested", "lands_in": "docs/spec/09-gui-and-overlay.md"}
+{"at": "2026-09-12T16:17:23Z", "what": "wgc_fps_on_a_game", "value": 55.1, "conditions": "same; delivers on presentation rather than on a clock", "lands_in": "docs/spec/09-gui-and-overlay.md"}
+{"at": "2026-09-12T16:17:23Z", "what": "printwindow_frame_latency_p50_ms", "value": 12.92, "conditions": "same window", "lands_in": "docs/spec/09-gui-and-overlay.md"}
+{"at": "2026-09-12T16:17:23Z", "what": "overlay_leaked_pixels", "value": 0, "conditions": "2400 frames under WDA_EXCLUDEFROMCAPTURE across three runs", "lands_in": "docs/spec/09-gui-and-overlay.md"}

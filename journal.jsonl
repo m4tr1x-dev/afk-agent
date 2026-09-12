@@ -35,3 +35,7 @@
 {"at": "2026-09-12T15:14:20Z", "event": "merged", "prs": [24, 25, 26, 27, 28]}
 {"at": "2026-09-12T15:32:59Z", "event": "blocker_raised", "id": "B-001", "detail": "human dependency package flagged in STATUS.md; not yet on the critical path"}
 {"at": "2026-09-12T15:32:59Z", "event": "question_answered", "matrix_question": 2, "detail": "26B A4B 8/8; 12.6 tokens/s processor-only fills the degradation ladder's step 3"}
+{"at": "2026-09-12T16:17:23Z", "event": "question_answered", "matrix_question": 7, "detail": "capture border suppressible from an unpackaged process, 3 runs; WGC 2.27ms/55fps against PrintWindow 12.92ms; three silent failure signatures for FR-PERC-009; overlay excluded twice over"}
+{"at": "2026-09-12T16:17:23Z", "event": "attempt_failed", "what": "differencing two captures to detect the capture border", "why": "the border is drawn on screen around the window and may never appear in a capture; zero difference proved nothing", "dont_retry": true}
+{"at": "2026-09-12T16:17:23Z", "event": "attempt_failed", "what": "reading the screen at a covered window's coordinates", "why": "reads whatever is on top; a clean reading of the wrong thing, twice", "dont_retry": true}
+{"at": "2026-09-12T16:17:23Z", "event": "merged", "prs": [31, 32]}
