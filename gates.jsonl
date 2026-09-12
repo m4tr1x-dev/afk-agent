@@ -7,3 +7,7 @@
 {"t": "2026-09-12T12:57:14Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 0}
 {"t": "2026-09-12T13:00:49Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 0}
 {"t": "2026-09-12T13:06:46Z", "kind": "gate", "gates": {"G1": "fail", "G2": "fail"}, "result": "fail", "tests_passed": 7}
+{"t": "2026-09-12T13:09:07Z", "kind": "gate", "gates": {"G0": "pass", "G1": "pass", "G2": "pass"}, "result": "pass", "tests_passed": 7}
+{"t": "2026-09-12T13:11:55Z", "kind": "gate", "gates": {"G1": "fail", "G2": "pass"}, "result": "fail", "tests_passed": 14}
+{"t": "2026-09-12T13:12:08Z", "kind": "gate", "gates": {"G1": "pass", "G2": "pass"}, "result": "pass", "tests_passed": 14}
+{"t": "2026-09-12T13:12:25Z", "kind": "gate", "gates": {"G1": "pass", "G2": "pass"}, "result": "pass", "tests_passed": 14}
