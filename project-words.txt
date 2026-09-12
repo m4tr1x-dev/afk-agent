@@ -109,6 +109,16 @@ respawn
 Backpressure
 flyouts
 
+# Windows commands named in the harness deny list. They appear because the
+# permission rules must name them exactly, not because the project uses them.
+bcdedit
+certutil
+pnputil
+addstore
+# Git vocabulary
+worktree
+worktrees
+
 # Tooling and platform names
 Rustlang
 winget

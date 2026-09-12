@@ -32,6 +32,15 @@ __pycache__/
 .env.*
 !.env.example
 
+# Agent harness
+# The portable settings are tracked; machine-specific paths are not.
+.claude/settings.local.json
+.claude/worktrees/
+# The build journal lives on the orphan `agent-status` branch, checked out
+# here as a worktree. Tracking it from main would put every journal write in
+# a pull request diff.
+/.agent/
+
 # Editors / OS
 .vscode/
 .idea/

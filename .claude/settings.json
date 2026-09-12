@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "includeCoAuthoredBy": true,
+  "env": {
+    "PAGER": "cat",
+    "GIT_PAGER": "cat",
+    "GH_PAGER": "cat",
+    "GH_NO_UPDATE_NOTIFIER": "1",
+    "GH_PROMPT_DISABLED": "1",
+    "NO_COLOR": "1",
+    "PYTHONUTF8": "1",
+    "PYTHONIOENCODING": "utf-8",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CARGO_TERM_COLOR": "never",
+    "RUST_BACKTRACE": "1",
+    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+    "DOTNET_NOLOGO": "1",
+    "DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1",
+    "MSBUILDTERMINALLOGGER": "off"
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git switch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git rebase:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)",
+      "Bash(git worktree:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git restore:*)",
+      "Bash(git tag:*)",
+      "Bash(git push -u origin:*)",
+      "Bash(git push origin HEAD:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh run:*)",
+      "Bash(gh workflow:*)",
+      "Bash(gh release:*)",
+      "Bash(gh label:*)",
+      "Bash(gh repo view:*)",
+      "Bash(cargo:*)",
+      "Bash(rustup:*)",
+      "Bash(rustc:*)",
+      "Bash(rustfmt:*)",
+      "Bash(dotnet:*)",
+      "Bash(python:*)",
+      "Bash(py:*)",
+      "Bash(pip:*)",
+      "Bash(mkdocs:*)",
+      "Bash(vale:*)",
+      "Bash(lychee:*)",
+      "Bash(npx --yes markdownlint-cli2:*)",
+      "Bash(npx --yes cspell:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(diff:*)",
+      "Bash(echo:*)",
+      "Bash(printf:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(touch:*)",
+      "Bash(test:*)",
+      "Bash(which:*)",
+      "Bash(date:*)",
+      "Bash(env:*)",
+      "Bash(curl:*)",
+      "Bash(tar:*)",
+      "Bash(unzip:*)",
+      "Bash(xargs:*)",
+      "Bash(winget install:*)",
+      "Bash(winget list:*)",
+      "Bash(winget search:*)",
+      "WebSearch",
+      "WebFetch(domain:doc.rust-lang.org)",
+      "WebFetch(domain:docs.rs)",
+      "WebFetch(domain:crates.io)",
+      "WebFetch(domain:index.crates.io)",
+      "WebFetch(domain:learn.microsoft.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:www.nuget.org)",
+      "WebFetch(domain:huggingface.co)",
+      "WebFetch(domain:ai.google.dev)",
+      "WebFetch(domain:squidfunk.github.io)",
+      "WebFetch(domain:www.mkdocs.org)",
+      "WebFetch(domain:vale.sh)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push origin main:*)",
+      "Bash(git push origin HEAD:main:*)",
+      "Bash(git push --delete:*)",
+      "Bash(git push --mirror:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh secret:*)",
+      "Bash(gh repo delete:*)",
+      "Bash(gh api -X DELETE:*)",
+      "Bash(gh api --method DELETE:*)",
+      "Bash(rm -rf /:*)",
+      "Bash(rm -fr /:*)",
+      "Bash(rm -rf ~:*)",
+      "Bash(npm install:*)",
+      "Bash(npm init:*)",
+      "Bash(pnpm:*)",
+      "Bash(yarn:*)",
+      "Bash(bcdedit:*)",
+      "Bash(pnputil:*)",
+      "Bash(sc.exe:*)",
+      "Bash(sc create:*)",
+      "Bash(certutil -addstore:*)",
+      "Bash(takeown:*)",
+      "Bash(icacls:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./LICENSE)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/tools/agent/brief.py\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto|manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/tools/agent/brief.py\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/tools/agent/keepgoing.py\"",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}
