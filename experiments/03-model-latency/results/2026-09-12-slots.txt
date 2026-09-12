@@ -1,0 +1,14 @@
+question 5 - two pinned slots at different visual budgets, 2026-09-12
+llama.cpp b10930 commit 56381e407, Vulkan, --parallel 2, context 8192
+E4B Q4_0, slot A at 256 px and slot B at 1024 px, alternating 20 rounds
+
+--- two pinned slots, question 5 ---
+  20 alternating rounds; slot A at the tactical budget, slot B at the deliberative one
+
+  slot                 reused    prefilled   prefill ms
+  A tactical              123            5         27.3
+  B deliberative          312            5         37.8
+
+  A mutated                 7          121        137.7   (one byte changed)
+
+  BOTH SLOTS KEEP THEIR CACHE: each slot reuses its own prefix in steady state while the other alternates against it, and a one-byte change collapses the reuse. The two-slot arrangement 17-model-contract.md assumes is available, and ADR-0006's one-slot fallback is not needed.
