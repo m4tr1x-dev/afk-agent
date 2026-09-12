@@ -1,0 +1,5 @@
+{"t":"2026-09-12T00:00:00Z","kind":"task_done","task":"T-0001","note":"PR #7 layout check merged"}
+{"t":"2026-09-12T00:00:00Z","kind":"task_done","task":"T-0002","note":"PR #8 stale documentation claims merged"}
+{"t":"2026-09-12T00:00:00Z","kind":"task_start","task":"T-0003","note":"autonomy harness"}
+{"t": "2026-09-12T12:45:53Z", "kind": "gate", "task": "T-0003", "note": "docs gate green before harness commit", "gate": "G1", "result": "pass"}
+{"t": "2026-09-12T12:49:53Z", "kind": "task_done", "task": "T-0003", "note": "autonomy harness committed"}

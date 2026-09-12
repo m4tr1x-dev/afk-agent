@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "updated": "2026-09-12T00:00:00Z",
+  "milestone": "M0",
+  "exit_criteria": [
+    {"id": "M0.1", "text": "autonomy harness in place: settings, journal, gate, hooks", "state": "in_progress"},
+    {"id": "M0.2", "text": "stale documentation claims corrected", "state": "done", "detail": "PR #8"},
+    {"id": "M0.3", "text": "layout check exists and runs unfiltered", "state": "done", "detail": "PR #7"},
+    {"id": "M0.4", "text": "experiments/ added to ADR-0016 and the layout page", "state": "todo"},
+    {"id": "M0.5", "text": "evidence: front matter field enforced on blocking decision records", "state": "todo"}
+  ],
+  "task": {
+    "id": "T-0003",
+    "title": "autonomy harness: settings, journal, gate, hooks",
+    "branch": "feat/autonomy-harness",
+    "pr": null,
+    "started": "2026-09-12T00:00:00Z"
+  },
+  "gates": {"G0": "pass", "G1": "pass", "G2": "n/a", "G3": "n/a", "G4": "n/a", "G7": "n/a"},
+  "open_decisions": [
+    {"id": "ADR-0039", "title": "cross-language contract format", "blocked_on": "M0.5 codegen spike"},
+    {"id": "ADR-0040", "title": "task runner and toolchain pinning", "blocked_on": "M0.5 toolchain spike"},
+    {"id": "ADR-0041", "title": "CI topology and the self-hosted runner", "blocked_on": "M0.5"},
+    {"id": "ADR-0042", "title": "enforcing the single input call site", "blocked_on": "M0.5"}
+  ],
+  "blockers": [],
+  "invariants": [
+    "CON-002: no kernel driver, no injection, no hooking, no cross-process memory, no drawing in the game's renderer",
+    "CON-003: no cloud inference, ever, in any form",
+    "FR-ACT-008: input synthesis in exactly ONE component",
+    "safety suites are absolute - one failure is a defect, never a percentage",
+    "a behaviour change updates its spec page in the SAME pull request",
+    "no decision record without an experiment behind it",
+    "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
+  ],
+  "next": [
+    "T-0004 add experiments/ to ADR-0016 and the layout page",
+    "T-0005 evidence: front matter field on decision records",
+    "T-0006 M0.5 spikes: slnx, MSIX packaging shape, contract codegen"
+  ]
+}
