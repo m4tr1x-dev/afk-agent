@@ -1,0 +1,51 @@
+capture routes, 2026-09-12, reference hardware
+llama.cpp not involved; Windows 11 Pro build 26200
+
+=== a windowed OpenGL game: AssaultCube 1.3.0.2, -t -w1280 -h720 ===
+window   AssaultCube
+measured 8s per route, asking for 30 Hz
+
+route           fps   p50 ms   p95 ms   black    flat  repeat  verdict
+PrintWindow    29.7    13.28    17.16      0%      0%      0%  usable
+BitBlt         29.8     3.58     4.12      0%      0%      0%  usable
+ScreenCrop     29.7    10.48    13.07      0%      0%      0%  usable
+WGC            55.0     2.37     2.69      0%      0%      0%  usable
+               cursor suppression accepted; capture border suppression accepted
+
+frames are 1282x752 where a route produced any
+
+=== a compositor-drawn application window ===
+window   Ustawienia
+measured 8s per route, asking for 30 Hz
+
+route           fps   p50 ms   p95 ms   black    flat  repeat  verdict
+PrintWindow    27.5    34.80    35.67      0%      0%    100%  stale surface
+BitBlt         29.7    15.70    17.17    100%      0%    100%  black frames
+ScreenCrop     28.1    34.53    35.58      0%      0%      0%  usable
+WGC             0.1    10.56    10.56      0%      0%      0%  too few frames
+               cursor suppression accepted; capture border suppression accepted
+
+frames are 2560x1392 where a route produced any
+
+=== question 7, three runs against a window the probe owns ===
+--- capture border, unpackaged, question 7 ---
+  reading      664x664 of screen, 12 px outside the window
+  border required   edge   4.54%   interior   1.41%  (control)
+  border suppressed  edge   0.00%   interior   0.00%  (control)
+  nothing capturing   interior   0.00%  (stability)
+
+  SUPPRESSED: a border appears when required, nothing appears when suppressed, and the window is stable on its own. From an unpackaged process.
+--- capture border, unpackaged, question 7 ---
+  reading      664x664 of screen, 12 px outside the window
+  border required   edge   4.54%   interior   1.41%  (control)
+  border suppressed  edge   0.00%   interior   0.00%  (control)
+  nothing capturing   interior   0.00%  (stability)
+
+  SUPPRESSED: a border appears when required, nothing appears when suppressed, and the window is stable on its own. From an unpackaged process.
+--- capture border, unpackaged, question 7 ---
+  reading      664x664 of screen, 12 px outside the window
+  border required   edge   4.54%   interior   1.41%  (control)
+  border suppressed  edge   0.00%   interior   0.00%  (control)
+  nothing capturing   interior   0.00%  (stability)
+
+  SUPPRESSED: a border appears when required, nothing appears when suppressed, and the window is stable on its own. From an unpackaged process.

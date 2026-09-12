@@ -30,7 +30,18 @@ wrappers = []
 [[bans.deny]]
 name = "windows"
 reason = "FR-ACT-008: the platform surface is confined to the crates that bind it"
-wrappers = ["afk-capture", "afk-uia", "afk-ipc", "afk-shm", "afk-perception", "afk-guardian"]
+# `capture-probe` is on this list for the life of the capture experiment,
+# which is time-boxed and archived when ADR-0008 is decided. It is the one
+# entry here that is not a product crate, and it is justified narrowly:
+# two of the three routes it compares - Windows Graphics Capture and
+# desktop duplication - cannot be reached without a COM and WinRT
+# activation layer, and writing one by hand to avoid a dependency would
+# make the experiment measure our binding rather than the platform.
+#
+# The ban that matters is untouched: check_call_sites.py rule A forbids
+# input-synthesis spellings outside afk-input and afk-guardian, and it
+# scans experiments/ too.
+wrappers = ["afk-capture", "afk-uia", "afk-ipc", "afk-shm", "afk-perception", "afk-guardian", "capture-probe"]
 
 [sources]
 unknown-registry = "deny"

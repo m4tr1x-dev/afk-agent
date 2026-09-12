@@ -6,7 +6,12 @@
 
 [workspace]
 resolver = "3"
-members = ["crates/*", "experiments/01-reachability", "experiments/02-vision-encoder"]
+members = [
+  "crates/*",
+  "experiments/01-reachability",
+  "experiments/02-vision-encoder",
+  "experiments/07-capture",
+]
 
 # The contract generator is a build-time tool, not part of what ships.
 # ADR-0016 wants `cargo build --workspace` to mean "the product", so the

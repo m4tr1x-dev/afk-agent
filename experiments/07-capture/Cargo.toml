@@ -1,0 +1,41 @@
+[package]
+name = "capture-probe"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Known-good-matrix question 7 and the evidence ADR-0008 needs: which capture route works on which window mode, and how each one fails."
+
+[lints]
+workspace = true
+
+[dependencies]
+# The platform bindings, for the two routes that cannot be reached through a
+# hand-written extern block without writing a COM and WinRT activation layer
+# first. `deny.toml` permits this crate here for the life of the experiment and
+# says so; `tools/check_call_sites.py` rule A still forbids input synthesis
+# anywhere outside afk-input and afk-guardian, including here, so the ban that
+# matters is unaffected.
+windows = { version = "0.62", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Gdi",
+  "Win32_Graphics_Dxgi",
+  "Win32_Graphics_Dxgi_Common",
+  "Win32_Graphics_Direct3D",
+  "Win32_Graphics_Direct3D11",
+  "Win32_UI_WindowsAndMessaging",
+  "Win32_Storage_Xps",
+  "Win32_System_Com",
+  "Win32_System_LibraryLoader",
+  "Graphics_Capture",
+  "Graphics_DirectX_Direct3D11",
+  "Win32_System_WinRT_Graphics_Capture",
+  "Win32_System_WinRT_Direct3D11",
+] }
+
+[[bin]]
+name = "capture-probe"
+path = "src/main.rs"
