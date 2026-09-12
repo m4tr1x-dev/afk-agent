@@ -173,6 +173,7 @@ nav:
       - contributing/coding-standards-rust.md
       - contributing/coding-standards-csharp.md
       - contributing/testing-strategy.md
+      - contributing/autonomous-builds.md
       - contributing/documentation-guide.md
       - contributing/adr-process.md
       - contributing/diagram-guide.md
