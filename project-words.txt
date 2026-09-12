@@ -119,6 +119,9 @@ addstore
 worktree
 worktrees
 
+# Rendering vocabulary that appears in findings pages.
+skybox
+
 # Games in the experiment roster. Named because the findings pages have to say
 # which title a measurement came from.
 Breathedge
