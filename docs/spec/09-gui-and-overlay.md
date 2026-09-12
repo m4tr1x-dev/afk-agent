@@ -158,7 +158,7 @@ Retrofitting string externalisation is tedious and doing it from the start costs
 3. **Limitation.** Whether the live view should be available when the shell is on the same monitor as a fullscreen game. It cannot be seen there, and rendering it anyway costs graphics time the game wants.
 4. **Non-blocking.** How much annotation is useful versus distracting. Every mark box is informative during debugging and noise during normal running.
 5. **Non-blocking.** Whether the shell should be able to attach to a core it did not start, so a user can reopen the window mid-session. Desirable; needs a discovery and reattach protocol in [the inter-process protocol](10-ipc-protocol.md).
-6. **Blocking.** Whether capture-border suppression is available for an unpackaged application on the target Windows build. If not, every captured frame carries a border the perception layer must crop.
+6. **Non-blocking.** Whether suppression also holds in borderless and exclusive fullscreen, and across multiple displays. The windowed case is answered: on build 26200, from an unpackaged process, a border is drawn when required and not drawn when suppressed - measured against the screen rather than against a capture, reproduced three times. No crop step is needed for the mode measured. See `experiments/07-capture/`.
 
 ## Related decisions
 
