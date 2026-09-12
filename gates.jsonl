@@ -4,3 +4,5 @@
 {"t": "2026-09-12T12:49:07Z", "kind": "gate", "gates": {"G0": "pass", "G1": "fail"}, "result": "fail", "tests_passed": 0}
 {"t": "2026-09-12T12:49:38Z", "kind": "gate", "gates": {"G0": "pass", "G1": "pass"}, "result": "pass", "tests_passed": 0}
 {"t": "2026-09-12T12:53:04Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 0}
+{"t": "2026-09-12T12:57:14Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 0}
+{"t": "2026-09-12T13:00:49Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 0}

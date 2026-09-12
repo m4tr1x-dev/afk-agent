@@ -1,27 +1,28 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T12:54:55Z",
+  "updated": "2026-09-12T13:02:25Z",
   "milestone": "M0.5",
   "exit_criteria": [
     {
       "id": "M0.5.1",
       "text": "Rust toolchain installed and pinned",
-      "state": "in_progress"
+      "state": "done"
     },
     {
       "id": "M0.5.2",
       "text": "toolchain pinning files land: rust-toolchain.toml, global.json, Directory.Build.props, Directory.Packages.props, clippy.toml, deny.toml",
-      "state": "todo"
+      "state": "partial",
+      "detail": "Rust and .NET pins landed; Directory.Build.props and Directory.Packages.props wait for the first C# project"
     },
     {
       "id": "M0.5.3",
       "text": "check_call_sites.py lands BEFORE afk-input exists",
-      "state": "todo"
+      "state": "done"
     },
     {
       "id": "M0.5.4",
       "text": "lint_requirements.py scans source trees; traceability page generated",
-      "state": "todo"
+      "state": "done"
     },
     {
       "id": "M0.5.5",
@@ -40,11 +41,11 @@
     }
   ],
   "task": {
-    "id": "T-0007",
-    "title": "install and pin the Rust toolchain",
-    "branch": "feat/rust-toolchain",
+    "id": "T-0011",
+    "title": "E1 reachability probe: the question that gates everything",
+    "branch": "feat/reachability-probe",
     "pr": null,
-    "started": "2026-09-12T12:54:55Z"
+    "started": "2026-09-12T13:02:25Z"
   },
   "gates": {
     "G0": "pass",
@@ -87,8 +88,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0008 toolchain pinning files",
-    "T-0009 check_call_sites.py before afk-input exists",
-    "T-0010 M0.5 spikes"
+    "T-0012 acquire the game roster",
+    "T-0013 E9 toolchain spikes",
+    "T-0014 ADR-0039..0042"
   ]
 }

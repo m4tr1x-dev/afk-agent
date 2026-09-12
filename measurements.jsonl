@@ -1,0 +1,1 @@
+{"t": "2026-09-12T12:58:48Z", "kind": "measure", "note": "planning estimate was 1.98.0", "q": "toolchain", "metric": "rust_version", "value": "1.98.1", "lands_in": "docs/known-good-matrix.md"}

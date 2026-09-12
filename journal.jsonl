@@ -6,3 +6,6 @@
 {"t": "2026-09-12T12:54:32Z", "kind": "task_done", "task": "T-0005", "note": "evidence field enforced, PR #10 merged"}
 {"t": "2026-09-12T12:54:33Z", "kind": "task_done", "task": "T-0004", "note": "experiments/ listed as planned; ADR amendment deferred to first probe"}
 {"t": "2026-09-12T12:54:55Z", "kind": "task_start", "task": "T-0007", "note": "M0 complete; installing Rust"}
+{"t": "2026-09-12T12:58:48Z", "kind": "measure", "note": "planning estimate was 1.98.0", "q": "toolchain", "metric": "rust_version", "value": "1.98.1", "lands_in": "docs/known-good-matrix.md"}
+{"t": "2026-09-12T12:58:48Z", "kind": "task_done", "task": "T-0007", "note": "Rust installed and pinned; FR-ACT-008 enforcement in place before the crate"}
+{"t": "2026-09-12T13:02:25Z", "kind": "task_done", "task": "T-0009", "note": "traceability extended to source; Lint method added; PR #12"}
