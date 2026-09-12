@@ -18,3 +18,12 @@
 *.pdf binary
 *.gguf binary
 *.safetensors binary
+
+# Large binary assets go to Git LFS.
+#
+# Configured before the first frame arrives rather than after. Retrofitting LFS
+# means rewriting history, and the corpus is expected to reach a thousand frames
+# or more.
+tests/corpus/**/*.png filter=lfs diff=lfs merge=lfs -text
+tests/corpus/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/**/*.bin filter=lfs diff=lfs merge=lfs -text

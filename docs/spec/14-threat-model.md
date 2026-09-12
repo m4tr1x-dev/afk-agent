@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, security]
 requirements: [FR-SKILL-005, INV-SKILL-001, INV-CTX-001, INV-CTX-002, INV-SAFE-001, INV-ACT-001, INV-ACT-003, FR-OBS-003, FR-OBS-004, FR-MODEL-005, CON-002]
-decisions: [ADR-0025]
+decisions: [ADR-0025, ADR-0041]
 generated: false
 ---
 

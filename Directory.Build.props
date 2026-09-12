@@ -1,0 +1,51 @@
+<Project>
+
+  <!--
+    Properties shared by every C# project in the repository.
+
+    Here rather than in each project file, for the same reason the Rust lint
+    policy lives in the workspace manifest: a setting applied to existing
+    projects is a setting somebody has to remember to apply to the next one.
+    The first project inherits these before it has a single line of code.
+  -->
+
+  <PropertyGroup>
+    <!-- .NET 10 is the long-term support release; 11 is standard-term. A
+         product that ships an installer to users belongs on the long-term
+         release unless a capability forces otherwise. ADR-0043 records the
+         decision and names the condition that reopens it. -->
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <LangVersion>14.0</LangVersion>
+    <Platforms>x64</Platforms>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+
+    <!-- A warning nobody has to fix is a warning everybody stops reading. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+
+    <!-- Ahead-of-time compilation was measured on 2026-09-12 and it works: a
+         4.2 MiB native binary that launches and composes its window. See
+         experiments/09-toolchain/. It stays off anyway, for reasons ADR-0043
+         states, and this line makes that a decision rather than a default
+         nobody chose. Ready-to-run plus self-contained is the shipping shape. -->
+    <PublishAot>false</PublishAot>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <SelfContained>true</SelfContained>
+
+    <!-- Deterministic output, so two builds of the same commit produce the same
+         bytes and a diff in a release artefact means a real change. -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+
+    <!-- ADR-0016: one repository, so an interface string added today is
+         translatable before anybody asks for a second language. -->
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+</Project>
