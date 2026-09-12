@@ -15,6 +15,7 @@ requirements: [FR-GUI-001, FR-GUI-002, NFR-GUI-001, CON-001, CON-007]
 decisions: [ADR-0002, ADR-0003]
 affects: [FR-GUI-001, FR-GUI-002, CON-007]
 spec: [spec/09-gui-and-overlay.md]
+evidence: [docs/explanation/overlay-rendering-explained.md, docs/known-good-matrix.md]
 supersedes: null
 superseded_by: null
 generated: false

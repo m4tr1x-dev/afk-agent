@@ -15,6 +15,7 @@ requirements: [FR-ACT-004, FR-ACT-005, FR-ACT-008, INV-ACT-001, INV-ACT-003, CON
 decisions: [ADR-0025]
 affects: [FR-ACT-008, INV-ACT-001, CON-002]
 spec: [spec/06-action-and-input.md, spec/12-safety-and-limits.md]
+evidence: [docs/explanation/anti-cheat-and-terms-of-service.md, docs/explanation/sustained-actions-explained.md]
 supersedes: null
 superseded_by: null
 generated: false

@@ -15,6 +15,7 @@ requirements: [FR-GND-001, FR-GND-002, FR-GND-003, FR-GND-004, FR-GND-005]
 decisions: [ADR-0013, ADR-0036]
 affects: [FR-GND-001, FR-GND-002, FR-GND-004]
 spec: [spec/18-grounding-and-verification.md]
+evidence: [docs/explanation/grounding-clicks-in-pixels.md, docs/known-good-matrix.md]
 supersedes: null
 superseded_by: null
 generated: false

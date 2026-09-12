@@ -15,6 +15,7 @@ requirements: []
 decisions: []
 affects: []
 spec: []
+evidence: [docs/contributing/adr-process.md]
 supersedes: null
 superseded_by: null
 generated: false

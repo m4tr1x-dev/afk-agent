@@ -15,6 +15,7 @@ requirements: [FR-LOOP-001, FR-LOOP-002, NFR-LOOP-001, FR-ACT-002]
 decisions: [ADR-0035]
 affects: [FR-LOOP-001, FR-LOOP-002, NFR-LOOP-001]
 spec: [spec/05-reasoning-loop.md]
+evidence: [docs/explanation/how-the-agent-loop-works.md, docs/explanation/perception-token-economics.md]
 supersedes: null
 superseded_by: null
 generated: false

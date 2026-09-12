@@ -69,6 +69,7 @@ AREA_FIELDS: dict[str, dict[str, type]] = {
         "informed": list,
         "affects": list,
         "spec": list,
+        "evidence": list,
     },
     "tutorials": {
         "last_verified": dt.date,
@@ -161,6 +162,30 @@ def check(path: Path, root: Path) -> list[str]:
         if not DECISION_ID.match(str(did)):
             errors.append(f"{path}:1 malformed decision identifier '{did}'")
 
+    # "A record is not accepted without evidence behind it." That rule lives in
+    # adr-process.md and in CLAUDE.md, and until now it lived only there — which
+    # for an autonomous build is the same as not existing, because the agent
+    # writing the record is the agent that would have to hold itself to it.
+    #
+    # An accepted or proposed record must name at least one artefact, and every
+    # path it names must exist. A record whose evidence is a broken path is a
+    # guess in a smart format with a citation attached.
+    if area == "decisions" and path.name not in NON_MEMBER_PAGES:
+        evidence = meta.get("evidence") or []
+        if status in {"accepted", "proposed"} and not evidence:
+            errors.append(
+                f"{path}:1 a record with status '{status}' cites no evidence; "
+                "list the artefacts behind it in the 'evidence' field"
+            )
+        for item in evidence:
+            if not isinstance(item, str):
+                errors.append(f"{path}:1 evidence entry is not a path: {item!r}")
+                continue
+            if not (root.parent / item).exists():
+                errors.append(
+                    f"{path}:1 evidence path does not exist: {item}"
+                )
+
     # A specification page with no requirements and no governing decisions is
     # prose pretending to be normative.
     #
@@ -201,7 +226,8 @@ def main(argv: list[str]) -> int:
     for error in errors:
         print(f"::error::{error}" if "GITHUB_ACTIONS" in __import__("os").environ else error)
 
-    print(f"checked {len(pages)} pages, {len(errors)} problems", file=sys.stderr)
+    plural = "" if len(errors) == 1 else "s"
+    print(f"checked {len(pages)} pages, {len(errors)} problem{plural}", file=sys.stderr)
     return 1 if errors else 0
 
 

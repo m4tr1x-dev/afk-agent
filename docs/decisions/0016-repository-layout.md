@@ -15,6 +15,7 @@ requirements: [FR-ACT-008]
 decisions: [ADR-0002, ADR-0004]
 affects: [FR-ACT-008]
 spec: [spec/10-ipc-protocol.md]
+evidence: [docs/contributing/repository-layout.md]
 supersedes: null
 superseded_by: null
 generated: false

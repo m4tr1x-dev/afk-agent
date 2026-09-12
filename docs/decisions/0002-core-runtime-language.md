@@ -15,6 +15,7 @@ requirements: [NFR-ACT-001, NFR-PERC-001, NFR-PERC-002, FR-ACT-001, FR-ACT-008]
 decisions: [ADR-0003]
 affects: [NFR-PERC-002, NFR-ACT-001, FR-ACT-008]
 spec: [spec/03-container-architecture.md, spec/04-perception.md, spec/06-action-and-input.md]
+evidence: [docs/explanation/rust-and-csharp-split.md]
 supersedes: null
 superseded_by: null
 generated: false

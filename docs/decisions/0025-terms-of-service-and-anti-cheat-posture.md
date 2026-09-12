@@ -15,6 +15,7 @@ requirements: [CON-002, FR-ACT-005, FR-SAFE-005]
 decisions: [ADR-0009]
 affects: [CON-002, FR-ACT-005]
 spec: [spec/19-non-goals.md, spec/12-safety-and-limits.md]
+evidence: [docs/explanation/anti-cheat-and-terms-of-service.md]
 supersedes: null
 superseded_by: null
 generated: false

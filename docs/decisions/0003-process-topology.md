@@ -15,6 +15,7 @@ requirements: [FR-SAFE-003, FR-GUI-004, INV-GUI-001, FR-MODEL-004]
 decisions: [ADR-0002]
 affects: [FR-SAFE-003, FR-GUI-004, INV-GUI-001]
 spec: [spec/03-container-architecture.md]
+evidence: [docs/spec/03-container-architecture.md, docs/spec/12-safety-and-limits.md]
 supersedes: null
 superseded_by: null
 generated: false
