@@ -32,7 +32,7 @@ directory exists today or is part of the shape `ADR-0016` sets.
 | `contract/` | present | Message and tool schemas, the single source of truth |
 | `crates/` | present | The Rust core, one crate per subsystem boundary |
 | `src/` | planned | The C# shell and overlay |
-| `tests/` | planned | Corpus, benchmark harness, replay fixtures |
+| `tests/` | present | Corpus, benchmark harness, replay fixtures, and the roster of titles |
 | `experiments/` | present | Timeboxed probes that answer a known-good-matrix question |
 
 Everything else at the root is configuration: the site, the linters, the

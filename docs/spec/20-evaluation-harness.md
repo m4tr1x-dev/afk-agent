@@ -90,6 +90,27 @@ Stated here rather than left for a reader to assume, because the wrong use of th
 - **The absolute hit rate is not sound**, and must never be compared with published figures from other benchmarks. Those have different labels, different tasks and different definitions of a hit.
 - **The benchmark over-represents easy targets.** Two-source agreement accepts what is easy to detect, so the measured rate is an **upper bound rather than an estimate**. The rejected pile quantifies the bias: if two clicks in five land on something no source boxed, the benchmark covers three fifths of the real problem, and that fraction goes in the report.
 
+### The roster is enforced, not noted
+
+`tests/roster.toml` lists every title this project may point a probe at, and
+what it may do to each: `synthesis_allowed` per title, alongside a three-value
+`terms` field and the date a person reviewed the clause pack.
+
+**The probe reads it and refuses.** A title with `synthesis_allowed = false`,
+and a title the roster does not list at all, both end the run before anything is
+synthesised and before the target window is even looked for.
+
+Unlisted is a refusal rather than a default, because a roster that silently
+permits what it has not heard of permits everything: a typo in a name is
+indistinguishable from a title nobody considered.
+
+`ADR-0025` excludes competitive multiplayer as a use case and as a direction of
+contribution, and some titles' terms prohibit automation outright.
+Both rules lived in prose, and a rule that lives only in prose is one somebody
+works around at two in the morning with a good reason.
+The difference between recording a rule and having the tool refuse is the whole
+of the difference.
+
 ### Privacy
 
 Corpus frames are images of a real screen.
