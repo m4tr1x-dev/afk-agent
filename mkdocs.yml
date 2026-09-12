@@ -132,6 +132,8 @@ nav:
       - decisions/0003-process-topology.md
       - decisions/0004-control-plane-transport.md
       - decisions/0005-data-plane-transport.md
+      - decisions/0006-model-runtime.md
+      - decisions/0007-model-variant-and-quantisation.md
       - decisions/0009-input-injection-method.md
       - decisions/0011-application-framework-and-packaging.md
       - decisions/0012-agent-loop-architecture.md

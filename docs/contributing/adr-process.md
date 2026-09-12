@@ -46,6 +46,32 @@ stateDiagram-v2
 A rejected record stays in the repository.
 The reasoning for not doing something is worth as much as the reasoning for doing it, and without the record the same proposal returns every six months.
 
+## Pre-registration, for a record whose decision waits on a measurement
+
+Some records cannot be written until an experiment has run.
+For those, the record is opened **before** the experiment, with every section filled in except one:
+
+| Section | When it is written |
+| --- | --- |
+| Context and problem statement | Before |
+| Decision drivers | Before |
+| Considered options | Before |
+| **Validation** | **Before** |
+| Pros and cons of the options | Before |
+| **Decision** | **After. It is literally absent until the experiment returns** |
+
+The order is the point, and it is Validation that carries it.
+Writing down what would count as a win — the threshold, the measurement, the condition that would change our minds — while the answer is still unknown is the only reliable way to avoid choosing the criterion that the result happens to satisfy.
+
+This is not a hypothetical failure.
+A record whose Decision and Validation are written in the same sitting, after the numbers are in, will describe a threshold the winner clears.
+Nobody has to be dishonest for that to happen; it is what reading a table and then writing a criterion does to a person.
+
+A pre-registered record is `proposed`, and `proposed` requires evidence like any other status — so it cites the experiment's design, its harness, or a prior run, not a conclusion it does not have yet.
+
+**Which records this applies to** is not a matter of taste: any record whose Decision section would contain a number, a ranking, or a choice between options that a measurement distinguishes.
+If the honest answer to "what would make us pick the other one" is a quantity, the record is pre-registered.
+
 ## The rule that matters most
 
 **A record is not accepted without evidence behind it.**

@@ -175,3 +175,10 @@ newtypes
 unsatisfiable
 flyout
 ggml
+
+# Inference runtimes weighed and rejected in ADR-0006. Recorded by name so the
+# question does not come back without the reasons.
+Ollama
+ONNX
+DirectML
+unquantised
