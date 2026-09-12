@@ -99,6 +99,9 @@ requirements:
 layout:
     python tools/lint_layout.py
 
+questions:
+    python tools/lint_open_questions.py
+
 call-sites:
     python tools/check_call_sites.py
 
@@ -118,7 +121,7 @@ prose:
 # --------------------------------------------------------------- aggregate ---
 
 # Everything that runs without a game, a graphics processor or a person.
-ci: fmt clippy test doc codegen-fmt codegen-clippy codegen-test codegen-check docs frontmatter requirements layout call-sites generated lint-docs spell prose
+ci: fmt clippy test doc codegen-fmt codegen-clippy codegen-test codegen-check docs frontmatter requirements questions layout call-sites generated lint-docs spell prose
 
 # The gate the autonomous build advances on. Stricter than `ci`: it records the
 # test count and refuses a drop.

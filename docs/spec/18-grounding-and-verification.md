@@ -198,12 +198,12 @@ Restated from [requirements](01-requirements.md), where they are defined:
 
 ## Open questions
 
-1. The verification window duration is game-dependent — a menu responds in a frame, a level load takes seconds — and there is no way to know which applies without knowing the game. Current candidate: derive it from the scene class, which is itself inferred.
-2. Whether the arbiter's counters should be per scene class or finer. Finer means slower to learn, coarser means it learns the wrong thing.
-3. How confidently a scene can be called "settled", which the refuted outcome depends on. Getting this wrong converts inconclusive into refuted, which is the thrashing failure above.
-4. Whether failure attribution can be automated at all, or whether it needs a model call. A model call per failure is affordable, since failures are rare; asking the model that failed to diagnose its own failure is not obviously sound.
-5. Whether Path A should be offered at all before the benchmark has run. Enabling it with no evidence is the position this page argues against.
-6. What happens when the two paths disagree — Path A returns a coordinate inside a different element than the mark Path B chose. Currently nothing detects that, and it would be a strong signal.
+1. **Blocking.** The verification window duration is game-dependent — a menu responds in a frame, a level load takes seconds — and there is no way to know which applies without knowing the game. Current candidate: derive it from the scene class, which is itself inferred.
+2. **Non-blocking.** Whether the arbiter's counters should be per scene class or finer. Finer means slower to learn, coarser means it learns the wrong thing.
+3. **Blocking.** How confidently a scene can be called "settled", which the refuted outcome depends on. Getting this wrong converts inconclusive into refuted, which is the thrashing failure above.
+4. **Non-blocking.** Whether failure attribution can be automated at all, or whether it needs a model call. A model call per failure is affordable, since failures are rare; asking the model that failed to diagnose its own failure is not obviously sound.
+5. **Blocking.** Whether Path A should be offered at all before the benchmark has run. Enabling it with no evidence is the position this page argues against.
+6. **Non-blocking.** What happens when the two paths disagree — Path A returns a coordinate inside a different element than the mark Path B chose. Currently nothing detects that, and it would be a strong signal.
 
 ## Related decisions
 

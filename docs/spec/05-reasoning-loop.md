@@ -241,12 +241,12 @@ This is the only way to test a stochastic agent repeatably, and it is also the o
 
 ## Open questions
 
-1. The thresholds for all four no-progress signals are empirical and need the recorded corpus.
-2. Whether the tactical cadence should vary with scene class. A menu needs a higher rate than a loading screen, and the current design is a fixed rate.
-3. How deep a plan tree is allowed to get. Unbounded depth is a way for a deliberative model to avoid ever acting.
-4. Whether research should be reachable from the tactical loop rather than only from the ladder. It would be faster to react; it also risks the fast loop spending the session reading.
-5. What happens when the deliberative model proposes a subgoal whose precondition is already false. Currently undefined.
-6. Whether rung 5 — returning to a safe state — can be defined without per-game knowledge. Closing menus generalises; "return to a hub" does not.
+1. **Blocking.** The thresholds for all four no-progress signals are empirical and need the recorded corpus.
+2. **Non-blocking.** Whether the tactical cadence should vary with scene class. A menu needs a higher rate than a loading screen, and the current design is a fixed rate.
+3. **Blocking.** How deep a plan tree is allowed to get. Unbounded depth is a way for a deliberative model to avoid ever acting.
+4. **Non-blocking.** Whether research should be reachable from the tactical loop rather than only from the ladder. It would be faster to react; it also risks the fast loop spending the session reading.
+5. **Blocking.** What happens when the deliberative model proposes a subgoal whose precondition is already false. Currently undefined.
+6. **Limitation.** Whether rung 5 — returning to a safe state — can be defined without per-game knowledge. Closing menus generalises; "return to a hub" does not.
 
 ## Related decisions
 

@@ -118,9 +118,9 @@ The full list with reasoning is in [non-goals](19-non-goals.md); the short versi
 
 ## Open questions
 
-1. Does the system support a game running on a second machine, captured over a video link? Currently out of scope, but the capture layer does not inherently prevent it, and saying so explicitly would prevent someone assuming it works.
-2. What is the defined behaviour when the target window closes mid-session — stop, or wait for it to reappear? The safety answer and the usability answer differ.
-3. Is a game running inside a browser one target window, or does the browser chrome need to be excluded from the capture region?
+1. **Non-blocking.** Does the system support a game running on a second machine, captured over a video link? Currently out of scope, but the capture layer does not inherently prevent it, and saying so explicitly would prevent someone assuming it works.
+2. **Blocking.** What is the defined behaviour when the target window closes mid-session — stop, or wait for it to reappear? The safety answer and the usability answer differ.
+3. **Non-blocking.** Is a game running inside a browser one target window, or does the browser chrome need to be excluded from the capture region?
 
 ## Related decisions
 

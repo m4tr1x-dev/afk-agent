@@ -159,12 +159,12 @@ Where a model-specific detail is unavoidable — a chat template, a token budget
 
 ## Open questions
 
-1. **Every latency figure on this page is missing**, and the tactical cadence's rate follows directly from them. Measuring requires the model running on the reference hardware **with a game in memory**, since the figure without one is not the figure that matters. This blocks `NFR-MODEL-001` and [performance budgets](15-performance-budgets.md).
-2. Whether the vision encoder loads at all on the required compute backend for the intended variant. There is a known defect in this area on a different backend. Until checked, the tactical cadence has no confirmed implementation.
-3. Whether prefix reuse behaves as assumed with two pinned contexts at different image costs. If the runtime shares one cache between them, the two cadences evict each other and the layout above buys nothing.
-4. Whether image cost is selectable per request or only per session. The two-stage refinement in [grounding](18-grounding-and-verification.md) needs per-request.
-5. Whether extended reasoning can be capped rather than merely switched off. Uncapped reasoning on the deliberative path is an unbounded pause.
-6. What the agent does when the model host reports a context overflow mid-session. Compaction should prevent it; "should" is not a mechanism.
+1. **Blocking.** **Every latency figure on this page is missing**, and the tactical cadence's rate follows directly from them. Measuring requires the model running on the reference hardware **with a game in memory**, since the figure without one is not the figure that matters. This blocks `NFR-MODEL-001` and [performance budgets](15-performance-budgets.md).
+2. **Blocking.** Whether the vision encoder loads at all on the required compute backend for the intended variant. There is a known defect in this area on a different backend. Until checked, the tactical cadence has no confirmed implementation.
+3. **Blocking.** Whether prefix reuse behaves as assumed with two pinned contexts at different image costs. If the runtime shares one cache between them, the two cadences evict each other and the layout above buys nothing.
+4. **Blocking.** Whether image cost is selectable per request or only per session. The two-stage refinement in [grounding](18-grounding-and-verification.md) needs per-request.
+5. **Blocking.** Whether extended reasoning can be capped rather than merely switched off. Uncapped reasoning on the deliberative path is an unbounded pause.
+6. **Blocking.** What the agent does when the model host reports a context overflow mid-session. Compaction should prevent it; "should" is not a mechanism.
 
 ## Related decisions
 

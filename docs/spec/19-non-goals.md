@@ -151,8 +151,8 @@ Listed separately because these might arrive, and conflating them with the entri
 
 ## Open questions
 
-1. Whether an explicit, user-initiated export and reimport of a note block between sessions is a defensible exception to the persistence exclusion. It would be genuinely useful for a long multi-session goal, and it breaches the property that makes the isolation free. Currently excluded.
-2. Whether a compatibility list that *informs* rather than gates — telling the user what to expect on a given game without changing behaviour — violates the per-game exclusion. Probably not, but it is the shape of thing that becomes a gate.
+1. **Non-blocking.** Whether an explicit, user-initiated export and reimport of a note block between sessions is a defensible exception to the persistence exclusion. It would be genuinely useful for a long multi-session goal, and it breaches the property that makes the isolation free. Currently excluded.
+2. **Non-blocking.** Whether a compatibility list that *informs* rather than gates — telling the user what to expect on a given game without changing behaviour — violates the per-game exclusion. Probably not, but it is the shape of thing that becomes a gate.
 
 ## Related decisions
 

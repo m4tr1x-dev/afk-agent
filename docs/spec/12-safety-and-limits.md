@@ -216,11 +216,11 @@ If any one of these fails, the rest of this page is decoration.
 
 ## Open questions
 
-1. The 100 ms panic budget is asserted, not measured. It must be validated against hotkey delivery latency under load before it becomes a requirement rather than an intention.
-2. Which mechanism reliably distinguishes synthesised from genuine input, and whether it can be read without installing a low-level hook. A hook works but adds a component in the path of every keystroke the user makes, which is its own risk.
-3. Whether the guardian should also enforce the session wall-clock budget, so that a core which hangs while holding input stops rather than waiting for the user.
-4. What the fallback is when both panic-key registrations fail because other applications hold the combinations. Currently there is none, which is not acceptable.
-5. Whether losing foreground should pause or stop. Pausing is friendlier; stopping is safer when the user has walked away and something else stole focus for reasons nobody is present to understand.
+1. **Blocking.** The 100 ms panic budget is asserted, not measured. It must be validated against hotkey delivery latency under load before it becomes a requirement rather than an intention.
+2. **Blocking.** Which mechanism reliably distinguishes synthesised from genuine input, and whether it can be read without installing a low-level hook. A hook works but adds a component in the path of every keystroke the user makes, which is its own risk.
+3. **Blocking.** Whether the guardian should also enforce the session wall-clock budget, so that a core which hangs while holding input stops rather than waiting for the user.
+4. **Blocking.** What the fallback is when both panic-key registrations fail because other applications hold the combinations. Currently there is none, which is not acceptable.
+5. **Blocking.** Whether losing foreground should pause or stop. Pausing is friendlier; stopping is safer when the user has walked away and something else stole focus for reasons nobody is present to understand.
 
 ## Related decisions
 

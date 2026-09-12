@@ -80,6 +80,13 @@ jobs:
       - name: Validate requirement identifiers
         run: python tools/lint_requirements.py docs
 
+      # Every open question carries a disposition, and an accepted page carries
+      # no question that should have stopped it. The rule was prose in
+      # CLAUDE.md until now, which for a repository built largely by an agent
+      # is close to not existing.
+      - name: Validate open-question dispositions
+        run: python tools/lint_open_questions.py
+
   markdown:
     name: Markdown lint
     runs-on: ubuntu-latest

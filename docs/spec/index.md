@@ -31,7 +31,8 @@ Every specification page has the same shape:
 | Design | How the requirements are met — diagrams, state machines, schemas |
 | Interfaces | What this subsystem exposes to the others |
 | Invariants | What holds at all times, not only at a step |
-| Open questions | Numbered, each with what would resolve it |
+| Known limitations | What this subsystem does not do and is not going to, with the reason |
+| Open questions | Numbered and marked, each with what would resolve it |
 | Related decisions | The records that govern this page |
 
 Read Purpose and Requirements first.
@@ -40,6 +41,18 @@ The Design section explains one way to satisfy the requirements; where it and th
 **Open questions are not decoration.**
 An empty Open questions section is a claim that none remain, and that claim is checked at review.
 If you are implementing a page and have to ask something that is not listed there, the page has a defect — file it rather than guessing.
+
+**Every open question carries a disposition**, and `tools/lint_open_questions.py` fails the build when one does not.
+
+| Marker | Meaning |
+| --- | --- |
+| **Blocking** | Implementation cannot proceed correctly without an answer. A guess here produces a defect rather than a revision |
+| **Non-blocking** | A design question with a stated default. Answering it later costs a change, not a correction |
+| **Limitation** | No experiment resolves it. It is a property of the problem, and it moves to Known limitations when the page is accepted |
+
+A page cannot reach `accepted` while it carries a question marked **Blocking** or **Limitation**, and that is checked rather than reviewed.
+The first is the rule `CLAUDE.md` already states in prose.
+The second is what the Known limitations section exists for: without somewhere to put a permanent limitation, it has to keep impersonating an open question, and no page ever passes the gate.
 
 ## Requirement identifiers
 

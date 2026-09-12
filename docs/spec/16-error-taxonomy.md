@@ -108,10 +108,10 @@ This page specifies the scheme; the code list is not written by hand, because a 
 
 ## Open questions
 
-1. Whether "environment" earns its own category or is a subset of "user". It is separate because the remedies differ — a driver update is not a setting change — and that may not justify a category.
-2. How many transient retries before escalation, per operation class. One number is wrong for both a device timeout and a page fetch.
-3. Whether a defect in a non-critical path should stop the session. Stopping is the safe answer, and it turns an unimportant failure into a ruined eight-hour run.
-4. Whether error codes should be stable across major versions. Stability helps users and search engines; it also freezes a taxonomy that may prove wrong.
+1. **Non-blocking.** Whether "environment" earns its own category or is a subset of "user". It is separate because the remedies differ — a driver update is not a setting change — and that may not justify a category.
+2. **Blocking.** How many transient retries before escalation, per operation class. One number is wrong for both a device timeout and a page fetch.
+3. **Blocking.** Whether a defect in a non-critical path should stop the session. Stopping is the safe answer, and it turns an unimportant failure into a ruined eight-hour run.
+4. **Non-blocking.** Whether error codes should be stable across major versions. Stability helps users and search engines; it also freezes a taxonomy that may prove wrong.
 
 ## Related decisions
 

@@ -180,11 +180,11 @@ Before this is reopened, [the threat model](14-threat-model.md) needs a section 
 
 ## Open questions
 
-1. Whether `ask_user` should have a timeout that converts to stopping. An agent blocked overnight on a question is not obviously better than one that stopped.
-2. Whether `declare_sensor` should validate that the expression evaluates meaningfully before installing it. A sensor that is always false is indistinguishable from a subgoal that never succeeds.
-3. How skills that the tactical cadence cannot see are surfaced when they are the right answer. Currently the deliberative pass has to notice.
-4. Whether `web_search` and `web_fetch` should be exposed at all, or only `deep_research`. The lower-level pair is more flexible and is also how an agent ends up reading forums for twenty minutes.
-5. What happens when two subgoals declare sensors with the same name.
+1. **Non-blocking.** Whether `ask_user` should have a timeout that converts to stopping. An agent blocked overnight on a question is not obviously better than one that stopped.
+2. **Non-blocking.** Whether `declare_sensor` should validate that the expression evaluates meaningfully before installing it. A sensor that is always false is indistinguishable from a subgoal that never succeeds.
+3. **Non-blocking.** How skills that the tactical cadence cannot see are surfaced when they are the right answer. Currently the deliberative pass has to notice.
+4. **Non-blocking.** Whether `web_search` and `web_fetch` should be exposed at all, or only `deep_research`. The lower-level pair is more flexible and is also how an agent ends up reading forums for twenty minutes.
+5. **Blocking.** What happens when two subgoals declare sensors with the same name.
 
 ## Related decisions
 

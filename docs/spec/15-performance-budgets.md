@@ -162,11 +162,11 @@ A safety budget exceeded is a defect to fix, not a threshold to relax.
 
 ## Open questions
 
-1. Every model figure is unvalidated. This blocks `NFR-MODEL-001` and the cadence rates.
-2. The 100 ms panic budget is asserted. It may be unachievable through the ordinary hotkey path under load, in which case the mechanism needs changing rather than the number.
-3. Whether the reflex rate should adapt to the game's own frame rate. A game at 30 fps does not need a 30 Hz agent.
-4. Whether the graphics memory poll at one second is frequent enough. A game loading a level can allocate gigabytes faster than that.
-5. What the acceptable frame-rate impact actually is. "Within a stated fraction" is in the [vision](../vision.md) and the fraction is not stated, which makes the success criterion unmeasurable as written.
+1. **Blocking.** Every model figure is unvalidated. This blocks `NFR-MODEL-001` and the cadence rates.
+2. **Blocking.** The 100 ms panic budget is asserted. It may be unachievable through the ordinary hotkey path under load, in which case the mechanism needs changing rather than the number.
+3. **Non-blocking.** Whether the reflex rate should adapt to the game's own frame rate. A game at 30 fps does not need a 30 Hz agent.
+4. **Blocking.** Whether the graphics memory poll at one second is frequent enough. A game loading a level can allocate gigabytes faster than that.
+5. **Blocking.** What the acceptable frame-rate impact actually is. "Within a stated fraction" is in the [vision](../vision.md) and the fraction is not stated, which makes the success criterion unmeasurable as written.
 
 ## Related decisions
 

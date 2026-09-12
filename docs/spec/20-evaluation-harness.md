@@ -142,12 +142,12 @@ A system whose text recognition misreads a counter presents as a system whose mo
 
 ## Open questions
 
-1. How large the grounding set needs to be for the confidence interval to be useful. A few hundred frames is a guess; the interval itself will say.
-2. Whether the corpus can be published. It is images of real games, which raises questions this project has not answered.
-3. Whether replay should tolerate small divergence or require exact equality. Exact is a clear signal and will make every model-host update look like a regression.
-4. How to label "reachable by Path A but not Path B" without assuming which elements perception ought to have found.
-5. Whether the latency suite can run anywhere but the reference machine. Almost certainly not, which makes it a nightly job on a self-hosted runner.
-6. What baseline the grounding suite compares against before there is a baseline.
+1. **Blocking.** How large the grounding set needs to be for the confidence interval to be useful. A few hundred frames is a guess; the interval itself will say.
+2. **Blocking.** Whether the corpus can be published. It is images of real games, which raises questions this project has not answered.
+3. **Blocking.** Whether replay should tolerate small divergence or require exact equality. Exact is a clear signal and will make every model-host update look like a regression.
+4. **Blocking.** How to label "reachable by Path A but not Path B" without assuming which elements perception ought to have found.
+5. **Limitation.** Whether the latency suite can run anywhere but the reference machine. Almost certainly not, which makes it a nightly job on a self-hosted runner.
+6. **Non-blocking.** What baseline the grounding suite compares against before there is a baseline.
 
 ## Related decisions
 

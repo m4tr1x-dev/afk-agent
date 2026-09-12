@@ -278,12 +278,12 @@ Restated from [requirements](01-requirements.md), where they are defined:
 
 ## Open questions
 
-1. Whether camera calibration survives the user changing their sensitivity setting mid-session. Currently nothing detects that, and every `look_at` afterwards is wrong.
-2. What happens when a game captures the cursor and the agent needs to click an interface element. Many games release capture when a menu opens, but not all, and there is no detection for it.
-3. Whether `move` should be expressed as a direction or as a key. A direction is more portable; a key is what the game actually reads, and the mapping between them is a per-game fact the agent is not supposed to have.
-4. The per-tick magnitude cap for relative movement is a guess until measured against real games.
-5. Whether the executor should refuse to hold a movement key while the scene class is a loading screen. It sounds obviously right and it is the kind of special case that accumulates.
-6. How `type_text` interacts with games that consume keystrokes for hotkeys rather than text. There is no way to tell from outside which mode a game is in.
+1. **Limitation.** Whether camera calibration survives the user changing their sensitivity setting mid-session. Currently nothing detects that, and every `look_at` afterwards is wrong.
+2. **Blocking.** What happens when a game captures the cursor and the agent needs to click an interface element. Many games release capture when a menu opens, but not all, and there is no detection for it.
+3. **Non-blocking.** Whether `move` should be expressed as a direction or as a key. A direction is more portable; a key is what the game actually reads, and the mapping between them is a per-game fact the agent is not supposed to have.
+4. **Blocking.** The per-tick magnitude cap for relative movement is a guess until measured against real games.
+5. **Non-blocking.** Whether the executor should refuse to hold a movement key while the scene class is a loading screen. It sounds obviously right and it is the kind of special case that accumulates.
+6. **Limitation.** How `type_text` interacts with games that consume keystrokes for hotkeys rather than text. There is no way to tell from outside which mode a game is in.
 
 ## Related decisions
 
