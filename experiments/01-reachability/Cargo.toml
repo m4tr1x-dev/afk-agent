@@ -13,6 +13,11 @@ description = "Known-good-matrix question 1: does synthesised relative mouse mov
 workspace = true
 
 [dependencies]
+# The version is stated even though nothing here is published: a path
+# dependency without one is a wildcard, and `deny.toml` bans wildcards. The
+# ban is worth keeping strict for registry dependencies, so the fix belongs
+# here rather than in an exception.
+afk-input = { path = "../../crates/afk-input", version = "0.0.0" }
 
 [[bin]]
 name = "reachability-probe"

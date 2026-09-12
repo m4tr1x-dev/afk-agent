@@ -72,6 +72,15 @@ impl Profile {
         Some(Self { values })
     }
 
+    /// Number of columns in the profile.
+    ///
+    /// The caller reads a lag as a fraction of this, because a displacement of
+    /// twenty columns means something different on a 640-wide capture than on a
+    /// 3840-wide one.
+    pub(crate) fn len(&self) -> usize {
+        self.values.len()
+    }
+
     /// Is this frame uniform enough that correlating it is meaningless?
     ///
     /// A black frame is the most common first capture failure, and a black
