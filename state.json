@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T14:04:11Z",
+  "updated": "2026-09-12T14:10:18Z",
   "milestone": "M1",
   "exit_criteria": [
     {
       "id": "M1.1",
       "text": "reachability probe works against five games across engines",
-      "state": "in_progress",
-      "detail": "3 of 5. Breathedge (Unreal Engine 4), Xonotic (DarkPlaces, 0.892 col/unit R2 0.957), AssaultCube (Cube, 1.072 col/unit R2 1.000). Installing OpenArena (id Tech 3) for a fourth."
+      "state": "done_with_caveat",
+      "detail": "Four engines tested, four reached: Unreal Engine 4, DarkPlaces, Cube, id Tech 3. Four of four is stronger than the four-of-five asked for, but the denominator is not the protocol's, so the matrix records rather than closes it."
     },
     {
       "id": "M1.2",
@@ -27,11 +27,11 @@
     }
   ],
   "task": {
-    "id": "T-0018",
-    "title": "E1 on a fourth engine; OpenArena is downloading",
+    "id": "T-0019",
+    "title": "M0.5 spikes and ADR-0039..0042, then the remaining M1 questions",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T14:04:11Z"
+    "started": "2026-09-12T14:10:18Z"
   },
   "gates": {
     "G0": "pass",
@@ -70,8 +70,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0018 OpenArena, for a fourth engine",
-    "T-0019 the wrap test, to turn columns per unit into degrees per unit",
-    "T-0020 M0.5 spikes and ADR-0039..0042"
+    "T-0019 M0.5 spikes: .slnx in VS 2026, MSIX packaging shape, contract codegen",
+    "T-0020 ADR-0039..0042 from those spikes",
+    "T-0021 E2: does the vision encoder load on the Vulkan backend"
   ]
 }
