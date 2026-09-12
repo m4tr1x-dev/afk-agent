@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T14:01:05Z",
+  "updated": "2026-09-12T14:04:11Z",
   "milestone": "M1",
   "exit_criteria": [
     {
@@ -12,9 +12,8 @@
     {
       "id": "M1.2",
       "text": "camera calibration derives a usable ratio without a model",
-      "state": "in_progress",
-      "on": "M1.1",
-      "detail": "Ratios exist in columns per unit for two engines. Degrees needs the field of view or the wrap test, neither run."
+      "state": "done",
+      "detail": "0.0909 degrees per mouse unit on AssaultCube, wrap test, match confidence 1.000. Cross-checks against the columns-per-unit sweep at a field of view of about 110 degrees, and the two share no arithmetic."
     },
     {
       "id": "M1.3",
@@ -29,10 +28,10 @@
   ],
   "task": {
     "id": "T-0018",
-    "title": "E1 on a fourth engine: OpenArena (id Tech 3)",
+    "title": "E1 on a fourth engine; OpenArena is downloading",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T14:01:05Z"
+    "started": "2026-09-12T14:04:11Z"
   },
   "gates": {
     "G0": "pass",
