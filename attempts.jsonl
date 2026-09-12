@@ -1,0 +1,1 @@
+{"t": "2026-09-12T13:24:43Z", "kind": "attempt", "task": "T-0011", "tried": "Xonotic +map dance, then +defer 12 cmd join", "why": "the game stays on a Join/Spectate prompt with the world paused; defer did not dismiss it", "next": "Breathedge via computer-use, or button support in afk-input", "dont_retry": true}

@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T13:07:27Z",
+  "updated": "2026-09-12T13:24:53Z",
   "milestone": "M1",
   "exit_criteria": [
     {
       "id": "M1.1",
       "text": "reachability probe works against five games across engines",
       "state": "in_progress",
-      "detail": "detection method built and tested; capture and input synthesis pending"
+      "detail": "probe runs end to end; no verdict yet. Xonotic sits on a Join prompt with the world paused, so no run has reached live gameplay. See experiments/01-reachability/results/2026-09-12-xonotic.md"
     },
     {
       "id": "M1.2",
@@ -27,11 +27,11 @@
     }
   ],
   "task": {
-    "id": "T-0011",
-    "title": "E1: minimal afk-input, then wire capture and synthesis into the probe",
-    "branch": "feat/reachability-probe",
-    "pr": 13,
-    "started": "2026-09-12T13:07:27Z"
+    "id": "T-0015",
+    "title": "reach live gameplay so E1 can measure: Breathedge via computer use, or pointer buttons in afk-input",
+    "branch": null,
+    "pr": null,
+    "started": "2026-09-12T13:24:53Z"
   },
   "gates": {
     "G0": "pass",
@@ -43,24 +43,15 @@
   },
   "open_decisions": [
     {
-      "id": "ADR-0039",
-      "title": "cross-language contract format",
-      "blocked_on": "M0.5 codegen spike"
+      "id": "ADR-0008",
+      "title": "screen capture API",
+      "blocked_on": "a run against a demonstrably animating window",
+      "evidence": "experiments/01-reachability/results/"
     },
     {
-      "id": "ADR-0040",
-      "title": "task runner and toolchain pinning",
-      "blocked_on": "M0.5 toolchain spike"
-    },
-    {
-      "id": "ADR-0041",
-      "title": "CI topology and the self-hosted runner",
-      "blocked_on": "M0.5"
-    },
-    {
-      "id": "ADR-0042",
-      "title": "enforcing the single input call site",
-      "blocked_on": "M0.5"
+      "id": "ADR-0009",
+      "title": "accepted; its validation section still needs the question 1 numbers",
+      "blocked_on": "E1"
     },
     {
       "id": "ADR-0039..0042",
@@ -79,8 +70,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0012 minimal crates/afk-input so the probe measures what ships",
-    "T-0013 window capture for the probe",
-    "T-0014 run E1 against Breathedge and Xonotic"
+    "T-0015 reach live gameplay (Breathedge is in the computer-use app list; Xonotic is not)",
+    "T-0016 run E1 and record the verdict",
+    "T-0017 CI gap: docs-quality path filter is '*.md' (root only), so markdown under experiments/ is checked locally but not in CI"
   ]
 }
