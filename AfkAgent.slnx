@@ -1,0 +1,9 @@
+<!--
+  The solution file. Empty until the first C# project lands in M2.
+
+  Committed now, and in this format, because `dotnet new sln` produces `.slnx`
+  with no flag on the installed toolchain: the new format is the default rather
+  than an option. Verified 2026-09-12; see experiments/09-toolchain/.
+-->
+<Solution>
+</Solution>

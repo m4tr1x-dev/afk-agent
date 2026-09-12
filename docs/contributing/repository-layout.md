@@ -24,6 +24,7 @@ directory exists today or is part of the shape `ADR-0016` sets.
 | --- | --- | --- |
 | `.cargo/` | present | Cargo configuration; the build target is fixed by `CON-001` |
 | `.claude/` | present | Coding-agent permissions and hooks; see [autonomous builds](autonomous-builds.md) |
+| `.config/` | present | The .NET local tool manifest, which pins the documentation generator |
 | `.github/` | present | Workflows, issue and pull request templates, code owners |
 | `docs/` | present | The specification and all other documentation |
 | `styles/` | present | Vale prose rules and vocabulary |

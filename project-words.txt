@@ -153,3 +153,23 @@ fallbacks
 superfences
 codegen
 msbuild
+
+# Build and packaging vocabulary, quoted verbatim from tool output in
+# experiments/09-toolchain. These are file extensions and executable names, so
+# there is no spelling to get right other than the one the tools use.
+slnx
+wapproj
+sideload
+runtimeconfig
+vswhere
+apphost
+PassThru
+
+# Decision-record vocabulary: two tool names, one PowerShell variable, and
+# three words the bundled dictionaries do not carry.
+xtask
+LASTEXITCODE
+parallelisable
+newtype
+newtypes
+unsatisfiable

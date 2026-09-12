@@ -143,6 +143,10 @@ nav:
       - decisions/0035-sustained-action-execution.md
       - decisions/0036-three-valued-verification.md
       - decisions/0039-generate-the-contract-from-one-schema.md
+      - decisions/0040-pin-every-tool-and-run-tasks-through-one-runner.md
+      - decisions/0041-continuous-integration-topology.md
+      - decisions/0042-enforce-the-single-input-call-site-mechanically.md
+      - decisions/0043-target-net-10-and-keep-ahead-of-time-compilation-off.md
   - Explanation:
       - explanation/index.md
       - explanation/why-no-per-game-training.md
