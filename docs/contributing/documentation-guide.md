@@ -165,7 +165,8 @@ Whether the behaviour exists yet is carried by `status`, not by grammar.
 
 ## Words we do not use
 
-Vale fails the build on these.
+Two of these fail the build. Two are flagged for you to think about and do not
+block, and the split is deliberate — see below.
 
 **Bot, cheat, hack, exploit, aimbot.**
 Two reasons.
@@ -173,15 +174,31 @@ Technically they are wrong: this software injects no code, hooks nothing, reads 
 Legally they are careless: those exact words appear in the terms of service we ask users to read carefully, and using them about our own software concedes a characterisation we do not accept.
 Write "agent" and "automation".
 
-**Simply, just, easily, obviously, clearly, trivially.**
-Anyone reading a how-to guide has already failed at something.
-Telling them the next step is easy adds nothing when it works and is insulting when it does not.
+**Future tense in `spec/`** — will be, shall be, eventually, for now.
+A specification describes a system in the present tense; whether it exists yet
+is carried by `status`, not by grammar. This one fails the build, because there
+is no legitimate exception inside a specification.
 
-**Vague quantifiers in `spec/`.**
-Fast, robust, scalable, reasonable, several, sufficient.
-Each hides a decision nobody has made.
-If the latency budget is "fast", no one can implement it and no test can check it.
-Write the number, the bound, or the condition.
+### Flagged, but advisory
+
+**Simply, just, easily, obviously, clearly, trivially.**
+Anyone reading a how-to guide has already failed at something, and telling them
+the step is easy adds nothing when it works and insults them when it does not.
+
+**Vague quantifiers** — fast, robust, scalable, reasonable, several, sufficient.
+In a normative statement each of these hides a decision nobody has made. If a
+latency budget is "fast", no one can implement it and no test can check it.
+
+Both are warnings rather than errors, and the reason is honest: a file-level
+linter cannot tell a requirement table row from the prose around it.
+"Many games expose no accessibility tree" is an accurate statement about the
+world, and "trivially detectable" is a precise technical claim rather than
+condescension. Gating on these would mean mangling correct prose to satisfy a
+rule written for a narrower target.
+
+They appear in every local run and as annotations on every pull request.
+**Where they matter — inside a requirement, a budget or an invariant — they are
+caught in review, and a reviewer should treat one as a defect.**
 
 ## Diagrams
 
