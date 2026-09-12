@@ -47,3 +47,7 @@
 {"at": "2026-09-12T17:54:55Z", "event": "question_answered", "matrix_question": 6, "detail": "deliberative on the processor: 41.5 s with the cache, 57.5 s without, against a 60 s criterion. Usable and marginal."}
 {"at": "2026-09-12T17:54:55Z", "event": "attempt_failed", "what": "measuring a deliberative call under the tactical grammar", "why": "the model stops after one tool call so max_tokens never binds; reads 3.7 s and says nothing about deliberation", "dont_retry": true}
 {"at": "2026-09-12T17:54:55Z", "event": "merged", "prs": [34]}
+{"at": "2026-09-12T18:17:37Z", "event": "task_done", "id": "T-0029", "detail": "corpus recorder built; destination guard wrong twice, both caught by tests, one had written into the repository"}
+{"at": "2026-09-12T18:17:37Z", "event": "blocker_actionable", "id": "B-001", "detail": "the recorder now exists, so the maintainer's 90 minutes can happen"}
+{"at": "2026-09-12T18:17:37Z", "event": "decision", "id": "ADR-0006", "status": "accepted", "detail": "llama-server on Vulkan pinned at 56381e407; six of seven capabilities demonstrated, capability 4 landed on its pre-registered fallback"}
+{"at": "2026-09-12T18:17:37Z", "event": "merged", "prs": [35, 36]}

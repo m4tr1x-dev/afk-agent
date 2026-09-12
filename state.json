@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T17:54:55Z",
+  "updated": "2026-09-12T18:17:37Z",
   "milestone": "M1",
   "exit_criteria": [
     {
@@ -28,11 +28,11 @@
     }
   ],
   "task": {
-    "id": "T-0029",
-    "title": "E-CAP part C: the corpus recorder",
+    "id": "T-0030",
+    "title": "E8 terms pack, then ADR-0008 and the remaining M1 records",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T17:54:55Z"
+    "started": "2026-09-12T18:17:37Z"
   },
   "gates": {
     "G0": "pass",
@@ -71,11 +71,11 @@
     {
       "id": "B-001",
       "title": "labelled corpus needs about 100 minutes of the maintainer's gameplay",
-      "raised": "2026-09-12T15:32:59Z",
+      "raised": "2026-09-12T15:40:00Z",
       "blocking": "ADR-0014 and the grounding benchmark",
-      "on_critical_path": false,
+      "on_critical_path": true,
       "unblock": "touch .agent/UNBLOCK-B-001",
-      "note": "Not actionable yet - the recorder is built in E-CAP part C. Raised early so it does not arrive as a surprise."
+      "note": "NOW ACTIONABLE. The recorder exists and its null case is verified; its positive path has never run because that requires a person clicking, and this probe may not synthesise input. capture-probe --window <game> --record --clicks 400 --minutes 20"
     }
   ],
   "invariants": [
@@ -88,8 +88,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0029 E-CAP part C: the corpus recorder, which the maintainer's 100 minutes feeds",
-    "T-0030 E8: the verbatim clause pack for the installed roster titles",
-    "T-0031 write ADR-0006 and ADR-0007's Decision sections from the measurements"
+    "T-0030 E8: verbatim clause pack for the installed roster titles; a human signs off",
+    "T-0031 ADR-0008 capture API, decided from experiments/07-capture",
+    "T-0032 M1 page transitions: 00, 01, 02, 03, 17, 19, 20 toward accepted"
   ]
 }

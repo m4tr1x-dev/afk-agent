@@ -67,3 +67,8 @@
 {"t": "2026-09-12T17:52:10Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 64}
 {"t": "2026-09-12T17:52:30Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 64}
 {"at": "2026-09-12T17:54:55Z", "gates": ["G1", "G2"], "result": "pass", "tests_declared": 64}
+{"t": "2026-09-12T17:55:30Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 64}
+{"t": "2026-09-12T17:56:01Z", "kind": "gate", "gates": {"G1": "fail"}, "result": "fail", "tests_passed": 64}
+{"t": "2026-09-12T17:56:21Z", "kind": "gate", "gates": {"G1": "pass"}, "result": "pass", "tests_passed": 64}
+{"t": "2026-09-12T18:14:47Z", "kind": "gate", "gates": {"G1": "pass", "G2": "pass"}, "result": "pass", "tests_passed": 71}
+{"at": "2026-09-12T18:17:37Z", "gates": ["G1", "G2"], "result": "pass", "tests_declared": 71}
