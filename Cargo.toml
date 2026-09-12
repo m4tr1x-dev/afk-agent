@@ -8,6 +8,11 @@
 resolver = "3"
 members = ["crates/*", "experiments/01-reachability"]
 
+# The contract generator is a build-time tool, not part of what ships.
+# ADR-0016 wants `cargo build --workspace` to mean "the product", so the
+# generator keeps its own lockfile and its own dependency audit surface.
+exclude = ["contract/codegen"]
+
 [workspace.package]
 edition = "2024"
 rust-version = "1.98"

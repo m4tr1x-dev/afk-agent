@@ -8,7 +8,7 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [spec, ipc]
 requirements: [FR-GUI-004, INV-GUI-001, FR-SAFE-001, FR-SAFE-003, NFR-GUI-001, NFR-OBS-001]
-decisions: [ADR-0004, ADR-0005, ADR-0016]
+decisions: [ADR-0004, ADR-0005, ADR-0016, ADR-0039]
 generated: false
 ---
 

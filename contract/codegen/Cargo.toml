@@ -1,0 +1,25 @@
+[package]
+name = "contract-codegen"
+version = "0.0.0"
+publish = false
+edition = "2024"
+rust-version = "1.98"
+license = "MIT"
+description = "Generate every artefact the cross-language contract owes, from one schema."
+
+# Excluded from the product workspace on purpose, per ADR-0016. `cargo build
+# --workspace` should mean "what ships", and this crate's dependencies have no
+# business in the product's audit surface.
+
+[workspace]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+toml = "0.9"
+
+[lints.rust]
+missing_docs = "warn"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
