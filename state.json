@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "updated": "2026-09-12T13:24:53Z",
+  "updated": "2026-09-12T13:37:56Z",
   "milestone": "M1",
   "exit_criteria": [
     {
       "id": "M1.1",
       "text": "reachability probe works against five games across engines",
       "state": "in_progress",
-      "detail": "probe runs end to end; no verdict yet. Xonotic sits on a Join prompt with the world paused, so no run has reached live gameplay. See experiments/01-reachability/results/2026-09-12-xonotic.md"
+      "detail": "REACHED on Breathedge (UE4), 1 of 5. Xonotic, 0 A.D., Wesnoth, SuperTuxKart outstanding."
     },
     {
       "id": "M1.2",
@@ -27,11 +27,11 @@
     }
   ],
   "task": {
-    "id": "T-0015",
-    "title": "reach live gameplay so E1 can measure: Breathedge via computer use, or pointer buttons in afk-input",
+    "id": "T-0017",
+    "title": "run E1 against the remaining roster",
     "branch": null,
     "pr": null,
-    "started": "2026-09-12T13:24:53Z"
+    "started": "2026-09-12T13:37:56Z"
   },
   "gates": {
     "G0": "pass",
@@ -70,8 +70,8 @@
     "never disable a check, never lower an assertion, never delete a failing test, never force-push, never push to main"
   ],
   "next": [
-    "T-0015 reach live gameplay (Breathedge is in the computer-use app list; Xonotic is not)",
-    "T-0016 run E1 and record the verdict",
-    "T-0017 CI gap: docs-quality path filter is '*.md' (root only), so markdown under experiments/ is checked locally but not in CI"
+    "T-0017 E1 on Xonotic (needs a Join click; it is not reachable by computer use), 0 A.D., Wesnoth, SuperTuxKart",
+    "T-0018 a sweep the correlation can still match, to get degrees_per_unit",
+    "T-0019 M0.5 spikes and ADR-0039..0042"
   ]
 }
