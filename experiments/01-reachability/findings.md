@@ -1,10 +1,10 @@
 # Question 1 — does synthesised relative mouse movement reach a real game?
 
-**Status: reached on two games of the five.** Synthesised relative movement turns
-the camera in Breathedge (Unreal Engine 4) and in Xonotic (DarkPlaces), the
-second with a linear response and a full pass on every test and control. The
-criterion is four of five across engines, so the question stays open; what is
-gone is the possibility that the answer was no everywhere.
+**Status: reached on three games of the five.** Synthesised relative movement turns
+the camera in Breathedge (Unreal Engine 4), Xonotic (DarkPlaces) and
+AssaultCube (Cube), the last two with a linear response and a measured ratio.
+The criterion is four of five across engines, so the question stays open; what
+is gone is the possibility that the answer was no everywhere.
 
 ## Why this probe exists
 
@@ -143,6 +143,8 @@ unstated precondition, reported as a conclusion.
 
 ## Results
 
+- `results/2026-09-12-assaultcube.md` — **reached, R2 1.000**, plus the third
+  outcome for an absolute reposition that the specification did not allow for.
 - `results/2026-09-12-xonotic-gameplay.md` — **reached, and linear.** The full
   measurement, the ratio, and the two earlier runs that were wrong.
 - `results/2026-09-12-breathedge.md` — **reached**, with the evidence and the

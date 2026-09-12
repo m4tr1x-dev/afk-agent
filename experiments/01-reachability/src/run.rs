@@ -64,20 +64,13 @@ pub(crate) enum ProbeError {
     Degenerate,
     /// A route was named on the command line that does not exist.
     UnknownRoute,
-    /// Consecutive captures of a live scene were pixel-identical.
+    /// A turn the probe itself emitted changed nothing in the frame.
     ///
-    /// The failure this probe is most likely to get wrong, so it is checked
-    /// before anything else runs. Identical frames correlate at 1.000 with zero
-    /// displacement, which reads as "the camera did not turn" — and that is the
-    /// project's gating question answered wrongly, in the most confident
+    /// Checked before anything else runs, because identical frames correlate at
+    /// 1.000 with zero displacement — which reads as "the camera did not turn",
+    /// and that is the gating question answered wrongly in the most confident
     /// possible tone.
-    ///
-    /// Two causes, and neither is an answer to question 1: the capture route
-    /// returns a stale or static image, or the window is showing something that
-    /// does not move, such as a menu.
-    StaticCapture {
-        frames: u32,
-    },
+    StaticCapture,
 }
 
 impl std::fmt::Display for ProbeError {
@@ -100,13 +93,12 @@ impl std::fmt::Display for ProbeError {
             Self::UnknownRoute => f.write_str(
                 "no such capture route; valid names are PrintWindow, BitBlt and ScreenCrop",
             ),
-            Self::StaticCapture { frames } => write!(
-                f,
-                "{frames} consecutive captures were pixel-identical, so nothing \
-                 measured afterwards would mean anything. Either the capture \
-                 route returns a stale image for this window, or the window is \
-                 showing something static such as a menu. That is an ADR-0008 \
-                 finding, not an answer to question 1"
+            Self::StaticCapture => f.write_str(
+                "a turn the probe emitted changed nothing in the captured frame, \
+                 so nothing measured afterwards would mean anything. Three \
+                 causes, and this probe separates none of them: the capture \
+                 route is stale, the input did not arrive, or the camera is \
+                 locked",
             ),
         }
     }
@@ -238,7 +230,8 @@ pub(crate) fn execute(
     // and entirely wrong verdict: every measurement came back at confidence
     // 1.000 with zero displacement, which is the signature of identical frames
     // rather than of a camera that did not move.
-    let route = choose_route(window, forced_route)?;
+    println!("checking that capture reflects an induced turn:");
+    let route = choose_route(&synth, window, forced_route)?;
     println!("capture route: {route}");
 
     let mut report = String::new();
@@ -330,9 +323,11 @@ pub(crate) fn execute(
     if !absolute_quiet {
         let _ = writeln!(
             report,
-            "note: absolute movement also turned the view. FR-ACT-004's rationale \
-             is weaker than 06-action-and-input.md claims for this game, and the \
-             page needs amending."
+            "note: an absolute reposition turned the view, and by a lot. \
+             FR-ACT-004 lists two outcomes for that - no delta, or one the game \
+             clamps as implausible - and this game applies it instead. \
+             That strengthens the requirement rather than weakening it: an \
+             uncontrolled swing is exactly what camera control must not produce."
         );
     }
 
@@ -363,76 +358,71 @@ pub(crate) fn turn_only(title: &str, arm_seconds: u64, units: i32) -> Result<(),
 }
 
 /// Pick the capture route: the one named, or the first that proves live.
-fn choose_route(window: capture::Hwnd, forced: Option<&str>) -> Result<Route, ProbeError> {
-    let Some(name) = forced else {
-        println!("checking whether any capture route is live:");
-        return liveness(window);
+fn choose_route(
+    synth: &Synthesiser,
+    window: capture::Hwnd,
+    forced: Option<&str>,
+) -> Result<Route, ProbeError> {
+    let candidates: Vec<Route> = match forced {
+        Some(name) => vec![
+            capture::ROUTES
+                .into_iter()
+                .find(|route| route.to_string().eq_ignore_ascii_case(name))
+                .ok_or(ProbeError::UnknownRoute)?,
+        ],
+        None => capture::ROUTES.to_vec(),
     };
 
-    let chosen = capture::ROUTES
-        .into_iter()
-        .find(|route| route.to_string().eq_ignore_ascii_case(name))
-        .ok_or(ProbeError::UnknownRoute)?;
-
-    println!("route forced to {chosen}; checking it is live");
-    if route_is_live(window, chosen).map_err(ProbeError::Capture)? {
-        Ok(chosen)
-    } else {
-        Err(ProbeError::StaticCapture {
-            frames: LIVENESS_FRAMES,
-        })
-    }
-}
-
-/// Frames sampled when checking that the scene is live.
-const LIVENESS_FRAMES: u32 = 12;
-
-/// Confirm that some capture route produces frames that actually change.
-///
-/// Returns the live route. Fails rather than proceeding, because every test
-/// below correlates two frames, and two identical frames correlate perfectly at
-/// zero displacement — which reads exactly like "the input never arrived".
-///
-/// Each route is checked on its own. "Produced a frame with content" and
-/// "produced a frame that changes" are different questions, and a route can
-/// return a perfectly detailed image that is the same image every time. The
-/// per-route result is the table `ADR-0008` needs.
-fn liveness(window: capture::Hwnd) -> Result<Route, ProbeError> {
-    let mut last_error = None;
-
-    for route in capture::ROUTES {
-        match route_is_live(window, route) {
+    for route in candidates {
+        match route_is_live(synth, window, route) {
             Ok(true) => {
-                println!("  {route}: live");
+                println!("  {route}: reflects an induced turn");
                 return Ok(route);
             }
-            Ok(false) => println!("  {route}: static across {LIVENESS_FRAMES} frames"),
-            Err(error) => {
-                println!("  {route}: {error}");
-                last_error = Some(error);
-            }
+            Ok(false) => println!("  {route}: unchanged by an induced turn"),
+            Err(error) => println!("  {route}: {error}"),
         }
     }
 
-    if let Some(error) = last_error {
-        return Err(ProbeError::Capture(error));
-    }
-    Err(ProbeError::StaticCapture {
-        frames: LIVENESS_FRAMES,
-    })
+    Err(ProbeError::StaticCapture)
 }
 
-fn route_is_live(window: capture::Hwnd, route: Route) -> Result<bool, capture::CaptureError> {
-    let mut previous = capture::capture_via(window, route)?.gray;
-    for _ in 1..LIVENESS_FRAMES {
-        sleep(Duration::from_millis(80));
-        let frame = capture::capture_via(window, route)?;
-        if frame.gray != previous {
-            return Ok(true);
-        }
-        previous = frame.gray;
-    }
-    Ok(false)
+/// Mouse units emitted to test that capture reflects an induced change.
+///
+/// Large enough that even a heavily damped camera moves a pixel, small enough
+/// that it is not itself a measurement anyone would read.
+const LIVENESS_UNITS: i32 = 60;
+
+/// Confirm that capture reflects something the probe itself caused.
+///
+/// The earlier version of this check waited for the scene to move **on its
+/// own**, and it was wrong in a way worth keeping written down. A stale capture
+/// and a scene that simply is not moving have the same signature in the frames:
+/// both give you the same bytes twice. Waiting for ambient movement rejects a
+/// perfectly good target whose player happens to be standing still — which is
+/// what one of the roster titles does, because nothing in it animates while
+/// the player stands still.
+///
+/// So the liveness test is now a small turn. If the frame changes afterwards,
+/// capture works and input arrives, both at once. If it does not, that is the
+/// same joint ambiguity the verdict already names, and it is reported as such
+/// rather than attributed to whichever cause is more interesting.
+fn route_is_live(
+    synth: &Synthesiser,
+    window: capture::Hwnd,
+    route: Route,
+) -> Result<bool, ProbeError> {
+    let before = capture::capture_via(window, route)
+        .map_err(ProbeError::Capture)?
+        .gray;
+    emit_relative(synth, LIVENESS_UNITS)?;
+    settle();
+    let after = capture::capture_via(window, route)
+        .map_err(ProbeError::Capture)?
+        .gray;
+    emit_relative(synth, -LIVENESS_UNITS)?;
+    settle();
+    Ok(before != after)
 }
 
 /// Test two: does the displacement grow with the input, and how?
@@ -531,16 +521,23 @@ fn absolute_control(
     baseline: i32,
     report: &mut String,
 ) -> Result<bool, ProbeError> {
+    // Park the cursor first, so the control requests a displacement of its own
+    // rather than whatever happens to be left over from the last run.
+    //
+    // Without this the result depends on cursor history: the first invocation
+    // moves it a long way and looks like a turn, the second has nowhere to go
+    // and looks quiet. One roster title produced exactly that pair, and the
+    // first reading was briefly written down as the specification being wrong.
+    let _ = synth.move_absolute(4_000, 4_000);
+    settle();
+
     let (before, _) = profile(window, route)?;
     // A refusal here is not a failure of the control: it is the foreground
     // guard, and it means the same thing as no movement.
-    let _ = synth.move_absolute(20_000, 32_000);
+    let _ = synth.move_absolute(56_000, 40_000);
     settle();
     let (after, _) = profile(window, route)?;
     let moved = displacement(&before, &after).ok_or(ProbeError::Degenerate)?;
-    // A lag with no correlation behind it is not evidence of movement. The
-    // first real run reported "ABSOLUTE ALSO TURNS" at confidence 0.257, which
-    // is the correlation saying it found nothing, not that the view moved.
     let quiet = moved.confidence < MIN_CONFIDENCE
         || moved.lag.abs() <= (baseline + BASELINE_MARGIN).max(MIN_TURN_COLUMNS);
     let _ = writeln!(
