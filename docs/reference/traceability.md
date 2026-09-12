@@ -33,14 +33,14 @@ site with no covering test fails the check that produces this page.
 | `CON-005` | — | [docs/spec/00-scope-and-goals.md](../spec/00-scope-and-goals.md) | — | — | backlog |
 | `CON-006` | — | [docs/spec/00-scope-and-goals.md](../spec/00-scope-and-goals.md) | — | — | backlog |
 | `CON-007` | — | [docs/spec/00-scope-and-goals.md](../spec/00-scope-and-goals.md) | — | — | backlog |
-| `FR-ACT-001` | Unit, Integration, Manual | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
+| `FR-ACT-001` | Unit, Integration, Manual | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | `crates/afk-input/src/lib.rs:300` | backlog |
 | `FR-ACT-002` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
 | `FR-ACT-003` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
-| `FR-ACT-004` | Manual, Integration | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
+| `FR-ACT-004` | Manual, Integration | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | `crates/afk-input/src/lib.rs:271`, `crates/afk-input/src/lib.rs:289` | backlog |
 | `FR-ACT-005` | Manual | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
-| `FR-ACT-006` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
+| `FR-ACT-006` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | `crates/afk-input/src/lib.rs:326` | backlog |
 | `FR-ACT-007` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
-| `FR-ACT-008` | Lint, Manual | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | `tools/check_call_sites.py:46` | backlog |
+| `FR-ACT-008` | Lint, Manual | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | `crates/afk-input/src/lib.rs:314`, `tools/check_call_sites.py:46` | backlog |
 | `FR-CFG-001` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
 | `FR-CFG-002` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
 | `FR-CFG-003` | Integration | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
@@ -101,7 +101,7 @@ site with no covering test fails the check that produces this page.
 | `FR-SKILL-003` | Integration | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
 | `FR-SKILL-004` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
 | `FR-SKILL-005` | Unit, Manual | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
-| `INV-ACT-001` | Unit, Integration | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
+| `INV-ACT-001` | Unit, Integration | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | `crates/afk-input/src/lib.rs:246`, `crates/afk-input/src/lib.rs:259` | backlog |
 | `INV-ACT-002` | Integration | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
 | `INV-ACT-003` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |
 | `INV-CFG-001` | Unit | [docs/spec/01-requirements.md](../spec/01-requirements.md) | — | — | backlog |

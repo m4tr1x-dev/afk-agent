@@ -6,7 +6,7 @@
 
 [workspace]
 resolver = "3"
-members = ["experiments/01-reachability"]
+members = ["crates/*", "experiments/01-reachability"]
 
 [workspace.package]
 edition = "2024"

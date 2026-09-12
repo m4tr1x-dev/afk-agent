@@ -1,0 +1,26 @@
+[package]
+name = "afk-input"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "FR-ACT-008: the only component in the system that synthesises input."
+
+[lints]
+workspace = true
+
+# No dependencies, and that is the design.
+#
+# This crate declares its own extern block for the operating system's input
+# surface rather than depending on a bindings crate. Cargo unifies features
+# across the whole dependency graph, so one crate enabling a bindings crate's
+# keyboard-and-mouse feature would hand the reachable API to everything that
+# depends on it, and a dependency ban would not notice.
+#
+# It also means no crate in the workspace needs an `#[allow]` for the lints in
+# clippy.toml that forbid those calls — so there is no exemption anywhere for
+# anyone to copy.
+[dependencies]

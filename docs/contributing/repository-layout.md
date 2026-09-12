@@ -29,7 +29,7 @@ directory exists today or is part of the shape `ADR-0016` sets.
 | `styles/` | present | Vale prose rules and vocabulary |
 | `tools/` | present | Documentation and build scripts |
 | `contract/` | planned | Message and tool schemas, the single source of truth |
-| `crates/` | planned | The Rust core, one crate per subsystem boundary |
+| `crates/` | present | The Rust core, one crate per subsystem boundary |
 | `src/` | planned | The C# shell and overlay |
 | `tests/` | planned | Corpus, benchmark harness, replay fixtures |
 | `experiments/` | present | Timeboxed probes that answer a known-good-matrix question |
