@@ -5,7 +5,7 @@
 //! is this. What it learns about which route works for which kind of window is
 //! the evidence that record needs.
 //!
-//! Two routes are tried, in order:
+//! Three routes:
 //!
 //! 1. **`PrintWindow` with full content.** Asks the window to render itself
 //!    into a bitmap. Works for composited windows whose content the desktop
@@ -15,6 +15,12 @@
 //!    what is on screen, so it fails when the window is occluded, and it
 //!    commonly returns black for content drawn by the graphics device rather
 //!    than by the drawing interface.
+//! 3. **`ScreenCrop`.** Reads the display itself, cropped to where the window
+//!    sits. It is the control rather than a candidate: it sees exactly what a
+//!    person sees, so a turn that is visible on screen is visible to it, which
+//!    is what separates an input that never arrived from a capture that does
+//!    not reflect the rendered scene. It also captures anything overlapping the
+//!    window, which is why the product cannot use it.
 //!
 //! Neither is what the product ships. The specification requires window-scoped
 //! capture through the platform's dedicated interface, with no full-resolution
@@ -82,6 +88,7 @@ unsafe extern "system" {
     fn GetWindowTextA(window: Hwnd, text: *mut u8, count: i32) -> i32;
     fn EnumWindows(callback: extern "system" fn(Hwnd, isize) -> i32, param: isize) -> i32;
     fn IsWindowVisible(window: Hwnd) -> i32;
+    fn GetWindowRect(window: Hwnd, rect: *mut Rect) -> i32;
 }
 
 #[link(name = "gdi32")]
@@ -118,8 +125,16 @@ unsafe extern "system" {
 pub(crate) enum Route {
     /// The window rendered itself, including graphics-device content.
     PrintWindow,
-    /// Copied from what is on screen.
+    /// Copied from the window's own device context.
     BitBlt,
+    /// Copied from the screen, cropped to where the window sits.
+    ///
+    /// The control that separates "the input never arrived" from "the capture
+    /// does not reflect the rendered scene". It reads what the display actually
+    /// shows, so a turn that is visible to a person is visible to it — at the
+    /// cost of capturing whatever occludes the window, which is why it is a
+    /// diagnostic rather than something the product could use.
+    ScreenCrop,
 }
 
 impl core::fmt::Display for Route {
@@ -127,6 +142,7 @@ impl core::fmt::Display for Route {
         f.write_str(match self {
             Self::PrintWindow => "PrintWindow",
             Self::BitBlt => "BitBlt",
+            Self::ScreenCrop => "ScreenCrop",
         })
     }
 }
@@ -213,39 +229,7 @@ fn client_size(window: Hwnd) -> Result<(i32, i32), CaptureError> {
 }
 
 /// Every route, in the order they are tried.
-pub(crate) const ROUTES: [Route; 2] = [Route::PrintWindow, Route::BitBlt];
-
-/// Capture a window, trying each route until one yields a frame with content.
-pub(crate) fn capture(window: Hwnd) -> Result<Frame, CaptureError> {
-    // SAFETY: `IsWindow` accepts any value, including an invalid handle, and
-    // answers whether it currently names a window. That is the whole reason to
-    // call it before anything that would require a valid one.
-    if unsafe { IsWindow(window) } == 0 {
-        return Err(CaptureError::NoWindow);
-    }
-
-    let mut rect = Rect::default();
-    // SAFETY: `window` names a live window, checked immediately above, and
-    // `rect` is a live, correctly sized structure the call writes into.
-    if unsafe { GetClientRect(window, &raw mut rect) } == 0 {
-        return Err(CaptureError::EmptyClientArea);
-    }
-    let width = rect.right - rect.left;
-    let height = rect.bottom - rect.top;
-    if width <= 0 || height <= 0 {
-        return Err(CaptureError::EmptyClientArea);
-    }
-
-    let mut last = Err(CaptureError::GdiRefused);
-    for route in [Route::PrintWindow, Route::BitBlt] {
-        match grab(window, width, height, route) {
-            Ok(frame) if !is_flat(&frame.gray) => return Ok(frame),
-            Ok(_) => last = Err(CaptureError::Featureless),
-            Err(error) => last = Err(error),
-        }
-    }
-    last
-}
+pub(crate) const ROUTES: [Route; 3] = [Route::PrintWindow, Route::BitBlt, Route::ScreenCrop];
 
 /// Is this frame a single flat colour?
 ///
@@ -261,7 +245,81 @@ fn is_flat(gray: &[u8]) -> bool {
     gray.iter().all(|&v| v.abs_diff(first) <= 2)
 }
 
+fn grab_from_screen(window: Hwnd) -> Result<Frame, CaptureError> {
+    let mut rect = Rect::default();
+    // SAFETY: `window` is live, checked by the caller, and `rect` is a live,
+    // correctly sized structure the call writes into.
+    if unsafe { GetWindowRect(window, &raw mut rect) } == 0 {
+        return Err(CaptureError::EmptyClientArea);
+    }
+    let width = rect.right - rect.left;
+    let height = rect.bottom - rect.top;
+    if width <= 0 || height <= 0 {
+        return Err(CaptureError::EmptyClientArea);
+    }
+
+    // SAFETY: a null window handle asks for the screen's device context, which
+    // is the documented way to read what the display is showing. It is released
+    // on every path below.
+    let screen_dc = unsafe { GetDC(core::ptr::null_mut()) };
+    if screen_dc.is_null() {
+        return Err(CaptureError::GdiRefused);
+    }
+
+    let result = screen_into(screen_dc, rect.left, rect.top, width, height);
+
+    // SAFETY: `screen_dc` came from `GetDC(null)` and has not been released.
+    unsafe { ReleaseDC(core::ptr::null_mut(), screen_dc) };
+    result
+}
+
+fn screen_into(
+    screen_dc: Hdc,
+    x: i32,
+    y: i32,
+    width: i32,
+    height: i32,
+) -> Result<Frame, CaptureError> {
+    // SAFETY: `screen_dc` is a live device context.
+    let memory_dc = unsafe { CreateCompatibleDC(screen_dc) };
+    if memory_dc.is_null() {
+        return Err(CaptureError::GdiRefused);
+    }
+    // SAFETY: as above, and the dimensions are positive.
+    let bitmap = unsafe { CreateCompatibleBitmap(screen_dc, width, height) };
+    if bitmap.is_null() {
+        // SAFETY: nothing has been selected into `memory_dc`.
+        unsafe { DeleteDC(memory_dc) };
+        return Err(CaptureError::GdiRefused);
+    }
+
+    // SAFETY: `memory_dc` is live and `bitmap` is compatible with it. The
+    // previous selection is restored before either is deleted.
+    let previous = unsafe { SelectObject(memory_dc, bitmap) };
+    // SAFETY: both device contexts are live and the rectangle fits the bitmap,
+    // which was created at exactly these dimensions.
+    let copied = unsafe { BitBlt(memory_dc, 0, 0, width, height, screen_dc, x, y, SRCCOPY) != 0 };
+
+    let frame = if copied {
+        read_pixels(memory_dc, bitmap, width, height, Route::ScreenCrop)
+    } else {
+        Err(CaptureError::GdiRefused)
+    };
+
+    // SAFETY: `previous` is what `SelectObject` returned, and restoring it is
+    // what makes the deletions below sound.
+    unsafe {
+        SelectObject(memory_dc, previous);
+        DeleteObject(bitmap);
+        DeleteDC(memory_dc);
+    }
+    frame
+}
+
 fn grab(window: Hwnd, width: i32, height: i32, route: Route) -> Result<Frame, CaptureError> {
+    if route == Route::ScreenCrop {
+        return grab_from_screen(window);
+    }
     // SAFETY: `window` is live. `GetDC` returns null on failure, which is
     // checked, and the handle is released on every path below.
     let window_dc = unsafe { GetDC(window) };
@@ -336,6 +394,9 @@ fn render(
         Route::BitBlt => unsafe {
             BitBlt(memory_dc, 0, 0, width, height, window_dc, 0, 0, SRCCOPY) != 0
         },
+        // Handled before this function is reached; it does not use the
+        // window's own device context at all.
+        Route::ScreenCrop => unreachable!("the screen route is served by grab_from_screen"),
     };
 
     let frame = if drawn {
@@ -504,7 +565,10 @@ mod tests {
         // failure to be distinguishable. A handle that is not a window is
         // neither, and saying so is where that distinction starts.
         let bogus = core::ptr::without_provenance_mut(0xdead_0000);
-        assert_eq!(capture(bogus), Err(CaptureError::NoWindow));
+        assert_eq!(
+            capture_via(bogus, Route::PrintWindow),
+            Err(CaptureError::NoWindow)
+        );
     }
 
     #[test]

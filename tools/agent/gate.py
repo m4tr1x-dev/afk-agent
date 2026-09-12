@@ -114,7 +114,10 @@ def gates() -> dict[str, list[Step]]:
             Step("layout", [py, "tools/lint_layout.py"]),
             Step("call sites", [py, "tools/check_call_sites.py"]),
             Step("markdownlint", [npx, "--yes", "markdownlint-cli2", "**/*.md"]),
-            Step("cspell", [npx, "--yes", "cspell", "docs/**/*.md", "*.md"]),
+            Step(
+                "cspell",
+                [npx, "--yes", "cspell", "docs/**/*.md", "experiments/**/*.md", "*.md"],
+            ),
             Step("vale", [vale, "--minAlertLevel=error", "docs/", "CLAUDE.md"]),
         ],
         "G2": [

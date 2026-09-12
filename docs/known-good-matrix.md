@@ -149,7 +149,7 @@ Each is an experiment with an end, not a topic.
 
 | # | Question | Experiment | Blocks | Resolved |
 | --- | --- | --- | --- | --- |
-| 1 | Does synthesised relative mouse movement reach a real game at all? | Build the reachability probe: a minimal program that captures a window, synthesises relative movement, and confirms the camera turned. Run it against five games of different engines. | Everything. If this fails there is no project. | |
+| 1 | Does synthesised relative mouse movement reach a real game at all? | Build the reachability probe: a minimal program that captures a window, synthesises relative movement, and confirms the camera turned. Run it against five games of different engines. | Everything. If this fails there is no project. | **One of five, 2026-09-12.** Reached in Breathedge, Unreal Engine 4 — see `experiments/01-reachability/results/`. Four titles outstanding, so the question is open; what is gone is the possibility that the answer was no everywhere. |
 | 2 | Does the vision encoder load on the Vulkan backend for the 26B A4B variant? | Start the model host with the projection file on the reference hardware and send one image. | Model contract | |
 | 3 | What are the latency and memory figures at visual budgets of 140 and 1120, at 8K and 16K context, **with a game running**? | Measure. The figure without a game in memory is not the figure that matters. | Model contract, performance budgets | |
 | 4 | How good is Gemma 4 at direct coordinate grounding on game interfaces? | Record 200 to 500 frames across three to five games, label the true element boxes, and measure both grounding paths. | Grounding, and the grounding decision record | |
@@ -158,6 +158,15 @@ Each is an experiment with an end, not a topic.
 | 7 | Can the capture border be suppressed for an unpackaged application on this Windows build? | Prototype. | Overlay, capture | |
 | 8 | What do the current terms of service of the games we intend to use as examples actually say about automation? | Read them. Not a summary, and not a similar game's terms. | Vision, and the terms-of-service decision record | |
 | 9 | Does the newer solution file format work in the installed Visual Studio, and does ahead-of-time compilation work with the UI framework? | Prototype both. | Repository layout | |
+
+Question 1's experiment column says the probe "confirms the camera turned",
+which is not a method.
+It is one now: each frame is reduced to a profile of column intensities over its central band, the two profiles are cross-correlated, and the lag at the peak is how far the world moved — with four conjunct tests and four null controls around it.
+The method and what it cost to get right are in `experiments/01-reachability/findings.md`.
+
+One of those controls is worth repeating here, because it was learned the expensive way.
+A correlation of exactly 1.000 is not a measurement; it is the signature of comparing a frame with itself.
+The probe's first run reported a confident, complete and wrong "not reached" on that basis, and the project's gating question deserves better than an answer nobody checked.
 
 Question 4 is the one worth doing carefully.
 It is the only one whose answer is not available anywhere, it decides an architectural default, and it is cheap — a few hundred labelled frames and an afternoon.

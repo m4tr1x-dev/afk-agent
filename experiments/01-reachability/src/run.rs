@@ -24,7 +24,17 @@ const SETTLE_FRAMES: u32 = 3;
 const STEP_INTERVAL_MS: u64 = 16;
 
 /// Total displacements swept, in mouse units, for the linearity test.
-const SWEEP: [i32; 4] = [100, 200, 400, 800];
+///
+/// Small, and the first real run is why. At Breathedge's default sensitivity a
+/// hundred mouse units moved the scene about two hundred columns — a fifth of
+/// the frame — so the original sweep of 100 to 800 turned the view through
+/// several screen widths. The correlation then had almost nothing in common
+/// between the two frames, reported low confidence, and the whole run read as
+/// noise.
+///
+/// A displacement large enough to leave no overlap is not a better measurement
+/// than a small one. It is not a measurement at all.
+const SWEEP: [i32; 4] = [10, 20, 40, 80];
 
 /// Correlation below this is not a measurement, whatever lag it names.
 const MIN_CONFIDENCE: f64 = 0.80;
@@ -40,6 +50,8 @@ pub(crate) enum ProbeError {
     NeverForeground,
     Refused(Refused),
     Degenerate,
+    /// A route was named on the command line that does not exist.
+    UnknownRoute,
     /// Consecutive captures of a live scene were pixel-identical.
     ///
     /// The failure this probe is most likely to get wrong, so it is checked
@@ -72,6 +84,9 @@ impl std::fmt::Display for ProbeError {
             Self::Degenerate => f.write_str(
                 "the frames carried too little texture to correlate. A flat scene \
                  cannot answer this question; point the camera at something",
+            ),
+            Self::UnknownRoute => f.write_str(
+                "no such capture route; valid names are PrintWindow, BitBlt and ScreenCrop",
             ),
             Self::StaticCapture { frames } => write!(
                 f,
@@ -133,8 +148,8 @@ fn settle() {
     ));
 }
 
-fn profile(window: capture::Hwnd) -> Result<(Profile, Route), ProbeError> {
-    let frame = capture::capture(window).map_err(ProbeError::Capture)?;
+fn profile(window: capture::Hwnd, route: Route) -> Result<(Profile, Route), ProbeError> {
+    let frame = capture::capture_via(window, route).map_err(ProbeError::Capture)?;
     let profile =
         Profile::from_gray(&frame.gray, frame.width, frame.height).ok_or(ProbeError::Degenerate)?;
     if profile.is_featureless() {
@@ -147,9 +162,10 @@ fn profile(window: capture::Hwnd) -> Result<(Profile, Route), ProbeError> {
 fn cycle(
     synth: &Synthesiser,
     window: capture::Hwnd,
+    route: Route,
     total: i32,
 ) -> Result<Measurement, ProbeError> {
-    let (before, _) = profile(window)?;
+    let (before, _) = profile(window, route)?;
     if total != 0 {
         emit_relative(synth, total)?;
     } else {
@@ -162,7 +178,7 @@ fn cycle(
         ));
     }
     settle();
-    let (after, _) = profile(window)?;
+    let (after, _) = profile(window, route)?;
 
     let found = displacement(&before, &after).ok_or(ProbeError::Degenerate)?;
     Ok(Measurement {
@@ -174,7 +190,11 @@ fn cycle(
 }
 
 /// Run the experiment and return a human-readable report.
-pub(crate) fn execute(title: &str, arm_seconds: u64) -> Result<String, ProbeError> {
+pub(crate) fn execute(
+    title: &str,
+    arm_seconds: u64,
+    forced_route: Option<&str>,
+) -> Result<String, ProbeError> {
     let window =
         capture::find_window(title).ok_or_else(|| ProbeError::WindowNotFound(title.to_owned()))?;
 
@@ -193,8 +213,7 @@ pub(crate) fn execute(title: &str, arm_seconds: u64) -> Result<String, ProbeErro
     // and entirely wrong verdict: every measurement came back at confidence
     // 1.000 with zero displacement, which is the signature of identical frames
     // rather than of a camera that did not move.
-    println!("checking whether any capture route is live:");
-    let route = liveness(window)?;
+    let route = choose_route(window, forced_route)?;
     println!("capture route: {route}");
 
     let mut report = String::new();
@@ -206,7 +225,7 @@ pub(crate) fn execute(title: &str, arm_seconds: u64) -> Result<String, ProbeErro
     //
     // If this produces a signal, the detector is measuring animation and every
     // positive result below is worthless.
-    let quiet = cycle(&synth, window, 0)?;
+    let quiet = cycle(&synth, window, route, 0)?;
     let control_clean = !quiet.is_turn();
     let _ = writeln!(
         report,
@@ -219,7 +238,7 @@ pub(crate) fn execute(title: &str, arm_seconds: u64) -> Result<String, ProbeErro
     // --- Test 2: monotonicity and linearity --------------------------------
     let mut sweep = Vec::new();
     for total in SWEEP {
-        let measured = cycle(&synth, window, total)?;
+        let measured = cycle(&synth, window, route, total)?;
         let _ = writeln!(
             report,
             "sweep {:>5} units    lag {:>5}  confidence {:.3}  -> {}",
@@ -237,21 +256,26 @@ pub(crate) fn execute(title: &str, arm_seconds: u64) -> Result<String, ProbeErro
         .windows(2)
         .all(|pair| pair[1].lag.abs() >= pair[0].lag.abs());
 
-    let signs_oppose = sign_test(&synth, window, &mut report)?;
+    let signs_oppose = sign_test(&synth, window, route, &mut report)?;
 
     // --- Test 3: return to origin ------------------------------------------
     //
     // The single strongest test here. It proves both that input arrived and
     // that the mapping is stable, and a scene moving on its own has no reason
     // to come back.
-    let (origin, _) = profile(window)?;
+    let (origin, _) = profile(window, route)?;
+    let before_return_width = origin.len();
     emit_relative(&synth, SWEEP[2])?;
     settle();
     emit_relative(&synth, -SWEEP[2])?;
     settle();
-    let (returned, _) = profile(window)?;
+    let (returned, _) = profile(window, route)?;
     let round_trip = displacement(&origin, &returned).ok_or(ProbeError::Degenerate)?;
-    let returns = round_trip.lag.abs() <= 2 && round_trip.confidence >= 0.90;
+    // Two columns is tighter than a camera returns in practice: the emitted
+    // sequence is quantised into steps, and a game's own smoothing leaves a
+    // little residue. Judge it against the turn threshold instead of zero.
+    let tolerance = (before_return_width as f64 * MIN_TURN_FRACTION) as i32;
+    let returns = round_trip.lag.abs() <= tolerance.max(2) && round_trip.confidence >= 0.90;
     let _ = writeln!(
         report,
         "return to origin       lag {:>5}  confidence {:.3}  -> {}",
@@ -260,7 +284,7 @@ pub(crate) fn execute(title: &str, arm_seconds: u64) -> Result<String, ProbeErro
         verdict(returns, "returned", "DRIFTED")
     );
 
-    let absolute_quiet = absolute_control(&synth, window, &mut report)?;
+    let absolute_quiet = absolute_control(&synth, window, route, &mut report)?;
 
     let reached = sweep.iter().any(Measurement::is_turn);
     let verdict_line = match (reached, control_clean, signs_oppose, returns, monotonic) {
@@ -275,7 +299,9 @@ pub(crate) fn execute(title: &str, arm_seconds: u64) -> Result<String, ProbeErro
         (true, false, _, _, _) => {
             "INCONCLUSIVE - the scene moves on its own; the control is not clean"
         }
-        (false, _, _, _, _) => "NOT REACHED by relative movement",
+        (false, _, _, _, _) => {
+            "NO MOVEMENT DETECTED - which has two causes this probe cannot \n             separate: the input did not reach the game, or the camera was \n             locked. A menu, a scripted sequence and an open overlay all \n             produce this result on a game that works"
+        }
     };
 
     let _ = writeln!(report);
@@ -291,6 +317,50 @@ pub(crate) fn execute(title: &str, arm_seconds: u64) -> Result<String, ProbeErro
 
     synth.release_all();
     Ok(report)
+}
+
+/// Emit one horizontal turn and exit, measuring nothing.
+///
+/// The control that needs no correlation and no threshold: take a screenshot,
+/// run this, take another, and look. Every automated verdict in this probe
+/// rests on a method that can be wrong, and a method that can be wrong deserves
+/// one check that a person can make directly.
+pub(crate) fn turn_only(title: &str, arm_seconds: u64, units: i32) -> Result<(), ProbeError> {
+    let window =
+        capture::find_window(title).ok_or_else(|| ProbeError::WindowNotFound(title.to_owned()))?;
+    println!("turning {units} units in {arm_seconds}s");
+    sleep(Duration::from_secs(arm_seconds));
+
+    let synth = Synthesiser::bind(window.cast());
+    if !synth.target_is_foreground() {
+        return Err(ProbeError::NeverForeground);
+    }
+    emit_relative(&synth, units)?;
+    synth.release_all();
+    println!("emitted");
+    Ok(())
+}
+
+/// Pick the capture route: the one named, or the first that proves live.
+fn choose_route(window: capture::Hwnd, forced: Option<&str>) -> Result<Route, ProbeError> {
+    let Some(name) = forced else {
+        println!("checking whether any capture route is live:");
+        return liveness(window);
+    };
+
+    let chosen = capture::ROUTES
+        .into_iter()
+        .find(|route| route.to_string().eq_ignore_ascii_case(name))
+        .ok_or(ProbeError::UnknownRoute)?;
+
+    println!("route forced to {chosen}; checking it is live");
+    if route_is_live(window, chosen).map_err(ProbeError::Capture)? {
+        Ok(chosen)
+    } else {
+        Err(ProbeError::StaticCapture {
+            frames: LIVENESS_FRAMES,
+        })
+    }
 }
 
 /// Frames sampled when checking that the scene is live.
@@ -352,15 +422,16 @@ fn route_is_live(window: capture::Hwnd, route: Route) -> Result<bool, capture::C
 fn sign_test(
     synth: &Synthesiser,
     window: capture::Hwnd,
+    route: Route,
     report: &mut String,
 ) -> Result<bool, ProbeError> {
     let amount = SWEEP[2];
 
-    let right = cycle(synth, window, amount)?;
+    let right = cycle(synth, window, route, amount)?;
     emit_relative(synth, -amount)?;
     settle();
 
-    let left = cycle(synth, window, -amount)?;
+    let left = cycle(synth, window, route, -amount)?;
     emit_relative(synth, amount)?;
     settle();
 
@@ -384,16 +455,20 @@ fn sign_test(
 fn absolute_control(
     synth: &Synthesiser,
     window: capture::Hwnd,
+    route: Route,
     report: &mut String,
 ) -> Result<bool, ProbeError> {
-    let (before, _) = profile(window)?;
+    let (before, _) = profile(window, route)?;
     // A refusal here is not a failure of the control: it is the foreground
     // guard, and it means the same thing as no movement.
     let _ = synth.move_absolute(20_000, 32_000);
     settle();
-    let (after, _) = profile(window)?;
+    let (after, _) = profile(window, route)?;
     let moved = displacement(&before, &after).ok_or(ProbeError::Degenerate)?;
-    let quiet = moved.lag.abs() <= 2;
+    // A lag with no correlation behind it is not evidence of movement. The
+    // first real run reported "ABSOLUTE ALSO TURNS" at confidence 0.257, which
+    // is the correlation saying it found nothing, not that the view moved.
+    let quiet = moved.confidence < MIN_CONFIDENCE || moved.lag.abs() <= 2;
     let _ = writeln!(
         report,
         "control, absolute move lag {:>5}  confidence {:.3}  -> {}",
