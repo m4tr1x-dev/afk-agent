@@ -151,7 +151,7 @@ After every action, within a bounded window:
 
 Collapsing inconclusive into either neighbour breaks the loop in a different way each time.
 
-Fold it into **confirmed** and the agent becomes credulous: it proceeds on the assumption that things worked, and discovers otherwise several subgoals later, when the recovery is expensive and the cause is buried.
+Fold it into **confirmed** and the agent becomes credulous: it proceeds on the assumption that things worked, and discovers otherwise three or four subgoals later, when the recovery is expensive and the cause is buried.
 
 Fold it into **refuted** and the agent thrashes: every loading screen and every transition becomes evidence of failure, the stuck detector fires constantly, and the escalation ladder runs on situations that were never wrong.
 

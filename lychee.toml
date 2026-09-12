@@ -1,8 +1,14 @@
 # Link checking for afk-agent documentation.
 #
-# Policy: internal links are a hard failure (a broken relative link is a bug we
-# introduced). External links are checked on a weekly schedule, not on pull
-# requests — the web rots on its own timetable and should not block a merge.
+# Policy: internal links are a hard failure — a broken relative link is a bug we
+# introduced. External links are checked on a schedule rather than on pull
+# requests, because the web rots on its own timetable and blocking a merge on it
+# teaches people to disable the check.
+#
+# NOTE ON QUOTING: the patterns below are TOML *literal* strings, in single
+# quotes. A basic double-quoted TOML string treats a backslash as an escape
+# introducer and rejects `\.` outright, which is a configuration parse error
+# rather than a link-checking failure — the whole file fails to load.
 
 max_concurrency = 8
 max_retries = 2
@@ -10,31 +16,35 @@ timeout = 20
 retry_wait_time = 2
 
 # Some sites reject the default user agent outright.
-user_agent = "Mozilla/5.0 (compatible; lychee/0.1; +https://github.com/lycheeverse/lychee)"
+user_agent = "Mozilla/5.0 (compatible; lychee)"
 
-# Cache external results so the weekly run is cheap and reruns are fast.
+# Cache external results so the scheduled run is cheap and reruns are fast.
 cache = true
 max_cache_age = "1d"
 
-# GitHub rate-limits anonymous requests hard; CI passes a token via GITHUB_TOKEN.
 require_https = false
 
 exclude = [
   # Local development addresses that are not reachable from CI.
-  "^https?://localhost",
-  "^https?://127\.0\.0\.1",
-  "^https?://0\.0\.0\.0",
+  '^https?://localhost',
+  '^https?://127\.0\.0\.1',
+  '^https?://0\.0\.0\.0',
   # Placeholder domains used in examples.
-  "^https?://example\.(com|org|net)",
+  '^https?://example\.(com|org|net)',
   # Generated API documentation does not exist until the publish workflow runs.
-  "^/api/",
+  '^/api/',
 ]
 
 exclude_path = [
   "target",
   "site",
   "node_modules",
+  # Theme templates, not documentation. Their Jinja expressions look like
+  # relative links to a link checker and are not.
+  "docs/overrides",
 ]
 
-# Anchors inside generated API docs cannot be resolved before generation.
-include_fragments = false
+# Fragment checking is off by default in lychee, which is what we want: anchors
+# inside generated API documentation cannot be resolved before that
+# documentation is generated. The option is not set here because its accepted
+# type in the config file differs from the command-line flag of the same name.

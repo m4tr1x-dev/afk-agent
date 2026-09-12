@@ -13,6 +13,7 @@ artifacts/
 
 # Documentation build
 /site/
+/.lycheecache
 # Vale style packages are downloaded by `vale sync`, not vendored.
 # Our own rules live in styles/AfkAgent and styles/config and ARE tracked.
 /styles/Microsoft/

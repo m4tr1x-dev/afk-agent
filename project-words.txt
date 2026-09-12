@@ -116,3 +116,9 @@ linters
 nullability
 viewmodel
 respawns
+
+# Compound technical terms. The bundled dictionaries disagree about these
+# between cspell versions, so they are pinned here rather than left to chance.
+cooldown
+fallbacks
+superfences
