@@ -15,6 +15,7 @@ requirements: [FR-MODEL-003, FR-GND-003, FR-ACT-006, FR-SKILL-001]
 decisions: [ADR-0014]
 affects: [FR-MODEL-003, FR-GND-003]
 spec: [spec/17-model-contract.md, spec/18-grounding-and-verification.md]
+evidence: [docs/explanation/grounding-clicks-in-pixels.md, docs/explanation/failure-modes-and-recovery.md]
 supersedes: null
 superseded_by: null
 generated: false

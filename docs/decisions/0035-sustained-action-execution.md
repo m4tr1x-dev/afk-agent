@@ -15,6 +15,7 @@ requirements: [FR-ACT-002, FR-ACT-003, FR-ACT-004, FR-ACT-007, FR-ACT-008, FR-AC
 decisions: [ADR-0012, ADR-0009]
 affects: [FR-ACT-002, FR-ACT-007, FR-ACT-001]
 spec: [spec/06-action-and-input.md]
+evidence: [docs/explanation/sustained-actions-explained.md]
 supersedes: null
 superseded_by: null
 generated: false

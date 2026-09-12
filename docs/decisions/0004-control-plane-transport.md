@@ -15,6 +15,7 @@ requirements: [NFR-GUI-001, FR-GUI-004]
 decisions: [ADR-0003]
 affects: [NFR-GUI-001, FR-GUI-004]
 spec: [spec/10-ipc-protocol.md]
+evidence: [docs/spec/10-ipc-protocol.md]
 supersedes: null
 superseded_by: null
 generated: false

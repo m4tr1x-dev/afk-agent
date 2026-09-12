@@ -15,6 +15,7 @@ requirements: [FR-GND-006, FR-GND-007, FR-GND-008, INV-GND-001, FR-LOOP-004]
 decisions: [ADR-0014]
 affects: [FR-GND-006, FR-GND-008, INV-GND-001]
 spec: [spec/18-grounding-and-verification.md]
+evidence: [docs/explanation/failure-modes-and-recovery.md, docs/reference/sensor-expressions.md]
 supersedes: null
 superseded_by: null
 generated: false

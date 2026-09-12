@@ -52,8 +52,35 @@ The reasoning for not doing something is worth as much as the reasoning for doin
 
 For most of this project's blocking decisions that means a timeboxed experiment: capture a thousand frames from a real game, inject input into a real game, measure inference on the target hardware.
 
-A record written without one is a guess in a smart format, and it will be sent back.
+A record written without one is a guess in a smart format, and it is sent back.
 The [known-good matrix](../known-good-matrix.md) lists the experiments that are outstanding.
+
+### The rule is enforced, not merely stated
+
+Every record carries an `evidence` field listing the artefacts behind it, as
+repository-relative paths. `tools/lint_frontmatter.py` rejects an accepted or
+proposed record whose list is empty, and rejects any path that does not exist.
+
+Until that check existed the rule lived only in prose, which for a project
+partly built by an unattended agent is the same as not existing: the party
+writing the record is the party who would have to hold themselves to it.
+
+### Two kinds of evidence, and they are not interchangeable
+
+An **experiment** is a measurement: a findings file under `experiments/`, a
+benchmark result, a recorded corpus. It is the only admissible evidence for a
+decision that turns on a number — which inference backend, which model
+variant, which capture interface, what the panic latency is.
+
+An **argument** is an explanation page that works the question through. It is
+admissible for a decision that turns on reasoning rather than measurement:
+whether the core is a separate process from the shell, whether the project ever
+attempts to evade detection, where the message catalogue lives.
+
+Anyone can tell which a record has by looking at the paths. A record whose
+decision needs a number and whose evidence is an essay is the failure this
+field exists to make visible, and it is visible at a glance rather than after
+reading the record.
 
 ## Numbering
 

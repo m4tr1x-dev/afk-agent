@@ -15,6 +15,7 @@ requirements: [FR-SAFE-001, NFR-OBS-001, NFR-GUI-001]
 decisions: [ADR-0004]
 affects: [FR-SAFE-001, NFR-OBS-001]
 spec: [spec/10-ipc-protocol.md]
+evidence: [docs/spec/10-ipc-protocol.md]
 supersedes: null
 superseded_by: null
 generated: false

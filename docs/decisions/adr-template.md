@@ -15,6 +15,7 @@ requirements: []
 decisions: []
 affects: []
 spec: []
+evidence: []            # paths to the artefacts behind this record
 supersedes: null
 superseded_by: null
 generated: false

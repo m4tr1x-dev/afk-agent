@@ -57,7 +57,12 @@ fail on a clean working copy.
 
 ## Notes on the planned directories
 
-`ADR-0016` is accepted and sets the shape above.
+`ADR-0016` is accepted and sets `contract/`, `crates/`, `src/` and `tests/`.
+
+`experiments/` is not in that record. It is listed here because the probes
+that answer the [known-good matrix](../known-good-matrix.md) need somewhere to
+live, and a record amending the layout is written when the first one lands
+rather than in advance of it.
 
 `contract/` is the one worth noting. The inter-process message catalogue and
 the tool schemas are defined once and generate types for both languages and the

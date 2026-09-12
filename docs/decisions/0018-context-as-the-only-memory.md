@@ -15,6 +15,7 @@ requirements: [CON-006, INV-CTX-001, INV-CTX-002, FR-CTX-005]
 decisions: []
 affects: [CON-006, INV-CTX-001, INV-CTX-002]
 spec: [spec/08-context-and-research.md, spec/19-non-goals.md]
+evidence: [docs/explanation/what-the-agent-remembers.md, docs/explanation/why-the-agent-does-not-learn.md]
 supersedes: null
 superseded_by: null
 generated: false
