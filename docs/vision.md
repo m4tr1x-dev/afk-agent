@@ -95,7 +95,9 @@ A first version that does one thing reliably is worth more than one that attempt
 1. **Cold-start competence.** Given a natural-language goal and a game the agent has never seen, it completes a defined twenty-minute objective in at least seven out of ten runs, with no per-game configuration of any kind.
 2. **Generality across a set.** The same build, unmodified, achieves that on at least five games spanning three genres, including at least one real-time game and one menu-driven one.
 3. **Safety is absolute.** Across every hour of testing, the panic key stops all input within its budget, no key is ever left held after a stop, and no input is ever delivered to a window other than the target. These are not statistics; a single failure is a defect.
-4. **It does not degrade the game.** With the agent running, the game's frame rate stays within a stated fraction of its unattended value on the reference hardware. An agent that makes the game stutter will be uninstalled regardless of how well it plays.
+4. **It does not degrade the game.** With the agent running at full cadence, the game's mean frame rate is at least **90%** of its value without the agent, and its **1% low** at least **80%** of the 1% low without the agent, measured over ten minutes on the reference hardware, on every game in the roster. An agent that makes the game stutter will be uninstalled regardless of how well it plays.
+
+    Two numbers rather than one, because a mean hides a stall and a stall is the symptom a player notices. A criterion on the mean alone would pass a build that hitches every time the deliberative model runs — which is the build this design is most likely to produce.
 5. **Research pays for itself.** On tasks that require knowledge the agent does not have — where a shop is, what unlocks a stage — enabling the research skills measurably improves the completion rate over disabling them. If it does not, the skills are decoration.
 
 ## Non-goals

@@ -51,7 +51,16 @@ The isolation is free because there is nothing to isolate.
 ```
 
 Ordered so everything stable is on the left, because a change invalidates everything to its right.
-The full reasoning, including why blocks 1 and 2 must be byte-identical between calls, is in [model contract](17-model-contract.md).
+
+**This is the layout.**
+It is stated once, here, and [model contract](17-model-contract.md) refers to it rather than restating it.
+Two copies of a layout whose whole purpose is byte-level stability is the specific defect that produces two implementations agreeing on neither.
+
+Blocks 1 and 2 are **invariant for the session** and byte-identical between calls.
+Blocks 3 and 4 are **append-only**: they grow, and nothing already written in them changes.
+That distinction is what makes them affordable. Appending leaves every byte before the append untouched, so the cached prefix survives up to that point; editing in place would discard it from the edit onwards.
+
+The reasoning behind all of this, and the two rules about images, is in [model contract](17-model-contract.md).
 
 ### The note block
 
