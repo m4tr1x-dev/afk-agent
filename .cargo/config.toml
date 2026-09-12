@@ -1,4 +1,11 @@
 # Windows only, by CON-001.
+#
+# This applies to every cargo invocation made from the repository root, which
+# includes the contract generator even though ADR-0016 keeps it out of the
+# product workspace. The generator is plain Rust and is built on Linux in
+# continuous integration, so that job sets `CARGO_BUILD_TARGET` to its own host
+# rather than inheriting this line. Overriding it there is correct: the target
+# pinned here describes what ships, and the generator does not ship.
 
 [build]
 target = "x86_64-pc-windows-msvc"
