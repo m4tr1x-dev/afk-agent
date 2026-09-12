@@ -1,0 +1,25 @@
+[package]
+name = "vision-encoder-probe"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Known-good-matrix question 2: does the vision encoder load on the Vulkan backend, and is the visual token budget a per-request knob?"
+
+[lints]
+workspace = true
+
+[dependencies]
+# Two dependencies, both needed for something this probe cannot do honestly by
+# hand. HTTP is written directly over a socket instead: the server is on
+# loopback, there is no transport security to get wrong, and an HTTP client is
+# a larger surface than the fifty lines it replaces.
+png = "0.18"
+serde_json = "1"
+
+[[bin]]
+name = "vision-encoder-probe"
+path = "src/main.rs"

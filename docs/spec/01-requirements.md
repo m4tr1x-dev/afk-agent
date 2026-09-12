@@ -138,7 +138,7 @@ violation is structurally detectable rather than behavioural.
 | ID | Statement | Rationale | Verification |
 | --- | --- | --- | --- |
 | `FR-MODEL-001` | The system MUST run inference locally, against a model host it starts or a host endpoint the user configures. | `CON-003`. | Integration |
-| `FR-MODEL-002` | The system MUST set the per-image visual token budget per call, and use a lower budget for the tactical cadence than for the deliberative one. | The main latency and quality dial. | Bench |
+| `FR-MODEL-002` | The system MUST control the per-image visual token cost per call, and use a lower cost for the tactical cadence than for the deliberative one. | The main latency and quality dial. Worded as an effect rather than a mechanism because the runtime exposes the budget as a process-level flag, while the cost per request is set by the resolution of the image sent — measured, `experiments/02-vision-encoder/`. | Bench |
 | `FR-MODEL-003` | The system MUST constrain model output to a grammar derived from the current tool schemas and the currently valid targets, regenerated each tactical tick. | See `FR-GND-003`. | Unit |
 | `FR-MODEL-004` | The system MUST monitor available graphics memory and degrade — reducing context, then visual budget, then moving the deliberative model off the graphics processor — before the game is starved. | An agent that makes the game stutter is uninstalled regardless of how well it plays. | Bench, Manual |
 | `FR-MODEL-005` | The system MUST verify the integrity of model weights before loading them. | Weights are downloaded; a corrupted download should fail loudly rather than produce a subtly broken agent. | Unit |

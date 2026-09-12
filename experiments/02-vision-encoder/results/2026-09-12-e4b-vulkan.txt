@@ -1,0 +1,54 @@
+model      /e/afk-agent/models/gemma-4-E4B/gemma-4-E4B-it-Q4_0.gguf (4378 MiB)
+projector  /e/afk-agent/models/gemma-4-E4B/mmproj-gemma-4-E4B-it-BF16.gguf (945 MiB)
+runtime    /e/afk-agent/runtime/llama-b10930-vulkan
+device control: 17.954036 tokens per second with no layers offloaded, 147.47101 with all of them, ratio 8.21x
+
+seed 424242  host 127.0.0.1:8080
+
+model    E:/afk-agent/models/gemma-4-E4B/gemma-4-E4B-it-Q4_0.gguf
+context  8192
+
+--- accuracy: eight scenes, all three fields exact ---
+  0  expected 396 on green with a circle    got 396 / green   / circle     ok    0.36s
+  1  expected 142 on purple with a square   got 142 / purple  / square     ok    0.36s
+  2  expected 151 on grey with a cross      got 151 / grey    / cross      ok    0.39s
+  3  expected 872 on green with a triangle  got 872 / green   / triangle   ok    0.36s
+  4  expected 744 on purple with a cross    got 744 / purple  / cross      ok    0.39s
+  5  expected 211 on green with a square    got 211 / green   / square     ok    0.36s
+  6  expected 203 on grey with a circle     got 203 / grey    / circle     ok    0.36s
+  7  expected 702 on red with a cross       got 102 / red     / cross      MISS  0.39s
+  7 of 8 exact
+
+--- visual cost against input resolution ---
+  text only, no image: 50 prompt tokens
+    256 px  prompt    133  image     83 tokens  answered 442 / red / triangle
+    512 px  prompt    173  image    123 tokens  answered 442 / red / triangle
+    768 px  prompt    308  image    258 tokens  answered 444 / red / triangle
+   1024 px  prompt    493  image    443 tokens  answered 442 / red / triangle
+  83 -> 443 tokens: the caller controls the visual cost by choosing the input resolution
+
+
+verdict: 7 of 8 exactly correct, 7 of 8 required -> SEES
+
+--- the same sweep with --image-max-tokens 128 on the server ---
+
+  text only, no image: 50 prompt tokens
+    256 px  prompt    133  image     83 tokens  answered 442 / red / triangle
+    512 px  prompt    173  image    123 tokens  answered 442 / red / triangle
+    768 px  prompt    173  image    123 tokens  answered 442 / red / triangle
+   1024 px  prompt    173  image    123 tokens  answered 442 / red / triangle
+
+The cap binds from 512 px upwards. Below it, resolution still decides.
+
+--- device characterisation, llama-bench, build 10930 commit 56381e407 ---
+
+  gemma4 E4B Q4_0, 4.26 GiB, 7.46 B params
+
+  backend  ngl   test    tokens per second
+  Vulkan    -1   pp128   3207.26
+  Vulkan    -1   tg32     148.37
+  Vulkan     0   pp128    366.53
+  Vulkan     0   tg32      18.30
+
+  ggml_vulkan: 0 = AMD Radeon RX 7900 XTX (AMD proprietary driver)
+               uma: 0 | fp16: 1 | bf16: 1 | warp size: 64 | matrix cores: KHR_coopmat
