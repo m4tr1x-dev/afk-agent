@@ -1,0 +1,38 @@
+model      /e/afk-agent/models/gemma-4-26B-A4B/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf (16162 MiB)
+projector  /e/afk-agent/models/gemma-4-26B-A4B/mmproj-F16.gguf (1137 MiB)
+runtime    /e/afk-agent/runtime/llama-b10930-vulkan
+device control: 12.579214 tokens per second with no layers offloaded, 141.222555 with all of them, ratio 11.23x
+
+seed 424242  host 127.0.0.1:8080
+
+model    E:/afk-agent/models/gemma-4-26B-A4B/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf
+context  8192
+
+--- accuracy: eight scenes, all three fields exact ---
+  0  expected 396 on green with a circle    got 396 / green   / circle     ok    4.11s
+  1  expected 142 on purple with a square   got 142 / purple  / square     ok    0.68s
+  2  expected 151 on grey with a cross      got 151 / grey    / cross      ok    0.64s
+  3  expected 872 on green with a triangle  got 872 / green   / triangle   ok    0.63s
+  4  expected 744 on purple with a cross    got 744 / purple  / cross      ok    0.70s
+  5  expected 211 on green with a square    got 211 / green   / square     ok    0.64s
+  6  expected 203 on grey with a circle     got 203 / grey    / circle     ok    0.69s
+  7  expected 702 on red with a cross       got 702 / red     / cross      ok    0.65s
+  8 of 8 exact
+
+--- visual cost against input resolution ---
+  text only, no image: 50 prompt tokens
+    256 px  prompt    133  image     83 tokens  answered 442 / red / triangle
+    512 px  prompt    173  image    123 tokens  answered 442 / red / triangle
+    768 px  prompt    308  image    258 tokens  answered 442 / red / triangle
+   1024 px  prompt    493  image    443 tokens  answered 442 / red / triangle
+  83 -> 443 tokens: the caller controls the visual cost by choosing the input resolution
+
+
+verdict: 8 of 8 exactly correct, 7 of 8 required -> SEES
+
+--- device characterisation, llama-bench, build 10930 commit 56381e407 ---
+| model                          |       size |     params | backend    | ngl |            test |                  t/s |
+| gemma4 26B.A4B Q4_K - Medium   |  15.77 GiB |    25.23 B | Vulkan     |   0 |           pp128 |         79.72 ± 0.00 |
+| gemma4 26B.A4B Q4_K - Medium   |  15.77 GiB |    25.23 B | Vulkan     |   0 |            tg32 |         16.61 ± 0.00 |
+| gemma4 26B.A4B Q4_K - Medium   |  15.77 GiB |    25.23 B | Vulkan     | 999 |           pp128 |       1651.90 ± 0.00 |
+| gemma4 26B.A4B Q4_K - Medium   |  15.77 GiB |    25.23 B | Vulkan     | 999 |            tg32 |        141.76 ± 0.00 |

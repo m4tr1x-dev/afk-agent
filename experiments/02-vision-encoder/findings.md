@@ -1,17 +1,19 @@
 # Question 2 — does the vision encoder load on the Vulkan backend?
 
-**Status: it loads, it sees, and the question behind the question is answered too.**
+**Status: answered. It loads, it sees, and the question behind the question is
+answered too.**
 
-Run on 2026-09-12 against Gemma 4 E4B at four-bit quantisation with the
-projector in BF16, on llama.cpp build 10930, commit `56381e407`, Vulkan backend,
-on the reference hardware.
+Run on 2026-09-12 against **both** variants on llama.cpp build 10930, commit
+`56381e407`, Vulkan backend, on the reference hardware: Gemma 4 E4B at four-bit
+quantisation with a BF16 projector, and **26B A4B at Q4_K_M with an F16
+projector**, which is the variant the matrix question names.
 
-| Question | Answer |
-| --- | --- |
-| Does the encoder load? | Yes |
-| Does the model actually **see** the image? | **7 of 8** synthetic scenes exactly correct on all three fields |
-| Was the graphics processor used? | **Yes**, 8.42x generation throughput against processor-only |
-| Is the visual token budget a per-request knob? | **No.** It is a server flag. Per request, the caller controls the cost by choosing the input resolution |
+| Question | E4B Q4_0 | 26B A4B Q4_K_M |
+| --- | --- | --- |
+| Does the encoder load? | Yes | Yes |
+| Does the model actually **see** the image? | **7 of 8** exact on all three fields | **8 of 8** |
+| Was the graphics processor used? | Yes, **8.42x** against processor-only | Yes, **11.23x** |
+| Is the visual token budget a per-request knob? | No. A server flag; per request the caller sets the cost by input resolution | Identical, to the token |
 
 The last row is the one the runtime decision turns on, and the answer changes a
 requirement. See **The budget is a flag, not a parameter** below.
@@ -160,16 +162,66 @@ changes its flags. `ADR-0006` already anticipated this outcome and named it
 It also answers `17-model-contract.md` open question 4 in full: **per session by
 flag, per request by resolution.**
 
+## The named variant, and the digit E4B missed
+
+The 26B A4B run used the same eight scenes at the same seed, so the two results
+are directly comparable rather than merely similar.
+
+```text
+0  396 on green with a circle    ok    1  142 on purple with a square   ok
+2  151 on grey with a cross      ok    3  872 on green with a triangle  ok
+4  744 on purple with a cross    ok    5  211 on green with a square    ok
+6  203 on grey with a circle     ok    7  702 on red with a cross       ok
+```
+
+**8 of 8**, including the scene E4B read as 102 — the seven-segment 7 that
+differs from a 1 by one bar. The larger model resolves it; the smaller one does
+not. That is a difference on a task the fixture happens to make hard, which is
+worth one sentence and not more: it is not the grounding benchmark, and nothing
+here ranks the variants for `ADR-0007`.
+
+**The visual token counts are identical to E4B, to the token**: 83, 123, 258 and
+443 at 256, 512, 768 and 1024 pixels, against the same 50-token text baseline.
+The two families share the projector's tiling behaviour, which means the budget
+finding is a property of the runtime rather than of a variant, and does not have
+to be re-established per model.
+
+### Throughput, both variants
+
+| | E4B Q4_0, 4.26 GiB | 26B A4B Q4_K_M, 15.77 GiB |
+| --- | --- | --- |
+| Prefill, all layers | 3207 tokens/s | 1652 tokens/s |
+| Prefill, no layers | 367 | 79.7 |
+| Generation, all layers | 148.4 | 141.8 |
+| **Generation, no layers** | **18.3** | **12.6** |
+| Request latency, idle machine, 123 image tokens | ~0.37 s | ~0.65 s |
+
+**The bottom row is a number the specification has been waiting for.**
+`15-performance-budgets.md` describes step 3 of the degradation ladder — moving
+the deliberative cadence to the processor — as viable at "an estimated
+single-digit to low-double-digit tokens per second", marked **Unvalidated**.
+
+Measured: **12.6 tokens per second** for 26B A4B on this processor. The estimate
+was right, and the row can lose its marking once the deliberative call's shape
+is measured against it. That is question 6, and this is not that measurement —
+it is the throughput figure that question 6 needs, taken on an idle machine with
+no game resident.
+
+Generation throughput barely separates the two variants (141.8 against 148.4)
+because only a fraction of the 26B's parameters are active per token. Prefill
+separates them by a factor of two, and prefill is what a tactical tick pays.
+
 ## What was not tested
 
-- **The 26B A4B variant**, which is what the matrix question names. E4B was run
-  first because it is a fifth of the size and the runtime questions do not
-  depend on the variant. The 26B run follows and this page will carry it.
 - **The named budgets 70, 140, 280, 560 and 1120.** The runtime does not offer
   them as steps, so the closest thing measurable is the cap, which was measured.
 - **Latency with a game running**, which is question 3 and a different
   experiment. The sub-second figures here are on an idle machine and are not
-  the figures that matter.
+  the figures that matter. Nothing in this page should be read as a tactical
+  latency measurement.
+- **The 12B variant**, and every quantisation other than the two run. `ADR-0007`
+  needs all six rows and a grounding benchmark; this is one column of one of
+  them.
 - **A quantised projector.** BF16 throughout, deliberately: a quantised
   projector is a known way to get a model that loads, answers fluently and
   localises badly, and the point of this probe is to avoid exactly that.
