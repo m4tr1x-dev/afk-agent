@@ -84,7 +84,13 @@ jobs:
           mkdir -p site/api/dotnet
           cp -r docs-api/_site/. site/api/dotnet/
 
+      # `enablement: true` turns Pages on for the repository if it is not
+      # already, rather than failing with "Get Pages site failed. Not Found",
+      # which is what a first push to a repository without Pages configured
+      # produces. It needs the `pages: write` permission granted above.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:

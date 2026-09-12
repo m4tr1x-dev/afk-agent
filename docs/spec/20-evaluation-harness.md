@@ -45,7 +45,7 @@ At least one game is held aside entirely, never used while tuning, so there is o
 ### Labelling
 
 Element boxes and scene classes are labelled by hand.
-It is slow, and there is no way around it: a benchmark labelled by the system under test measures agreement rather than accuracy.
+It is laborious, and there is no way around it: a benchmark labelled by the system under test measures agreement rather than accuracy.
 
 Labels record the true box, a natural-language description of the target, and whether the element is reachable by each grounding path — an element the detector never proposes is not a Path B failure, it is a perception failure, and conflating the two makes the arbiter's input meaningless.
 
@@ -108,7 +108,7 @@ Replay is therefore pinned to a runtime version, and a version change invalidate
 | Perception | Text and element extraction against labels, within tolerance | Every pull request |
 | Grounding | Hit rate per path, not worse than the recorded baseline | Every pull request |
 | Replay | Recorded sessions produce their recorded action sequence | Every pull request |
-| Coordinate transform | Exact mapping under several scaling and monitor configurations | Every pull request |
+| Coordinate transform | Exact mapping under at least four scaling and monitor configurations | Every pull request |
 | Safety | Release on stop, panic, focus loss and crash | Every pull request |
 | Latency | Per-phase budgets from [performance budgets](15-performance-budgets.md) | Nightly, on reference hardware |
 
