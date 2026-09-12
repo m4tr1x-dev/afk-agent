@@ -8,50 +8,80 @@ last_reviewed: 2026-09-12
 applies_to: unreleased
 tags: [contributing]
 requirements: []
-decisions: []
+decisions: [ADR-0016]
 generated: false
 ---
 
 # Repository layout
 
-## Today
+## Top-level directories
 
-```text
-docs/            the specification and all other documentation
-  spec/          normative pages
-  decisions/     architecture decision records
-  explanation/   the reasoning behind the hard parts
-  reference/     factual pages, mostly generated once code exists
-  how-to/        task-oriented guides
-  tutorials/     guided lessons
-  contributing/  how to work here
-  assets/        images and rendered diagrams
-  snippets/      shared documentation fragments
-styles/          Vale prose rules and vocabulary
-tools/           documentation lint scripts
-.github/         workflows, templates, code owners
-```
+Every tracked top-level directory appears here, and `tools/lint_layout.py`
+fails the build when one does not. The `state` column carries whether the
+directory exists today or is part of the shape `ADR-0016` sets.
 
-Everything else at the root is configuration: the site, the linters, the editor, and the repository metadata.
+| Directory | State | Contents |
+| --- | --- | --- |
+| `.github/` | present | Workflows, issue and pull request templates, code owners |
+| `docs/` | present | The specification and all other documentation |
+| `styles/` | present | Vale prose rules and vocabulary |
+| `tools/` | present | Documentation and build scripts |
+| `contract/` | planned | Message and tool schemas, the single source of truth |
+| `crates/` | planned | The Rust core, one crate per subsystem boundary |
+| `src/` | planned | The C# shell and overlay |
+| `tests/` | planned | Corpus, benchmark harness, replay fixtures |
+| `experiments/` | planned | Timeboxed probes that answer a known-good-matrix question |
 
-## When the code exists
+Everything else at the root is configuration: the site, the linters, the
+editor, and the repository metadata.
 
-Set by `ADR-0016`, which is not accepted.
-The shape the specification implies:
+Untracked directories are outside this table by design. The documentation site
+output, the Rust target directory, build artefacts and the agent's own scratch
+space are generated rather than authored, and a check that policed them would
+fail on a clean working copy.
 
-```text
-crates/          the Rust core, one crate per subsystem boundary
-src/             the C# shell and overlay
-contract/        the message and tool schemas, the single source of truth
-tests/           corpus, benchmark harness, replay fixtures
-tools/           documentation and build scripts
-```
+## Inside `docs/`
 
-`contract/` is the one worth noting.
-The inter-process message catalogue and the tool schemas are defined once and generate types for both languages and the reference documentation.
-Hand-written types on two sides of a boundary drift, and the drift is found at runtime.
+| Directory | Contents |
+| --- | --- |
+| `docs/spec/` | Normative pages |
+| `docs/decisions/` | Architecture decision records |
+| `docs/explanation/` | The reasoning behind the hard parts |
+| `docs/reference/` | Factual pages, mostly generated once code exists |
+| `docs/how-to/` | Task-oriented guides |
+| `docs/tutorials/` | Guided lessons |
+| `docs/contributing/` | How to work here |
+| `docs/assets/` | Images and rendered diagrams |
+| `docs/snippets/` | Shared documentation fragments |
+
+## Notes on the planned directories
+
+`ADR-0016` is accepted and sets the shape above.
+
+`contract/` is the one worth noting. The inter-process message catalogue and
+the tool schemas are defined once and generate types for both languages and the
+reference documentation. Hand-written types on two sides of a boundary drift,
+and the drift is found at runtime.
+
+`experiments/` holds the probes that answer the questions in the
+[known-good matrix](../known-good-matrix.md). Three rules govern it, because a
+directory of throwaway code otherwise becomes a second codebase held to no
+standard and deleted by nobody:
+
+- No crate under `crates/` depends on anything in it.
+- Each subdirectory is named `NN-topic/`, where `NN` matches the matrix
+  question it answers.
+- Each carries a `findings.md` and a `results/` directory of raw artefacts.
+
+It is archived when the last question it holds is resolved. Porting probe code
+into a real crate is an explicit, reviewed act rather than a move.
 
 ## Keeping this honest
 
-A continuous integration check verifies that every top-level directory appears on this page.
-A directory that exists and is not listed fails the build, which is the cheapest way to stop this page becoming fiction.
+`tools/lint_layout.py` runs on every pull request and compares the table above
+against the tracked contents of the repository. It fails in both directions: a
+tracked directory missing from the table, a row marked `present` that contains
+nothing, and a row marked `planned` whose directory has arrived.
+
+The third case is the one that matters over time. Adding a directory is
+memorable; moving its row from `planned` to `present` is not.

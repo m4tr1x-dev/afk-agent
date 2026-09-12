@@ -1,0 +1,41 @@
+name: repo-quality
+
+# Checks that must run on every pull request, with no path filter.
+#
+# The point of these checks is that they cannot be skipped by touching only one
+# part of the repository. A pull request that adds a top-level directory and no
+# documentation is exactly the change the layout check exists to catch, and a
+# path filter would let it through.
+#
+# Structural checks only: each one fails the build, and each one has a
+# mechanical fix.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repo-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  layout:
+    name: Repository layout
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The check reads `git ls-files`, so it needs the index rather than a
+          # single-commit export.
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Every tracked top-level directory is documented
+        run: python tools/lint_layout.py
