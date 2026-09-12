@@ -90,6 +90,19 @@ A single changed byte discards the whole cached prefix, and since block 1 is the
 This is easy to violate by accident.
 Putting the current time into the system prompt is the classic version, and it costs the prefix on every single call.
 
+**Measured 2026-09-12, and it is not an optimisation.**
+At a realistic prompt size of about 4800 tokens, with a game resident and a fresh frame every request:
+
+| 26B A4B Q4_K_M | Prefix cache off | Prefix cache on |
+| --- | --- | --- |
+| Tactical tick, 256-pixel image | 3282 ms | **596 ms** |
+
+The rule is worth **2686 ms per tick**.
+Without it a tactical call costs three and a half seconds, which is not a slower agent but a different architecture — roughly the cadence this page reserves for deliberation.
+
+A smaller prompt hides this entirely. Measured against a forty-token prompt the cache appears to buy nothing, 427 ms against 430 ms, because there is no prefix to hit. That is a property of the measurement, not of the cache.
+See `experiments/03-model-latency/`.
+
 **Blocks 3 and 4 are append-only.**
 The note block and the research excerpts grow during a session; nothing already written in either is edited or reordered.
 Append-only is a weaker property than byte-identical and it buys most of the same thing: every byte before the append is unchanged, so the cached prefix survives up to that point and only the appended text is new work.
@@ -162,7 +175,7 @@ Where a model-specific detail is unavoidable — a chat template, a token budget
 
 ## Open questions
 
-1. **Blocking.** **Every latency figure on this page is missing**, and the tactical cadence's rate follows directly from them. Measuring requires the model running on the reference hardware **with a game in memory**, since the figure without one is not the figure that matters. This blocks `NFR-MODEL-001` and [performance budgets](15-performance-budgets.md).
+1. **Blocking.** The **deliberative** latency figure is still missing, and the escalation ladder's timing follows from it. The tactical figure was measured on 2026-09-12 with a game resident, a product-sized prefix and a fresh frame per request: 445 ms for E4B and 596 ms for 26B A4B, against a 150–400 ms target. That corrected this page, [performance budgets](15-performance-budgets.md) and the cadence in [the reasoning loop](05-reasoning-loop.md). See `experiments/03-model-latency/`.
 2. **Non-blocking.** Whether any *further* variant needs the same check before it is shipped. Answered on 2026-09-12 for both variants that matter: E4B reads 7 of 8 synthetic scenes exactly on all three fields and 26B A4B reads 8 of 8, with the graphics processor confirmed in use at 8.42 and 11.23 times processor-only throughput. The tactical cadence has a confirmed implementation. See `experiments/02-vision-encoder/`.
 3. **Blocking.** Whether prefix reuse behaves as assumed with two pinned contexts at different image costs. If the runtime shares one cache between them, the two cadences evict each other and the layout above buys nothing.
 4. **Non-blocking.** Whether a per-request budget parameter is worth asking the runtime for. Measured 2026-09-12: the budget is a process-level flag (`--image-min-tokens`, `--image-max-tokens`), and the per-request cost is set by the resolution of the image sent — 83, 123, 258 and 443 image tokens at 256, 512, 768 and 1024 pixels. The two-stage refinement therefore has the control it needs, by rescaling. See `experiments/02-vision-encoder/`.

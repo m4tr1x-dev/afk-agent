@@ -185,3 +185,4 @@ unquantised
 
 # Platform constants named verbatim in the capture experiment.
 EXCLUDEFROMCAPTURE
+uncacheable

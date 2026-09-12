@@ -57,14 +57,22 @@ It is never in this budget.
 
 ## Model calls
 
-| Call | Target | Status |
+| Call | Target | Measured, 2026-09-12 |
 | --- | --- | --- |
-| Tactical, small image cost, no extended reasoning | 150–400 ms | **Unvalidated** |
+| Tactical, small image cost, no extended reasoning | 150–400 ms | **445 ms** with E4B, **596 ms** with 26B A4B |
 | Deliberative, large image cost, extended reasoning | 3–15 s | **Unvalidated** |
 | Two-stage refinement, both passes | Under the deliberative budget | **Unvalidated** |
 
+**The tactical target is not met**, and the measurement is realistic rather than pessimistic: a product-sized prefix, the prefix cache on, a fresh frame every request, and a game resident.
+The best figure is 445 ms at a 256-pixel image, 11% over the ceiling; see `experiments/03-model-latency/`.
+
 `NFR-MODEL-001` is written against the tactical figure, and the tactical cadence's rate follows from it.
-Until it is measured, the rate in [the reasoning loop](05-reasoning-loop.md) is an intention.
+At 445 ms the ceiling is **2.2 Hz**, and at 596 ms it is 1.7 — so the 1–4 Hz range in [the reasoning loop](05-reasoning-loop.md) is corrected to **1–2 Hz** rather than the measurement being argued with.
+That is what this page's own rule below requires: when a budget is exceeded the mechanism changes, or the number does, and here the number was an intention from the start.
+
+Two thirds of a tick is not the image.
+The text-only floor is 333 ms for E4B and 412 ms for 26B A4B, so the visual budget — the dial this page reaches for first — is worth about 70 ms across the whole range from 256 to 1024 pixels.
+Shortening the answer is worth more than shrinking the image.
 
 Neither call is on the reflex path.
 `NFR-LOOP-001` requires the other cadences to keep running while either is in flight, which is what makes a fifteen-second deliberation invisible.
@@ -178,7 +186,7 @@ A safety budget exceeded is a defect to fix, not a threshold to relax.
 
 ## Open questions
 
-1. **Blocking.** Every model figure is unvalidated. This blocks `NFR-MODEL-001` and the cadence rates.
+1. **Blocking.** The **deliberative** figure is unvalidated, and with it the escalation ladder's timing. The tactical figure was measured on 2026-09-12 at 445 ms for E4B and 596 ms for 26B A4B, which corrected both this page and the cadence range; see `experiments/03-model-latency/`.
 2. **Blocking.** The 100 ms panic budget is asserted. It may be unachievable through the ordinary hotkey path under load, in which case the mechanism needs changing rather than the number.
 3. **Non-blocking.** Whether the reflex rate should adapt to the game's own frame rate. A game at 30 fps does not need a 30 Hz agent.
 4. **Blocking.** Whether the graphics memory poll at one second is frequent enough. A game loading a level can allocate gigabytes faster than that.
