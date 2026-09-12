@@ -1,0 +1,42 @@
+name: Bug report
+description: Something behaves differently from what the documentation says.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        There is no released build yet, so most reports at this stage are about
+        the documentation or the tooling rather than the application.
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen
+      description: Link the specification page or reference page that says so.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happens instead
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: Numbered steps, starting from a clean state.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Windows build, GPU and driver version, toolchain versions.
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Redact anything personal. Screen captures in a session recording may contain private content.
+      render: text

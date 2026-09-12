@@ -1,0 +1,55 @@
+/* Status banners.
+   Every page under docs/ carries a `status` field in its front matter. The
+   banner is what stops a reader mistaking a draft specification for behaviour
+   that actually exists — which, in a project whose documentation precedes its
+   code, is the single most likely way for the docs to mislead. */
+
+.status-banner {
+  border-radius: 0.2rem;
+  padding: 0.6rem 0.8rem;
+  margin: 0 0 1.2rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-left: 0.2rem solid;
+}
+
+.status-banner--draft {
+  background: var(--md-code-bg-color);
+  border-left-color: #e08e0b;
+}
+
+.status-banner--review {
+  background: var(--md-code-bg-color);
+  border-left-color: #5b8def;
+}
+
+.status-banner--accepted {
+  background: var(--md-code-bg-color);
+  border-left-color: #7f7fd5;
+}
+
+.status-banner--implemented {
+  background: var(--md-code-bg-color);
+  border-left-color: #2e9e5b;
+}
+
+.status-banner--deprecated,
+.status-banner--superseded {
+  background: var(--md-code-bg-color);
+  border-left-color: #8a8a8a;
+  text-decoration: line-through;
+}
+
+/* Requirement identifiers appear constantly in the specification and need to
+   be visually separable from ordinary inline code. */
+.md-typeset code.requirement-id {
+  font-weight: 600;
+}
+
+/* Wide tables — the requirements and budget pages have several — must scroll
+   inside their own container rather than making the page scroll sideways. */
+.md-typeset .md-typeset__table {
+  display: block;
+  overflow-x: auto;
+}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{#
+  Renders the front-matter `status` field as a banner above the page content.
+
+  A project whose documentation precedes its implementation has exactly one
+  catastrophic failure mode: a reader treats a specification as a description
+  of working software. This banner is the mitigation, and it is why `status` is
+  a required front-matter field enforced by CI.
+#}
+{% block content %}
+  {% if page.meta and page.meta.status %}
+    {% set status = page.meta.status %}
+    <div class="status-banner status-banner--{{ status }}">
+      {% if status == "draft" %}
+        Draft — this page specifies behaviour that is not implemented. It may change without notice.
+      {% elif status == "review" %}
+        In review — this page is complete but has not been accepted. Do not implement against it yet.
+      {% elif status == "accepted" %}
+        Accepted — this page is normative and ready to implement. The behaviour does not exist yet.
+      {% elif status == "implemented" %}
+        Implemented — this page describes behaviour that exists in the current build.
+      {% elif status == "deprecated" %}
+        Deprecated — this page describes behaviour that is being removed.
+      {% elif status == "superseded" %}
+        Superseded{% if page.meta.superseded_by %} by <a href="{{ page.meta.superseded_by }}">{{ page.meta.superseded_by }}</a>{% endif %} — kept as a historical record.
+      {% endif %}
+      {%- if page.meta.last_reviewed %} Last reviewed {{ page.meta.last_reviewed }}.{% endif %}
+    </div>
+  {% endif %}
+  {{ super() }}
+{% endblock %}

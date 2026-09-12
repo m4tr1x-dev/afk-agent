@@ -1,0 +1,101 @@
+name: docs-publish
+
+# Builds the full documentation site and deploys it to GitHub Pages.
+#
+# Three generators produce one site. The hub is MkDocs; the two API sub-sites
+# are static output mounted underneath it. They are generated independently and
+# never cross-generated — see ADR-0001.
+#
+#   /              MkDocs Material  — specification, decisions, guides
+#   /api/rust/     cargo doc        — the Rust core
+#   /api/dotnet/   DocFX            — the C# shell
+#
+# The API steps are guarded: until the code exists there is nothing to generate,
+# and a missing manifest should not fail the documentation deploy.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a deploy in progress; a half-deployed site is worse than a stale
+# one. Queue instead.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # mkdocs-git-revision-date and similar plugins need history.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install pinned documentation toolchain
+        run: pip install -r docs/requirements.txt
+
+      - name: Build the hub
+        run: mkdocs build --strict
+
+      - name: Check for a Rust workspace
+        id: rust
+        run: |
+          if [ -f Cargo.toml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No Cargo.toml yet; skipping the Rust API reference."
+          fi
+
+      - name: Build the Rust API reference
+        if: steps.rust.outputs.present == 'true'
+        run: |
+          cargo doc --no-deps --all-features --workspace
+          mkdir -p site/api/rust
+          cp -r target/doc/. site/api/rust/
+
+      - name: Check for a DocFX configuration
+        id: docfx
+        run: |
+          if [ -f docs-api/docfx.json ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No docfx.json yet; skipping the .NET API reference."
+          fi
+
+      - name: Build the .NET API reference
+        if: steps.docfx.outputs.present == 'true'
+        run: |
+          dotnet tool install -g docfx
+          docfx docs-api/docfx.json
+          mkdir -p site/api/dotnet
+          cp -r docs-api/_site/. site/api/dotnet/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

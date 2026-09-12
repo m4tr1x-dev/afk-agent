@@ -1,0 +1,71 @@
+{
+  // Documentation lint rules for afk-agent.
+  // Rationale for every deviation from the defaults is given inline — do not
+  // change these without updating docs/contributing/documentation-guide.md.
+  "config": {
+    "default": true,
+
+    // MD003: headings are ATX, never Setext.
+    "MD003": { "style": "atx" },
+
+    // MD004: unordered lists use a dash, so diffs stay stable.
+    "MD004": { "style": "dash" },
+
+    // MD013 (line length) is OFF. We use semantic line breaks: one sentence
+    // per line, long sentences broken at clause boundaries. That makes a review
+    // diff point at the sentence that changed rather than at the paragraph,
+    // which matters more than a wrapped column.
+    "MD013": false,
+
+    // MD024: decision records legitimately repeat headings such as
+    // "Consequences" across sibling sections, so only flag duplicates that
+    // share a parent.
+    "MD024": { "siblings_only": true },
+
+    // MD025: exactly one H1 per page.
+    //
+    // `front_matter_title` is set empty on purpose. By default markdownlint
+    // treats the front-matter `title:` field as the document's H1, which would
+    // make every page in this repository fail: our convention is that a page
+    // carries BOTH a `title:` field (used by navigation and search) AND a
+    // matching H1 (what the reader sees). The two are kept in agreement by
+    // tools/lint_frontmatter.py, which is a better check than this one because
+    // it verifies they match rather than merely that one exists.
+    "MD025": { "front_matter_title": "" },
+
+    // MD033: inline HTML only for the few things Markdown cannot express.
+    // Anything else belongs in a Material admonition.
+    "MD033": {
+      "allowed_elements": ["br", "kbd", "sup", "sub", "details", "summary"]
+    },
+
+    // MD034: bare URLs are never acceptable — links carry descriptive text.
+    "MD034": true,
+
+    // MD040: every fenced block declares a language. Snippet tooling and
+    // highlighting both depend on it; `text` is the right answer for
+    // pseudocode and for plain output.
+    "MD040": true,
+
+    // MD046 (code block style) is OFF. Material admonitions carry their body as
+    // a four-space-indented block, which this rule cannot distinguish from an
+    // indented code block. Enforcing it would mean giving up admonitions, and
+    // the safety pages need them.
+    "MD046": false,
+
+    // MD049/MD050: one emphasis style each, so search and replace is safe.
+    // Asterisks for both: mixing `_italic_` with `**bold**` inside a sentence
+    // reads badly and invites the wrong one being typed.
+    "MD049": { "style": "asterisk" },
+    "MD050": { "style": "asterisk" }
+  },
+  "globs": ["**/*.md"],
+  "ignores": [
+    "node_modules/**",
+    "target/**",
+    "site/**",
+    // Templates are forms, not pages: they start at a second-level
+    // heading on purpose and have no single subject to title.
+    ".github/**"
+  ]
+}

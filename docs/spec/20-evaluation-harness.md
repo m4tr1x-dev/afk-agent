@@ -1,0 +1,155 @@
+---
+title: Evaluation harness
+description: "The recorded corpus, the grounding benchmark, and the regression suites."
+status: draft
+owner: m4tr1x-dev
+created: 2026-09-12
+last_reviewed: 2026-09-12
+applies_to: unreleased
+tags: [spec, evaluation]
+requirements: [FR-OBS-002, FR-GND-004, FR-GND-008, INV-OBS-001, NFR-MODEL-001]
+decisions: []
+generated: false
+---
+
+# Evaluation harness
+
+## Purpose
+
+This page specifies how the project measures itself.
+
+It exists early because two decisions are blocked on measurements this harness produces, and because a project whose central component is stochastic cannot be tested by running it and looking.
+
+One tool serves three purposes: the grounding benchmark, regression testing, and deterministic replay of a failure.
+
+## The corpus
+
+A set of recorded frames and sessions, labelled, committed to the repository or to a release artefact.
+
+| Set | Contents | Used for |
+| --- | --- | --- |
+| **Grounding** | Individual frames with true element boxes and a described target | Measuring both grounding paths |
+| **Sessions** | Complete recordings: frames, observations, prompts, actions, outcomes | Replay, regression |
+| **Perception** | Frames with true text, element boxes and scene class | Measuring extraction |
+
+### Collection
+
+Frames come from real games played by a human, captured with the agent in dry-run mode.
+Dry run means the perception pipeline runs in full while nothing is synthesised, which is what makes collection safe on any game.
+
+**Breadth matters more than depth.**
+Three hundred frames from five games across three genres is worth more than three thousand from one, because the thing being measured is whether the approach generalises.
+
+At least one game is held aside entirely, never used while tuning, so there is one measurement that has not been fitted to.
+
+### Labelling
+
+Element boxes and scene classes are labelled by hand.
+It is slow, and there is no way around it: a benchmark labelled by the system under test measures agreement rather than accuracy.
+
+Labels record the true box, a natural-language description of the target, and whether the element is reachable by each grounding path — an element the detector never proposes is not a Path B failure, it is a perception failure, and conflating the two makes the arbiter's input meaningless.
+
+### Privacy
+
+Corpus frames are images of a real screen.
+Anything captured for the corpus is reviewed before it is committed, and games are played on an account created for the purpose.
+
+## The grounding benchmark
+
+The measurement that unblocks `ADR-0014`.
+
+For each labelled frame:
+
+1. Run perception, producing elements and marks.
+2. Ask the model for the described target via **Path A**, direct coordinates.
+3. Ask via **Path B**, mark selection.
+4. Ask via **two-stage refinement**.
+5. Record, for each, whether the result falls inside the true box.
+
+Reported per scene class and per game, not only in aggregate.
+An approach that is excellent on menus and useless in a world view has an aggregate number that describes neither.
+
+### What it decides
+
+- Whether Path A is viable at all for this model.
+- The arbiter's global starting preference.
+- Whether the refinement stage earns its extra call.
+- Where perception is the limiting factor rather than the model.
+
+That last one is why the perception set exists separately.
+A frame where the target was never proposed is a perception result, and reporting it as a grounding failure would send the next month of work to the wrong subsystem.
+
+## Replay
+
+`FR-OBS-002`, `INV-OBS-001`.
+
+A recorded session replays deterministically: the same recording and the same sampling seed produce the same action sequence.
+
+Used for three things:
+
+- **Regression.** A change that alters behaviour on a recorded session shows up as a diff in the action sequence.
+- **Debugging.** A failure that happened overnight is reproducible on demand.
+- **Cheap iteration.** Perception and planning changes can be evaluated without a game running.
+
+### Where determinism breaks, and what to do about it
+
+Two places, both known.
+
+**Compaction is a model call**, so a replay that crosses a compaction boundary may diverge from the original run.
+The harness records compaction results in the recording and replays them from there rather than re-deriving them.
+
+**The model host may not be bit-reproducible** across versions or hardware.
+Replay is therefore pinned to a runtime version, and a version change invalidates the expected outputs rather than silently producing failures.
+
+## Regression suites
+
+| Suite | Asserts | Runs |
+| --- | --- | --- |
+| Perception | Text and element extraction against labels, within tolerance | Every pull request |
+| Grounding | Hit rate per path, not worse than the recorded baseline | Every pull request |
+| Replay | Recorded sessions produce their recorded action sequence | Every pull request |
+| Coordinate transform | Exact mapping under several scaling and monitor configurations | Every pull request |
+| Safety | Release on stop, panic, focus loss and crash | Every pull request |
+| Latency | Per-phase budgets from [performance budgets](15-performance-budgets.md) | Nightly, on reference hardware |
+
+The coordinate suite is the one that looks least interesting and catches the most.
+A transform defect under mixed display scaling is invisible in ordinary testing and breaks every grounded action for the users who have that configuration.
+
+The safety suite is not a statistic.
+A single failure is a defect, not a degraded score.
+
+## Measuring honestly
+
+Three rules, because a benchmark that flatters is worse than none.
+
+**Split by session and by time, never at random.**
+Adjacent frames are nearly identical. A random split puts a frame's neighbour in the other half and produces a number that is both excellent and meaningless.
+
+**Report an interval, not a point.**
+At a few hundred samples the standard error on a proportion near one half is a couple of percentage points, which means a two-point improvement is one standard error — not evidence. The harness reports a confidence interval, and a change that does not clear it is noise.
+
+**Measure in the deployment path.**
+The benchmark runs against the same runtime, the same quantisation and the same configuration the product uses, not a convenient approximation. The gap between those two is the standard source of results that look fine and behave worse.
+
+## The blame histogram
+
+`FR-GND-008`.
+
+Not a suite but the most useful thing the harness produces: the distribution of failure causes over real sessions.
+
+It answers "what should be fixed next", and it answers it with evidence rather than with the instinct to blame the model.
+A system whose text recognition misreads a counter presents as a system whose model makes poor decisions, and only the histogram separates them.
+
+## Open questions
+
+1. How large the grounding set needs to be for the confidence interval to be useful. A few hundred frames is a guess; the interval itself will say.
+2. Whether the corpus can be published. It is images of real games, which raises questions this project has not answered.
+3. Whether replay should tolerate small divergence or require exact equality. Exact is a clear signal and will make every model-host update look like a regression.
+4. How to label "reachable by Path A but not Path B" without assuming which elements perception ought to have found.
+5. Whether the latency suite can run anywhere but the reference machine. Almost certainly not, which makes it a nightly job on a self-hosted runner.
+6. What baseline the grounding suite compares against before there is a baseline.
+
+## Related decisions
+
+`ADR-0026` will record the testing strategy for a non-deterministic agent.
+It is not accepted, and `ADR-0014` depends on this harness existing first.

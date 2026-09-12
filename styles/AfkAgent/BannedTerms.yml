@@ -1,0 +1,22 @@
+extends: substitution
+message: "Use '%s' instead of '%s'."
+level: error
+ignorecase: true
+# This project is an accessibility-style automation tool that operates entirely
+# through public Windows APIs. Calling it a bot, a hack or an exploit invites
+# both a mistaken technical reading — we inject nothing and hook nothing — and a
+# hostile legal one. These words also appear verbatim in most games' terms of
+# service, so using them about our own software concedes a characterisation we
+# do not accept.
+#
+# "cheat" is handled separately, in CheatWord.yml, because it has to be allowed
+# inside "anti-cheat" and a substitution rule cannot express that.
+swap:
+  bot: agent
+  bots: agents
+  botting: automation
+  hack: workaround
+  hacks: workarounds
+  exploit: defect
+  exploits: defects
+  aimbot: automated aiming

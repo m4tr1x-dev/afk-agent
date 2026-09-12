@@ -1,0 +1,128 @@
+name: docs-quality
+
+# Runs on every pull request that touches documentation.
+#
+# Policy on hardness: structural problems fail the build, because they are
+# unambiguous and the fix is mechanical. External link rot does not, because it
+# happens on the web's timetable rather than ours and blocking a merge on it
+# trains people to disable the check.
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "*.md"
+      - "mkdocs.yml"
+      - ".markdownlint-cli2.jsonc"
+      - ".vale.ini"
+      - "styles/**"
+      - "cspell.json"
+      - "project-words.txt"
+      - "lychee.toml"
+      - "tools/lint_*.py"
+      - ".github/workflows/docs-quality.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "*.md"
+      - "mkdocs.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build site (strict)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install pinned documentation toolchain
+        run: pip install -r docs/requirements.txt
+
+      # --strict turns warnings into errors, which is what catches a nav entry
+      # pointing at a file that does not exist, a snippet whose marker was
+      # deleted, and a broken relative link between pages.
+      - name: Build
+        run: mkdocs build --strict
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site/
+          retention-days: 7
+
+  frontmatter:
+    name: Front matter and requirement identifiers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install pyyaml
+
+      - name: Validate front matter
+        run: python tools/lint_frontmatter.py docs
+
+      - name: Validate requirement identifiers
+        run: python tools/lint_requirements.py docs
+
+  markdown:
+    name: Markdown lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: "**/*.md"
+
+  prose:
+    name: Prose lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: errata-ai/vale-action@reviewdog
+        with:
+          files: docs
+          # Only errors fail the build. Warnings and suggestions are annotated
+          # on the diff so an author sees them without being blocked by them;
+          # the levels are set per rule and per area in .vale.ini.
+          fail_on_error: true
+          filter_mode: nofilter
+          reporter: github-pr-check
+          vale_flags: "--minAlertLevel=error"
+
+  spelling:
+    name: Spell check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: streetsidesoftware/cspell-action@v6
+        with:
+          files: "docs/**/*.md"
+          incremental_files_only: false
+
+  links-internal:
+    name: Internal links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          # Offline mode checks only relative links between files, which are
+          # entirely our responsibility and always a defect when broken.
+          args: --offline --config lychee.toml docs/ README.md
+          fail: true

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or discussion
+    url: https://github.com/m4tr1x-dev/afk-agent/discussions
+    about: For questions, ideas and anything that is not yet a concrete defect or proposal.
+  - name: Security report
+    url: https://github.com/m4tr1x-dev/afk-agent/security/advisories/new
+    about: Report a vulnerability privately. Do not open a public issue for one.

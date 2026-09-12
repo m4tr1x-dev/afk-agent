@@ -1,16 +1,30 @@
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-env/
-*.egg-info/
-.pytest_cache/
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
 
-# Node
-node_modules/
-dist/
-build/
+# .NET
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+artifacts/
+
+# Documentation build
+/site/
+# Vale style packages are downloaded by `vale sync`, not vendored.
+# Our own rules live in styles/AfkAgent and styles/config and ARE tracked.
+/styles/Microsoft/
+/docs/requirements.lock
+.cache/
+__pycache__/
+.venv/
+
+# Model weights — never commit these, they are downloaded at first run
+/models/
+*.gguf
+*.safetensors
 
 # Env / secrets
 .env
@@ -22,9 +36,11 @@ build/
 .idea/
 Thumbs.db
 desktop.ini
+.DS_Store
 
 # Runtime output
 logs/
 *.log
+recordings/
 screenshots/
 captures/

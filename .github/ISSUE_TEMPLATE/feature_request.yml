@@ -1,0 +1,36 @@
+name: Feature request
+description: Propose a capability the project does not have.
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Read the non-goals first. Several obvious-sounding features are
+        deliberately excluded, and the reasoning is written down.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you unable to do today? Describe the situation, not the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you propose
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you considered instead
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I read the non-goals and this is not one of them
+          required: true
+        - label: This does not require the agent to learn, to store knowledge between sessions, or to be configured per game
+          required: true

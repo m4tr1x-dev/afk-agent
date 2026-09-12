@@ -1,0 +1,15 @@
+extends: existence
+message: "Write 'automation' rather than '%s'. It concedes a characterisation this project does not accept."
+level: error
+ignorecase: true
+# "cheat" cannot go in the substitution rule because it must remain legal inside
+# "anti-cheat", which is the accepted name of a category of protection software
+# and which we have no alternative term for.
+#
+# Vale compiles patterns with Go's regexp package, which has no lookbehind, so
+# the exclusion is expressed by requiring the character before the word to be
+# something other than a hyphen. The leading group is part of the match, which
+# only affects the reported column.
+nonword: true
+tokens:
+  - '(?:^|[^-\w])(?:cheats?|cheating)\b'

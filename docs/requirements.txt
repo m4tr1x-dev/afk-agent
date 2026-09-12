@@ -1,0 +1,17 @@
+# Pinned documentation toolchain.
+#
+# Pin exactly. A documentation build that breaks because a dependency shipped a
+# minor release is a tax nobody should pay while writing a specification.
+# Bump these deliberately, in their own pull request, with the site built and
+# eyeballed before merge.
+#
+# Resolved and verified with `mkdocs build --strict` on 2026-09-12,
+# Python 3.12.10, Windows 11 build 26200.
+mkdocs==1.6.1
+mkdocs-material==9.7.7
+pymdown-extensions==11.0.2
+pyyaml==6.0.2
+
+# Deferred until there is something to use them for:
+#   mkdocs-redirects  — needed the first time a page moves
+#   mike              — needed the first time there is a release to version

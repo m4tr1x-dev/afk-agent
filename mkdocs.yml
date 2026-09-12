@@ -1,0 +1,180 @@
+site_name: afk-agent
+site_description: An autonomous computer-use agent that plays PC games from a natural-language prompt.
+site_url: https://m4tr1x-dev.github.io/afk-agent/
+repo_url: https://github.com/m4tr1x-dev/afk-agent
+repo_name: m4tr1x-dev/afk-agent
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 M4tr1x-dev — MIT licensed
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  language: en
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.saneheaders
+  # Snippets is the anti-drift mechanism: documentation includes code from real
+  # source files by marker, and `mkdocs build --strict` fails when a marker is
+  # deleted or renamed. Never paste code into a page by hand.
+  - pymdownx.snippets:
+      base_path:
+        - docs/snippets
+        - .
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        # Mermaid renders natively on GitHub and here from the same fence, so a
+        # reviewer sees diagrams in the pull request diff without a build step.
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - search
+  - tags
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/m4tr1x-dev/afk-agent
+
+nav:
+  - Home:
+      - index.md
+      - vision.md
+      - roadmap.md
+      - glossary.md
+      - faq.md
+  - Specification:
+      - spec/index.md
+      - spec/00-scope-and-goals.md
+      - spec/01-requirements.md
+      - spec/02-system-context.md
+      - spec/03-container-architecture.md
+      - spec/04-perception.md
+      - spec/05-reasoning-loop.md
+      - spec/06-action-and-input.md
+      - spec/07-skills.md
+      - spec/08-context-and-research.md
+      - spec/09-gui-and-overlay.md
+      - spec/10-ipc-protocol.md
+      - spec/11-configuration-and-profiles.md
+      - spec/12-safety-and-limits.md
+      - spec/13-observability.md
+      - spec/14-threat-model.md
+      - spec/15-performance-budgets.md
+      - spec/16-error-taxonomy.md
+      - spec/17-model-contract.md
+      - spec/18-grounding-and-verification.md
+      - spec/19-non-goals.md
+      - spec/20-evaluation-harness.md
+  - Decisions:
+      - decisions/index.md
+      - decisions/adr-template.md
+      - decisions/0000-use-madr-for-architecture-decisions.md
+      - decisions/0001-documentation-toolchain-and-docs-as-spec.md
+      - decisions/0002-core-runtime-language.md
+      - decisions/0003-process-topology.md
+      - decisions/0004-control-plane-transport.md
+      - decisions/0005-data-plane-transport.md
+      - decisions/0009-input-injection-method.md
+      - decisions/0011-application-framework-and-packaging.md
+      - decisions/0012-agent-loop-architecture.md
+      - decisions/0013-constrained-decoding.md
+      - decisions/0014-grounding-strategy.md
+      - decisions/0016-repository-layout.md
+      - decisions/0018-context-as-the-only-memory.md
+      - decisions/0025-terms-of-service-and-anti-cheat-posture.md
+      - decisions/0035-sustained-action-execution.md
+      - decisions/0036-three-valued-verification.md
+  - Explanation:
+      - explanation/index.md
+      - explanation/why-no-per-game-training.md
+      - explanation/why-the-agent-does-not-learn.md
+      - explanation/what-the-agent-remembers.md
+      - explanation/why-a-local-model.md
+      - explanation/how-the-agent-loop-works.md
+      - explanation/grounding-clicks-in-pixels.md
+      - explanation/sustained-actions-explained.md
+      - explanation/perception-token-economics.md
+      - explanation/failure-modes-and-recovery.md
+      - explanation/research-skills-and-game-guides.md
+      - explanation/rust-and-csharp-split.md
+      - explanation/overlay-rendering-explained.md
+      - explanation/anti-cheat-and-terms-of-service.md
+  - How-to:
+      - how-to/index.md
+  - Tutorials:
+      - tutorials/index.md
+  - Reference:
+      - reference/index.md
+      - reference/sensor-expressions.md
+      - reference/api/index.md
+  - Contributing:
+      - contributing/index.md
+      - contributing/development-environment.md
+      - contributing/repository-layout.md
+      - contributing/build-and-run.md
+      - contributing/coding-standards-rust.md
+      - contributing/coding-standards-csharp.md
+      - contributing/testing-strategy.md
+      - contributing/documentation-guide.md
+      - contributing/adr-process.md
+      - contributing/diagram-guide.md
+      - contributing/release-process.md
+  - known-good-matrix.md

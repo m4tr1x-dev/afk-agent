@@ -1,0 +1,118 @@
+# Project vocabulary for afk-agent.
+# Every term that appears in docs/glossary.md must also appear here.
+# Keep alphabetical within sections.
+
+# Project
+afk
+gguf
+mmproj
+Roblox
+
+# Models and inference
+Gemma
+GBNF
+llama
+logits
+mistral
+multimodal
+quantisation
+quantization
+quantized
+requantize
+tokenizer
+unsloth
+vulkan
+VRAM
+
+# Perception and agents
+Diataxis
+grounded
+grounding
+OCR
+OmniParser
+ScreenSpot
+SigLIP
+subgoal
+subgoals
+tesseract
+
+# Windows platform
+Acrylic
+composited
+DirectComposition
+DirectML
+DPI
+DWM
+DXGI
+HWND
+Mica
+MSIX
+NativeAOT
+seqlock
+UIA
+WASDK
+WinRT
+WinUI
+
+# Rust and .NET
+bindgen
+cbindgen
+clippy
+csbindgen
+rustdoc
+rustfmt
+thiserror
+tokio
+wgpu
+
+# Tooling
+cspell
+docfx
+lychee
+markdownlint
+mkdocs
+pymdownx
+rustup
+
+# Hardware and vendors
+CUDA
+MMMU
+RDNA
+Radeon
+
+# Documentation framework
+Diataxis
+Diátaxis
+frontmatter
+Nygard
+
+# Vocabulary the project bans but must be able to name
+aimbot
+botting
+
+# Terms of art
+timeboxed
+
+# Requirement area codes
+PERC
+
+# Platform and software terms that are correct as written
+Analyzer
+dialog
+memoises
+redistributables
+repeatably
+replan
+vendored
+replayable
+respawn
+Backpressure
+flyouts
+
+# Tooling and platform names
+Rustlang
+winget
+linters
+nullability
+viewmodel
+respawns

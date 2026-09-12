@@ -1,0 +1,6 @@
+# The specification and the decision records are the project's load-bearing
+# documents. Everything else can be reviewed by anyone.
+/docs/spec/        @m4tr1x-dev
+/docs/decisions/   @m4tr1x-dev
+/mkdocs.yml        @m4tr1x-dev
+/.github/          @m4tr1x-dev

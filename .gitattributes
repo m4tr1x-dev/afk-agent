@@ -1,0 +1,20 @@
+# Normalise line endings in the repository to LF, matching .editorconfig.
+#
+# Without this, Git on Windows checks files out as CRLF while .editorconfig
+# declares LF, and the two disagree quietly until a linter or a script that
+# reads files literally starts producing confusing results.
+* text=auto eol=lf
+
+# Windows-native scripts need CRLF to be executed correctly.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary assets are never converted.
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.gguf binary
+*.safetensors binary

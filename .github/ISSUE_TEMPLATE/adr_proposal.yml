@@ -1,0 +1,80 @@
+name: Architecture decision proposal
+description: Propose a new architecture decision, or argue that an existing one should be revisited.
+title: "[adr] "
+labels: ["decision"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Open this **before** writing a pull request that implements the decision.
+
+        Architecture changes are discussed as issues and recorded as decision
+        records. A pull request that quietly makes an architectural choice in
+        passing will be asked to come back here first.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is this
+      options:
+        - A new decision that has not been recorded
+        - An existing decision should be revisited
+        - An existing decision should be superseded
+    validations:
+      required: true
+
+  - type: input
+    id: existing
+    attributes:
+      label: Existing record
+      description: If this concerns one, give its number.
+      placeholder: ADR-0009
+
+  - type: textarea
+    id: question
+    attributes:
+      label: The question, in one sentence
+      description: What has to be decided?
+    validations:
+      required: true
+
+  - type: textarea
+    id: drivers
+    attributes:
+      label: Decision drivers
+      description: |
+        What actually discriminates between the options? If a consideration does
+        not distinguish them, it is context rather than a driver.
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: Options considered
+      description: |
+        Include the ones you rejected early. Those are the part that is valuable
+        in six months, when someone asks why the obvious approach was not taken.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: |
+        A decision record written without an experiment behind it is a guess in a
+        smart format. Paste the measurement, or describe the experiment that
+        would settle it and how long it would take.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation
+    attributes:
+      label: How would we know this was wrong
+      description: |
+        Name a measurement, a threshold, or an observable condition that would
+        make us revisit. "If it turns out badly" is not one.
+    validations:
+      required: true

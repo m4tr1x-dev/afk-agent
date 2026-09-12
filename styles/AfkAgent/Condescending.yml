@@ -1,0 +1,19 @@
+extends: existence
+message: "'%s' assumes the reader finds this easy. Remove it."
+level: error
+ignorecase: true
+# A reader consulting a how-to guide has already failed at something. Telling
+# them the next step is simple adds nothing when it works and is insulting when
+# it does not.
+tokens:
+  - simply
+  - just
+  - easily
+  - obviously
+  - of course
+  - clearly
+  - trivially
+  - "it's easy"
+  - "it is easy"
+  - "all you need to do"
+  - "as you would expect"

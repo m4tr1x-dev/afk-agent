@@ -1,0 +1,26 @@
+extends: existence
+message: "'%s' is imprecise. A specification states a number, a bound, or a condition."
+level: error
+ignorecase: true
+# Every one of these words hides a decision that has not been made. If the
+# latency budget is "fast", nobody can implement it and no test can check it.
+tokens:
+  - fast
+  - slow
+  - quickly
+  - efficient
+  - efficiently
+  - robust
+  - scalable
+  - reasonable
+  - reasonably
+  - appropriate
+  - appropriately
+  - sufficient
+  - sufficiently
+  - a number of
+  - several
+  - various
+  - many
+  - most likely
+  - should probably

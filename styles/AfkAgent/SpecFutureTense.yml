@@ -1,0 +1,24 @@
+extends: existence
+message: "'%s': specifications are written in the present tense. Whether the behaviour exists yet is carried by the page's `status` field, not by its grammar."
+level: error
+ignorecase: true
+# The single most common failure mode in a docs-as-spec project is a
+# specification that drifts into being a roadmap. "The core will expose a
+# metrics endpoint" is a promise; "The core exposes a metrics endpoint" is a
+# requirement someone can implement and test against.
+tokens:
+  - will be
+  - will have
+  - will expose
+  - will provide
+  - will support
+  - will need
+  - will then
+  - shall be
+  - is going to
+  - are going to
+  - we plan to
+  - we intend to
+  - in the future
+  - for now
+  - eventually

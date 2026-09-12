@@ -1,0 +1,69 @@
+name: Specification change
+description: Challenge, correct or extend a specification page.
+title: "[spec] "
+labels: ["specification"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the most valuable kind of issue right now.
+
+        There is no code yet, so a wrong assumption caught on a page costs an
+        afternoon rather than a fortnight. If a specification page does not add
+        up, say so here.
+
+  - type: input
+    id: page
+    attributes:
+      label: Which page
+      description: Path under docs/, for example docs/spec/06-action-and-input.md
+      placeholder: docs/spec/...
+    validations:
+      required: true
+
+  - type: input
+    id: requirements
+    attributes:
+      label: Requirement identifiers
+      description: Which requirements this concerns, if any. Leave blank if none apply.
+      placeholder: FR-ACT-001, INV-SAFE-002
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem
+      options:
+        - The specification is wrong — it would not work
+        - The specification is ambiguous — two readings, different implementations
+        - The specification is incomplete — I would have to guess
+        - The specification contradicts another page
+        - Missing requirement
+        - Suggested simplification
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: |
+        Be concrete. If the page is ambiguous, give both readings. If it would
+        not work, describe the case where it fails.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What it should say instead
+      description: Optional. A proposed wording is welcome but not required.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I read the page's Open questions section and this is not already listed there
+          required: true
+        - label: I checked whether a decision record already settles this
+          required: true
