@@ -94,7 +94,7 @@ jobs:
       # file. `dotnet tool install -g docfx` installs whatever is newest on the
       # day the workflow runs, which contradicts the pinning discipline the
       # known-good matrix applies to everything else in the build.
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         if: steps.docfx.outputs.present == 'true'
         with:
           global-json-file: global.json
