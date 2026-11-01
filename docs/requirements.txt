@@ -8,8 +8,8 @@
 # Resolved and verified with `mkdocs build --strict` on 2026-09-12,
 # Python 3.12.10, Windows 11 build 26200.
 mkdocs==1.6.1
-mkdocs-material==9.7.7
-pymdown-extensions==11.0.2
+mkdocs-material==9.8.0
+pymdown-extensions==12.3
 pyyaml==6.0.3
 
 # Deferred until there is something to use them for:
